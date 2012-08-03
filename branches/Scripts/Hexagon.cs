@@ -1,4 +1,3 @@
-using UnityEngine;
 using System.Collections;
 
 
@@ -38,6 +37,18 @@ public class Hexagon : MonoBehaviour {
 
 		};
 	
+		Vector2 uv0 = new Vector2(0.25f,1);
+		Vector2 uv1 = new Vector2(0,0.5f);
+		Vector2 uv2 = new Vector2(0.25f,0);
+		Vector2 uv3 = new Vector2(0.75f,0);
+		Vector2 uv4 = new Vector2(1,0.5f);
+		Vector2 uv5 = new Vector2(0.75f,1);
+		
+		mesh.uv = new Vector2[]{
+				uv0,uv1,uv2,
+				uv3,uv4,uv5
+		};
+		
 		mesh.RecalculateNormals();
 		mesh.RecalculateBounds();
 		mesh.Optimize();
