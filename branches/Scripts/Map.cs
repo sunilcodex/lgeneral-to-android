@@ -20,16 +20,18 @@ public class Map : MonoBehaviour {
 	}
 	
 	void Awake(){
-		for (int i=0; i<width;i++){
-			for (int j=0; j<height;j++){
+		
+		
+		for (int i=0; i<height; i++){
+			for (int j=0; j<width; j++){
 				GameObject hex;
-				if(IsEven(i)){
-					hex = (GameObject)Instantiate(hexPrefab,new Vector3(i*1.5f,0,-Mathf.Sqrt(3)*j),Quaternion.identity);
+				if (IsEven(j)){
+					hex = (GameObject)Instantiate(hexPrefab,new Vector3(j*1.5f,0,-Mathf.Sqrt(3)*i),Quaternion.identity);
 					
 				}
 				else{
-					float desp = Mathf.Sqrt(3)/2;
-					hex = (GameObject)Instantiate(hexPrefab,new Vector3(i*1.5f,0,(-Mathf.Sqrt(3)*j)+desp),Quaternion.identity);
+					hex = (GameObject)Instantiate(hexPrefab,new Vector3(j*1.5f,0,
+						-(Mathf.Sqrt(3)*i)-(Mathf.Sqrt(3)/2)),Quaternion.identity);
 				}
 				hex.transform.parent = this.gameObject.transform;
 				Hexagon hexScript = hex.GetComponent(typeof(Hexagon)) as  Hexagon;
@@ -37,6 +39,7 @@ public class Map : MonoBehaviour {
 				hexScript.maxTextures = 3;
 				//Material hexMaterial  = hex.renderer;
 				hex.renderer.sharedMaterial = defaultTexture;
+				
 			}
 		}
 		
@@ -52,3 +55,4 @@ public class Map : MonoBehaviour {
 	
 	}
 }
+
