@@ -3,11 +3,15 @@ using System.Collections;
 
 public class Map : MonoBehaviour {
 	
-	private int tam_x = 10;
-	private int tam_y = 10;
+	public int width;
+	public int height;
+	public GameObject hexPrefab;
+	public Material defaultTexture;
 	
-	private bool EsPar(int num){
-		if (num%2==0){
+	//public TipoSuelo[,] mapa;
+	
+	private bool IsEven(int number){
+		if (number%2==0){
 			return true;
 		}
 		else{
@@ -16,24 +20,23 @@ public class Map : MonoBehaviour {
 	}
 	
 	void Awake(){
-		
-		GameObject hexagon = GameObject.Find("Hexagon");
-		GameObject map = GameObject.Find ("Map");
-		for (int i=0; i<tam_x;i++){
-			for (int j=0; j<tam_y;j++){
-				if (i==0 && j==0){
-					map.transform.Translate(0,0,0);
-					hexagon.transform.Translate(0,0,0);
-				}
-				else if(EsPar(i)){
-					GameObject hex = (GameObject)Instantiate(hexagon,new Vector3(i*1.5f,0,-Mathf.Sqrt(3)*j),Quaternion.identity);
-					hex.transform.parent = map.transform;
+		for (int i=0; i<width;i++){
+			for (int j=0; j<height;j++){
+				GameObject hex;
+				if(IsEven(i)){
+					hex = (GameObject)Instantiate(hexPrefab,new Vector3(i*1.5f,0,-Mathf.Sqrt(3)*j),Quaternion.identity);
+					
 				}
 				else{
 					float desp = Mathf.Sqrt(3)/2;
-					GameObject hex = (GameObject)Instantiate(hexagon,new Vector3(i*1.5f,0,(-Mathf.Sqrt(3)*j)+desp),Quaternion.identity);
-					hex.transform.parent = map.transform;
+					hex = (GameObject)Instantiate(hexPrefab,new Vector3(i*1.5f,0,(-Mathf.Sqrt(3)*j)+desp),Quaternion.identity);
 				}
+				hex.transform.parent = this.gameObject.transform;
+				Hexagon hexScript = hex.GetComponent(typeof(Hexagon)) as  Hexagon;
+				hexScript.actualTexture = 1;
+				hexScript.maxTextures = 3;
+				//Material hexMaterial  = hex.renderer;
+				hex.renderer.sharedMaterial = defaultTexture;
 			}
 		}
 		
