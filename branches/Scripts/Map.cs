@@ -8,7 +8,7 @@ public class Map : MonoBehaviour {
 	//public int width;
 	//public int height;
 	public GameObject hexPrefab;
-	public Material defaultTexture;
+	//public Material defaultTexture;
 	public string mapname;
 	private string title;
 	private string description;
@@ -52,7 +52,12 @@ public class Map : MonoBehaviour {
 		if (hexScript.maxTextures==-1){
 			Debug.Log("Texture don't exit");
 		}
-		//Falta cargar la textura y añadirsela
+		print ("Orientation: "+ hexScript.actualTexture);
+		print ("Max Texture: "+ hexScript.maxTextures);
+		print ("Tipo Terreno: "+ terrain_type);
+		//hex.renderer.sharedMaterial = Resources.Load("Textures/Terrain/Materials/"+terrain_type) as Material;
+		hex.renderer.material.mainTexture= Resources.Load("Textures/Terrain/"+terrain_type) as Texture2D;
+			
 	}
 	
 	private bool IsEven(int number){
