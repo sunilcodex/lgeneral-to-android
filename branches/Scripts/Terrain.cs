@@ -4,109 +4,112 @@
  * Fecha: 12/01/2009
  * Hora: 12:56
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | Codificación | Editar Encabezados Estándar
+ * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÃ³n | Editar Encabezados EstÃ¡ndar
  */
-
 using System;
 using System.Collections.Generic;
 
-namespace SharpGeneral
+namespace Engine
 {
 
-    /// <summary>
-    /// Weather flags.
-    /// </summary>
-    [Flags]
+	/// <summary>
+	/// Weather flags.
+	/// </summary>
+	[Flags]
     public enum WEATHER_FLAGS
-    {
-        NONE = 0,
-        NO_AIR_ATTACK = (1 << 1),    /* flying units can't and can't be attacked */
-        DOUBLE_FUEL_COST = (1 << 2), /* guess what! */
-        CUT_STRENGTH = (1 << 3),     /* cut strength in half due to bad weather */
-        BAD_SIGHT = (1 << 4),        /* ranged attack is harder */
-    }
+	{
+		NONE = 0,
+		NO_AIR_ATTACK = (1 << 1),    /* flying units can't and can't be attacked */
+		DOUBLE_FUEL_COST = (1 << 2), /* guess what! */
+		CUT_STRENGTH = (1 << 3),     /* cut strength in half due to bad weather */
+		BAD_SIGHT = (1 << 4),        /* ranged attack is harder */
+	}
 
 
-    /// <summary>
-    /// Weather type.
-    /// </summary>
-    public class Weather_Type
-    {
-        public string id;
-        public string name;
-        public WEATHER_FLAGS flags;
-    }
+	/// <summary>
+	/// Weather type.
+	/// </summary>
+	public class Weather_Type
+	{
+		public string id;
+		public string name;
+		public WEATHER_FLAGS flags;
+	}
 
 
-    /// <summary>
-    /// Fog alpha
-    /// </summary>
-    public enum FOG_ALPHA { FOG_ALPHA = 64, DANGER_ALPHA = 128 };
+	/// <summary>
+	/// Fog alpha
+	/// </summary>
+	public enum FOG_ALPHA
+	{
+		FOG_ALPHA = 64,
+		DANGER_ALPHA = 128
+	};
 
 
-    /// <summary>
-    /// Terrain flags
-    /// </summary>
-    [Flags]
+	/// <summary>
+	/// Terrain flags
+	/// </summary>
+	[Flags]
     public enum Terrain_flags
-    {
-        NONE = 0,
-        INF_CLOSE_DEF = (1 << 1), /* if there's a fight inf against non-inf
+	{
+		NONE = 0,
+		INF_CLOSE_DEF = (1 << 1), /* if there's a fight inf against non-inf
                                      on this terrain the non-inf unit must use
                                      it's close defense value */
-        NO_SPOTTING = (1 << 2), /* you can't see on this tile except being on it
+		NO_SPOTTING = (1 << 2), /* you can't see on this tile except being on it
                                      or close to it */
-        RIVER = (1 << 3), /* engineers can build a bridge over this tile */
-        SUPPLY_AIR = (1 << 4), /* flying units may supply */
-        SUPPLY_GROUND = (1 << 5), /* ground units may supply */
-        SUPPLY_SHIPS = (1 << 6), /* swimming units may supply */
-        BAD_SIGHT = (1 << 7), /* ranged attack is harder */
-        SWAMP = (1 << 8)  /* attack penalty */
-    }
+		RIVER = (1 << 3), /* engineers can build a bridge over this tile */
+		SUPPLY_AIR = (1 << 4), /* flying units may supply */
+		SUPPLY_GROUND = (1 << 5), /* ground units may supply */
+		SUPPLY_SHIPS = (1 << 6), /* swimming units may supply */
+		BAD_SIGHT = (1 << 7), /* ranged attack is harder */
+		SWAMP = (1 << 8)  /* attack penalty */
+	}
 
 
-    /// <summary>
-    /// Terrain type.
-    /// In this case the id is a single character used to determine the
-    /// terrain type in a map.
-    /// mov, spt and flags may be different for each weather type
-    /// </summary>
-    public class Terrain_Type
-    {
-        public string id;
-        public string name;
-        //TODO_RR public SDL_Surface[] images;
-        //TODO_RR public SDL_Surface[] images_fogged;
-        public int[,] mov; //mov cost is array [ mov_type, weatherType ]
-        public int[] spt; // spot cost is array [ weatherType ]
-        public int min_entr;
-        public int max_entr;
-        public int max_ini;
-        public Terrain_flags[] flags; // flags is array [ weatherType ]
-    }
+	/// <summary>
+	/// Terrain type.
+	/// In this case the id is a single character used to determine the
+	/// terrain type in a map.
+	/// mov, spt and flags may be different for each weather type
+	/// </summary>
+	public class Terrain_Type
+	{
+		public string id;
+		public string name;
+		//TODO_RR public SDL_Surface[] images;
+		//TODO_RR public SDL_Surface[] images_fogged;
+		public int[,] mov; //mov cost is array [ mov_type, weatherType ]
+		public int[] spt; // spot cost is array [ weatherType ]
+		public int min_entr;
+		public int max_entr;
+		public int max_ini;
+		public Terrain_flags[] flags; // flags is array [ weatherType ]
+	}
 
 
-    /// <summary>
-    /// Terrain icons
-    /// </summary>
-    public class Terrain_Icons
-    {
-        //TODO_RR public SDL_Surface fog;       /* mask used to create fog */
-        //TODO_RR public SDL_Surface danger;    /* mask used to create danger zone */
-        //TODO_RR public SDL_Surface grid;      /* contains the grid */
-        //TODO_RR public SDL_Surface select;    /* selecting frame picture */
-        //TODO_RR public SDL_Surface cross;     /* crosshair animation */
-        //TODO_RR public Anim expl1, expl2;     /* explosion animation (attacker, defender)*/
+	/// <summary>
+	/// Terrain icons
+	/// </summary>
+	public class Terrain_Icons
+	{
+		//TODO_RR public SDL_Surface fog;       /* mask used to create fog */
+		//TODO_RR public SDL_Surface danger;    /* mask used to create danger zone */
+		//TODO_RR public SDL_Surface grid;      /* contains the grid */
+		//TODO_RR public SDL_Surface select;    /* selecting frame picture */
+		//TODO_RR public SDL_Surface cross;     /* crosshair animation */
+		//TODO_RR public Anim expl1, expl2;     /* explosion animation (attacker, defender)*/
 #if WITH_SOUND
     Wav *wav_expl;   /* explosion */
     Wav *wav_select; /* tile selection */
 #endif
-    }
+	}
 
-    public class Terrain
-    {
+	public class Terrain
+	{
 
-        /*
+		/*
         ====================================================================
         Load terrain types, weather information and hex tile icons.
         ====================================================================
@@ -133,7 +136,7 @@ namespace SharpGeneral
                 weatherTypes[i].id = sub.Name;
                 weatherTypes[i].name = sub.GetProperty("name");
                 string flags = sub.GetProperty("flags");
-                foreach (string flag in flags.Split('°'))
+                foreach (string flag in flags.Split('Â°'))
                 {
                     weatherTypes[i].flags |= (WEATHER_FLAGS)System.Enum.Parse(typeof(WEATHER_FLAGS), flag.ToUpper());
                 }
@@ -286,7 +289,7 @@ namespace SharpGeneral
                 for (int j = 0; j < weatherTypeCount; j++)
                 {
                     string flags = subsub.GetProperty(weatherTypes[j].id);
-                    foreach (string flag in flags.Split('°'))
+                    foreach (string flag in flags.Split('Â°'))
                     {
                         terrainTypes[i].flags[j] |= (Terrain_flags)System.Enum.Parse(typeof(Terrain_flags), flag.ToUpper());
                     }
@@ -297,17 +300,17 @@ namespace SharpGeneral
             return 1;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Delete terrain types & co
         ====================================================================
         */
-        public void terrain_delete()
-        {
-            throw new System.NotImplementedException();
-        }
+		public void terrain_delete ()
+		{
+			throw new System.NotImplementedException ();
+		}
 
-        /*
+		/*
         ====================================================================
         Get the movement cost for a terrain type by passing movement
         type id and weather id in addition.
@@ -316,13 +319,13 @@ namespace SharpGeneral
         Return cost else.
         ====================================================================
         */
-        public static int GetMovementCost(Terrain_Type type, int mov_type, int weather)
-        {
-            return type.mov[weather, mov_type];
-        }
+		public static int GetMovementCost (Terrain_Type type, int mov_type, int weather)
+		{
+			return type.mov [weather, mov_type];
+		}
 
 
-        /*
+		/*
        ====================================================================
        Flag conversion table
        ====================================================================
@@ -344,23 +347,23 @@ private StrToFlag[] fct_terrain = new StrToFlag[]{
 };
 #endif
 
-        /*
+		/*
         ====================================================================
         Geometry of a hex tile
         ====================================================================
         */
-        public int hex_w, hex_h;
-        public int hex_x_offset, hex_y_offset;
+		public int hex_w, hex_h;
+		public int hex_x_offset, hex_y_offset;
 
-        /*
+		/*
         ====================================================================
         Terrain types & co
         ====================================================================
         */
-        public Terrain_Type[] terrainTypes;
-        public int terrainTypeCount;
-        public Weather_Type[] weatherTypes;
-        public int weatherTypeCount;
-        public Terrain_Icons terrainIcons;
-    }
+		public Terrain_Type[] terrainTypes;
+		public int terrainTypeCount;
+		public Weather_Type[] weatherTypes;
+		public int weatherTypeCount;
+		public Terrain_Icons terrainIcons;
+	}
 }
