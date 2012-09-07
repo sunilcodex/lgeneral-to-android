@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections;
-using Engine;
 
 [CustomEditor (typeof(Hexagon))] 
 public class HexagonEditor : Editor
