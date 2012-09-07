@@ -1,144 +1,151 @@
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
+
 //TODO_RR using System.Drawing;
 //TODO_RR using System.Drawing.Drawing2D;
 //TODO_RR using System.Drawing.Imaging;
-
-namespace SharpGeneral
+namespace Engine
 {
-    public class Way_Point
-    {
-        public int x, y;
-    }
+	public class Way_Point
+	{
+		public int x, y;
+	}
 
-    public enum weather { FAIR = 0, CLOUDS, RAIN, SNOW };
+	public enum weather
+	{
+		FAIR = 0,
+		CLOUDS,
+		RAIN,
+		SNOW
+	};
 
-    /// <summary>
-    /// To determine various things of the map (deploy, spot, blocked ...)
-    /// a map mask is used and these are the flags for it.
-    /// </summary>
-    [Flags]
+	/// <summary>
+	/// To determine various things of the map (deploy, spot, blocked ...)
+	/// a map mask is used and these are the flags for it.
+	/// </summary>
+	[Flags]
     public enum MAP_MASK
-    {
-        F_FOG = (1 << 1),
-        F_SPOT = (1 << 2),
-        F_IN_RANGE = (1 << 3),
-        F_MOUNT = (1 << 4),
-        F_SEA_EMBARK = (1 << 5),
-        F_AUX = (1 << 6),
-        F_INFL = (1 << 7),
-        F_INFL_AIR = (1 << 8),
-        F_VIS_INFL = (1 << 9),
-        F_VIS_INFL_AIR = (1 << 10),
-        F_BLOCKED = (1 << 11),
-        F_BACKUP = (1 << 12),
-        F_MERGE_UNIT = (1 << 13),
-        F_INVERSE_FOG = (1 << 14), /* inversion of F_FOG */
-        F_DEPLOY = (1 << 15),
-        F_CTRL_GRND = (1 << 17),
-        F_CTRL_AIR = (1 << 18),
-        F_CTRL_SEA = (1 << 19),
-        F_MOVE_COST = (1 << 20),
-        F_DANGER = (1 << 21),
-        F_SPLIT_UNIT = (1 << 22),
-        F_DISTANCE = (1 << 23)
-    }
+	{
+		F_FOG = (1 << 1),
+		F_SPOT = (1 << 2),
+		F_IN_RANGE = (1 << 3),
+		F_MOUNT = (1 << 4),
+		F_SEA_EMBARK = (1 << 5),
+		F_AUX = (1 << 6),
+		F_INFL = (1 << 7),
+		F_INFL_AIR = (1 << 8),
+		F_VIS_INFL = (1 << 9),
+		F_VIS_INFL_AIR = (1 << 10),
+		F_BLOCKED = (1 << 11),
+		F_BACKUP = (1 << 12),
+		F_MERGE_UNIT = (1 << 13),
+		F_INVERSE_FOG = (1 << 14), /* inversion of F_FOG */
+		F_DEPLOY = (1 << 15),
+		F_CTRL_GRND = (1 << 17),
+		F_CTRL_AIR = (1 << 18),
+		F_CTRL_SEA = (1 << 19),
+		F_MOVE_COST = (1 << 20),
+		F_DANGER = (1 << 21),
+		F_SPLIT_UNIT = (1 << 22),
+		F_DISTANCE = (1 << 23)
+	}
 
-    public class Map_Tile
-    {
-        public string name;             /* name of this map tile */
-        //TODO_RR public Terrain_Type terrain;  /* terrain properties */
-        public int terrain_id;         /* id of terrain properties */
-        public int image_offset;       /* image offset in prop.image */
-        public int strat_image_offset; /* offset in the list of strategic tiny terrain images */
-        //TODO_RR public Nation nation;         /* nation that owns this flag (NULL == no nation) */
-        //TODO_RR public Player player;         /* dito */
-        public bool obj;                /* military objective ? */
-        public int deploy_center;      /* deploy allowed? */
-        //TODO_RR public Unit g_unit;           /* ground/naval unit pointer */
-        //TODO_RR public Unit a_unit;           /* air unit pointer */
-        //TODO_RR public Unit backupUnit;
-    }
+	public class Map_Tile
+	{
+		public string name;             /* name of this map tile */
+		public Terrain_Type terrain;  /* terrain properties */
+		public int terrain_id;         /* id of terrain properties */
+		public int image_offset;       /* image offset in prop.image */
+		public int strat_image_offset; /* offset in the list of strategic tiny terrain images */
+		//TODO_RR public Nation nation;         /* nation that owns this flag (NULL == no nation) */
+		//TODO_RR public Player player;         /* dito */
+		public bool obj;                /* military objective ? */
+		public int deploy_center;      /* deploy allowed? */
+		//TODO_RR public Unit g_unit;           /* ground/naval unit pointer */
+		//TODO_RR public Unit a_unit;           /* air unit pointer */
+		//TODO_RR public Unit backupUnit;
+	}
 
 
-    /// <summary>
-    /// Map mask tile.
-    /// </summary>
-    public class Mask_Tile
-    {
-        public bool fog; /* if true the engine covers this tile with fog. if ENGINE_MODIFY_FOG is set
+	/// <summary>
+	/// Map mask tile.
+	/// </summary>
+	public class Mask_Tile
+	{
+		public bool fog; /* if true the engine covers this tile with fog. if ENGINE_MODIFY_FOG is set
                     this fog may change depending on the action (range of unit, merge partners
                     etc */
-        public bool spot; /* true if any of your units observes this map tile; you can only attack units
+		public bool spot; /* true if any of your units observes this map tile; you can only attack units
                             on a map tile that you spot */
-        /* used for a selected unit */
-        public int in_range; /* this is used for pathfinding; it's -1 if tile isn't in range else it's set to the
+		/* used for a selected unit */
+		public int in_range; /* this is used for pathfinding; it's -1 if tile isn't in range else it's set to the
                         remaining moving points of the unit; enemy influence is not included */
-        public int distance; /* mere distance to current unit; used for danger mask */
-        public int moveCost; /* total costs to reach this tile */
-        public bool blocked; /* units can move over there tiles with an allied unit but they must not stop there;
+		public int distance; /* mere distance to current unit; used for danger mask */
+		public int moveCost; /* total costs to reach this tile */
+		public bool blocked; /* units can move over there tiles with an allied unit but they must not stop there;
                         so allow movment to a tile only if in_range and !blocked */
-        public int mount; /* true if unit must mount to reach this tile */
-        public bool sea_embark; /* sea embark possible? */
-        public int infl; /* at the beginning of a player's turn this mask is set; each tile close to a
+		public int mount; /* true if unit must mount to reach this tile */
+		public bool sea_embark; /* sea embark possible? */
+		public int infl; /* at the beginning of a player's turn this mask is set; each tile close to a
                     hostile unit gets infl increased; if influence is 1 moving costs are doubled; if influence is >=2
                     this tile is impassible (unit stops at this tile); if a unit can't see a tile with infl >= 2 and
                     tries to move there it will stop on this tile; independed from a unit's moving points passing an
                     influenced tile costs all mov-points */
-        public int vis_infl; /* analogue to infl but only spotted units contribute to this mask; used to setup
+		public int vis_infl; /* analogue to infl but only spotted units contribute to this mask; used to setup
                         in_range mask */
-        public int air_infl; /* analouge for flying units */
-        public int vis_air_infl;
-        public int aux; /* used to setup any of the upper values */
-        public bool backup; /* used to backup spot mask for undo unit move */
-        //TODO_RR public Unit merge_unit; 
+		public int air_infl; /* analouge for flying units */
+		public int vis_air_infl;
+		public int aux; /* used to setup any of the upper values */
+		public bool backup; /* used to backup spot mask for undo unit move */
+		//TODO_RR public Unit merge_unit; 
 		/* if not NULL this is a pointer to a unit the one who called map_get_merge_units()
                          may merge with. you'll need to remember the other unit as it is not saved here */
-        //TODO_RR public Unit split_unit; /* target unit may transfer strength to */
-        public bool split_okay; /* unit may transfer a new subunit to this tile */
-        public bool deploy; /* deploy mask: "true": unit may deploy their, "false" unit may not deploy their; setup by deploy.c */
-        public bool danger; /* true: mark this tile as being dangerous to enter */
-        /* AI masks */
-        public int ctrl_grnd; /* mask of controlled area for a player. own units give there positive combat
+		//TODO_RR public Unit split_unit; /* target unit may transfer strength to */
+		public bool split_okay; /* unit may transfer a new subunit to this tile */
+		public bool deploy; /* deploy mask: "true": unit may deploy their, "false" unit may not deploy their; setup by deploy.c */
+		public bool danger; /* true: mark this tile as being dangerous to enter */
+		/* AI masks */
+		public int ctrl_grnd; /* mask of controlled area for a player. own units give there positive combat
                       value in move+attack range while enemy scores are substracted. the final
                       value for each tile is relative to the highest absolute control value thus
                       it ranges from -1000 to 1000 */
-        public int ctrl_air;
-        public int ctrl_sea; /* each operational region has it's own control mask */
-    }
+		public int ctrl_air;
+		public int ctrl_sea; /* each operational region has it's own control mask */
+	}
 
-
-    public class Map
-    {
+	public class Map
+	{
         #region Protected and Private
-        public int map_w = 0, map_h = 0;
-        public Map_Tile[,] map;
-        public Mask_Tile[,] mask;
-        public const short DIST_AIR_MAX = short.MaxValue;
+		public int map_w = 0, map_h = 0;
+		public Map_Tile[,] map;
+		public Mask_Tile[,] mask;
+		public const short DIST_AIR_MAX = short.MaxValue;
+		public bool isLoaded = false;
+		public struct MapCoord
+		{
+			public MapCoord (short px, short py)
+			{
+				x = px;
+				y = py;
+			}
 
-        public bool isLoaded = false;
-        public struct MapCoord
-        {
-            public MapCoord(short px, short py)
-            {
-                x = px;
-                y = py;
-            }
-            public short x, y;
-        }
+			public short x, y;
+		}
         #endregion
 
-        static List<List<MapCoord>> deploy_fields;
+		static List<List<MapCoord>> deploy_fields;
 
-        /// <summary>
-        /// Check the surrounding tiles and get the one with the highest
-        /// in_range value.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="next_x"></param>
-        /// <param name="next_y"></param>
+		/// <summary>
+		/// Check the surrounding tiles and get the one with the highest
+		/// in_range value.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="next_x"></param>
+		/// <param name="next_y"></param>
 #if TODO_RR
         static void map_get_next_unit_point(int x, int y, out int next_x, out int next_y)
         {
@@ -157,10 +164,10 @@ namespace SharpGeneral
             next_y = high_y;
         }
 #endif
-        /// <summary>
-        /// Add a unit's influence to the (vis_)infl mask.
-        /// </summary>
-        /// <param name="unit"></param>
+		/// <summary>
+		/// Add a unit's influence to the (vis_)infl mask.
+		/// </summary>
+		/// <param name="unit"></param>
 #if TODO_RR
         static void map_add_vis_unit_infl(Unit unit)
         {
@@ -181,11 +188,11 @@ namespace SharpGeneral
             }
         }
 #endif
-        /// <summary>
-        /// Load map.
-        /// </summary>
-        /// <param name="fname">map name </param>
-        /// <returns></returns>
+		/// <summary>
+		/// Load map.
+		/// </summary>
+		/// <param name="fname">map name </param>
+		/// <returns></returns>
 #if TODO_RR
         public int map_load(string fname)
         {
@@ -265,84 +272,100 @@ namespace SharpGeneral
 		
 #endif	
 
-        /// <summary>
-        /// Delete map.
-        /// </summary>
-        public void map_delete()
-        {
-            throw new System.NotImplementedException();
-        }
+		/// <summary>
+		/// Delete map.
+		/// </summary>
+		public void map_delete ()
+		{
+			throw new System.NotImplementedException ();
+		}
 
-        /// <summary>
-        /// Get tile at x,y
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns
-        public Map_Tile map_tile(int x, int y)
-        {
-            if (x < 0 || y < 0 || x >= map_w || y >= map_h)
-            {
-                //throw new Exception( "map_tile: map tile at "+x+", "+y+" doesn't exist");
-                return null;
-            }
-            return map[x, y];
-        }
+		/// <summary>
+		/// Get tile at x,y
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns
+		public Map_Tile map_tile (int x, int y)
+		{
+			if (x < 0 || y < 0 || x >= map_w || y >= map_h) {
+				//throw new Exception( "map_tile: map tile at "+x+", "+y+" doesn't exist");
+				return null;
+			}
+			return map [x, y];
+		}
 
-        public Mask_Tile map_mask_tile(int x, int y)
-        {
-            if (x < 0 || y < 0 || x >= map_w || y >= map_h)
-            {
-                //throw new Exception("map_tile: mask tile at "+x+", "+y+" doesn't exist");
-                return null;
-            }
-            return mask[x, y];
-        }
+		public Mask_Tile map_mask_tile (int x, int y)
+		{
+			if (x < 0 || y < 0 || x >= map_w || y >= map_h) {
+				//throw new Exception("map_tile: mask tile at "+x+", "+y+" doesn't exist");
+				return null;
+			}
+			return mask [x, y];
+		}
 
-        /// <summary>
-        /// Clear the passed map mask flags.
-        /// </summary>
-        /// <param name="flags"></param>
-        public void map_clear_mask(MAP_MASK flags)
-        {
-            int i, j;
-            for (i = 0; i < map_w; i++)
-                for (j = 0; j < map_h; j++)
-                {
-                    if ((flags & MAP_MASK.F_FOG) == MAP_MASK.F_FOG) mask[i, j].fog = true;
-                    if ((flags & MAP_MASK.F_INVERSE_FOG) == MAP_MASK.F_INVERSE_FOG) mask[i, j].fog = false;
-                    if ((flags & MAP_MASK.F_SPOT) == MAP_MASK.F_SPOT) mask[i, j].spot = false;
-                    if ((flags & MAP_MASK.F_IN_RANGE) == MAP_MASK.F_IN_RANGE) mask[i, j].in_range = 0;
-                    if ((flags & MAP_MASK.F_MOUNT) == MAP_MASK.F_MOUNT) mask[i, j].mount = 0;
-                    if ((flags & MAP_MASK.F_SEA_EMBARK) == MAP_MASK.F_SEA_EMBARK) mask[i, j].sea_embark = false;
-                    if ((flags & MAP_MASK.F_AUX) == MAP_MASK.F_AUX) mask[i, j].aux = 0;
-                    if ((flags & MAP_MASK.F_INFL) == MAP_MASK.F_INFL) mask[i, j].infl = 0;
-                    if ((flags & MAP_MASK.F_INFL_AIR) == MAP_MASK.F_INFL_AIR) mask[i, j].air_infl = 0;
-                    if ((flags & MAP_MASK.F_VIS_INFL) == MAP_MASK.F_VIS_INFL) mask[i, j].vis_infl = 0;
-                    if ((flags & MAP_MASK.F_VIS_INFL_AIR) == MAP_MASK.F_VIS_INFL_AIR) mask[i, j].vis_air_infl = 0;
-                    if ((flags & MAP_MASK.F_BLOCKED) == MAP_MASK.F_BLOCKED) mask[i, j].blocked = false;
-                    if ((flags & MAP_MASK.F_BACKUP) == MAP_MASK.F_BACKUP) mask[i, j].backup = false;
-                    //TODO_RR if ((flags & MAP_MASK.F_MERGE_UNIT) == MAP_MASK.F_MERGE_UNIT) mask[i, j].merge_unit = null;
-                    if ((flags & MAP_MASK.F_DEPLOY) == MAP_MASK.F_DEPLOY) mask[i, j].deploy = false;
-                    if ((flags & MAP_MASK.F_CTRL_GRND) == MAP_MASK.F_CTRL_GRND) mask[i, j].ctrl_grnd = 0;
-                    if ((flags & MAP_MASK.F_CTRL_AIR) == MAP_MASK.F_CTRL_AIR) mask[i, j].ctrl_air = 0;
-                    if ((flags & MAP_MASK.F_CTRL_SEA) == MAP_MASK.F_CTRL_SEA) mask[i, j].ctrl_sea = 0;
-                    if ((flags & MAP_MASK.F_MOVE_COST) == MAP_MASK.F_MOVE_COST) mask[i, j].moveCost = 0;
-                    if ((flags & MAP_MASK.F_DISTANCE) == MAP_MASK.F_DISTANCE) mask[i, j].distance = -1;
-                    if ((flags & MAP_MASK.F_DANGER) == MAP_MASK.F_DANGER) mask[i, j].danger = false;
-                    if ((flags & MAP_MASK.F_SPLIT_UNIT) == MAP_MASK.F_SPLIT_UNIT)
-                    {
-                        //TODO_RR mask[i, j].split_unit = null;
-                        mask[i, j].split_okay = false;
-                    }
-                }
-        }
+		/// <summary>
+		/// Clear the passed map mask flags.
+		/// </summary>
+		/// <param name="flags"></param>
+		public void map_clear_mask (MAP_MASK flags)
+		{
+			int i, j;
+			for (i = 0; i < map_w; i++)
+				for (j = 0; j < map_h; j++) {
+					if ((flags & MAP_MASK.F_FOG) == MAP_MASK.F_FOG)
+						mask [i, j].fog = true;
+					if ((flags & MAP_MASK.F_INVERSE_FOG) == MAP_MASK.F_INVERSE_FOG)
+						mask [i, j].fog = false;
+					if ((flags & MAP_MASK.F_SPOT) == MAP_MASK.F_SPOT)
+						mask [i, j].spot = false;
+					if ((flags & MAP_MASK.F_IN_RANGE) == MAP_MASK.F_IN_RANGE)
+						mask [i, j].in_range = 0;
+					if ((flags & MAP_MASK.F_MOUNT) == MAP_MASK.F_MOUNT)
+						mask [i, j].mount = 0;
+					if ((flags & MAP_MASK.F_SEA_EMBARK) == MAP_MASK.F_SEA_EMBARK)
+						mask [i, j].sea_embark = false;
+					if ((flags & MAP_MASK.F_AUX) == MAP_MASK.F_AUX)
+						mask [i, j].aux = 0;
+					if ((flags & MAP_MASK.F_INFL) == MAP_MASK.F_INFL)
+						mask [i, j].infl = 0;
+					if ((flags & MAP_MASK.F_INFL_AIR) == MAP_MASK.F_INFL_AIR)
+						mask [i, j].air_infl = 0;
+					if ((flags & MAP_MASK.F_VIS_INFL) == MAP_MASK.F_VIS_INFL)
+						mask [i, j].vis_infl = 0;
+					if ((flags & MAP_MASK.F_VIS_INFL_AIR) == MAP_MASK.F_VIS_INFL_AIR)
+						mask [i, j].vis_air_infl = 0;
+					if ((flags & MAP_MASK.F_BLOCKED) == MAP_MASK.F_BLOCKED)
+						mask [i, j].blocked = false;
+					if ((flags & MAP_MASK.F_BACKUP) == MAP_MASK.F_BACKUP)
+						mask [i, j].backup = false;
+					//TODO_RR if ((flags & MAP_MASK.F_MERGE_UNIT) == MAP_MASK.F_MERGE_UNIT) mask[i, j].merge_unit = null;
+					if ((flags & MAP_MASK.F_DEPLOY) == MAP_MASK.F_DEPLOY)
+						mask [i, j].deploy = false;
+					if ((flags & MAP_MASK.F_CTRL_GRND) == MAP_MASK.F_CTRL_GRND)
+						mask [i, j].ctrl_grnd = 0;
+					if ((flags & MAP_MASK.F_CTRL_AIR) == MAP_MASK.F_CTRL_AIR)
+						mask [i, j].ctrl_air = 0;
+					if ((flags & MAP_MASK.F_CTRL_SEA) == MAP_MASK.F_CTRL_SEA)
+						mask [i, j].ctrl_sea = 0;
+					if ((flags & MAP_MASK.F_MOVE_COST) == MAP_MASK.F_MOVE_COST)
+						mask [i, j].moveCost = 0;
+					if ((flags & MAP_MASK.F_DISTANCE) == MAP_MASK.F_DISTANCE)
+						mask [i, j].distance = -1;
+					if ((flags & MAP_MASK.F_DANGER) == MAP_MASK.F_DANGER)
+						mask [i, j].danger = false;
+					if ((flags & MAP_MASK.F_SPLIT_UNIT) == MAP_MASK.F_SPLIT_UNIT) {
+						//TODO_RR mask[i, j].split_unit = null;
+						mask [i, j].split_okay = false;
+					}
+				}
+		}
 
-        /// <summary>
-        ///         Swap units. Returns the previous unit or 0 if none.
-        /// </summary>
-        /// <param name="unit"></param>
-        /// <returns></returns>
+		/// <summary>
+		///         Swap units. Returns the previous unit or 0 if none.
+		/// </summary>
+		/// <param name="unit"></param>
+		/// <returns></returns>
 #if TODO_RR
         public Unit map_swap_unit(Unit unit)
         {
@@ -361,10 +384,10 @@ namespace SharpGeneral
             return old;
         }
 #endif
-        /// <summary>
-        /// Insert, Remove unit pointer from map.
-        /// </summary>
-        /// <param name="unit"></param>
+		/// <summary>
+		/// Insert, Remove unit pointer from map.
+		/// </summary>
+		/// <param name="unit"></param>
 #if TODO_RR
         public void map_insert_unit(Unit unit)
         {
@@ -383,13 +406,13 @@ namespace SharpGeneral
             map_tile(unit.x, unit.y).backupUnit = null;
         }
 #endif
-        /// <summary>
-        /// Get neighbored tiles clockwise with id between 0 and 5.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
+		/// <summary>
+		/// Get neighbored tiles clockwise with id between 0 and 5.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="id"></param>
+		/// <returns></returns>
 #if TODO_RR
         public Map_Tile map_get_close_hex(int x, int y, int id)
         {
@@ -417,10 +440,10 @@ namespace SharpGeneral
                             map_add_unit_spot_mask_rec(unit, next_x, next_y, points);
         }
 #endif
-        /// <summary>
-        /// Add/set spotting of a unit to auxiliary mask
-        /// </summary>
-        /// <param name="unit"></param>
+		/// <summary>
+		/// Add/set spotting of a unit to auxiliary mask
+		/// </summary>
+		/// <param name="unit"></param>
 #if TODO_RR
         public void map_add_unit_spot_mask(Unit unit)
         {
@@ -439,7 +462,7 @@ namespace SharpGeneral
             map_add_unit_spot_mask(unit);
         }
 #endif
-        /*
+		/*
         ====================================================================
         Check whether unit can enter (x,y) provided it has 'points' move
         points remaining. 'mounted' means, to use the base cost for the 
@@ -502,7 +525,7 @@ namespace SharpGeneral
             return true;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Check whether hex (x,y) is reachable by the unit. 'distance' is the
         distance to the hex, the unit is standing on. 'points' is the number
@@ -567,10 +590,10 @@ namespace SharpGeneral
                 }
         }
 #endif
-        /// <summary>
-        /// Set movement range of a unit to in_range/sea_embark/mount.
-        /// </summary>
-        /// <param name="unit"></param>
+		/// <summary>
+		/// Set movement range of a unit to in_range/sea_embark/mount.
+		/// </summary>
+		/// <param name="unit"></param>
 #if TODO_RR
         public void map_get_unit_move_mask(Unit unit)
         {
@@ -614,14 +637,14 @@ namespace SharpGeneral
                     mask[x, y].in_range++;
         }
 #endif
-        public void map_clear_unit_move_mask()
-        {
-            map_clear_mask(MAP_MASK.F_IN_RANGE | MAP_MASK.F_MOUNT | MAP_MASK.F_SEA_EMBARK |
+		public void map_clear_unit_move_mask ()
+		{
+			map_clear_mask (MAP_MASK.F_IN_RANGE | MAP_MASK.F_MOUNT | MAP_MASK.F_SEA_EMBARK |
                            MAP_MASK.F_BLOCKED | MAP_MASK.F_AUX | MAP_MASK.F_MOVE_COST | MAP_MASK.F_DISTANCE);
-        }
+		}
 
 
-        /*
+		/*
         ====================================================================
         Writes into the given array the coordinates of all friendly
         airports, returning the number of coordinates written.
@@ -648,7 +671,7 @@ namespace SharpGeneral
             return count;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Sets the distance mask beginning with the airfield at (ax, ay).
         ====================================================================
@@ -667,15 +690,15 @@ namespace SharpGeneral
             dist_air_mask[ax, ay] = 0;
         }
 #endif
-        /// <summary>
-        /// Recreates the danger mask for 'unit'.
-        /// The fog must be set to the movement range of 'unit' for this
-        /// function to work properly.
-        /// The movement cost of the mask must have been set for 'unit'.
-        /// Returns true when at least one tile's danger mask was set, otherwise false.
-        /// </summary>
-        /// <param name="unit"></param>
-        /// <returns></returns>
+		/// <summary>
+		/// Recreates the danger mask for 'unit'.
+		/// The fog must be set to the movement range of 'unit' for this
+		/// function to work properly.
+		/// The movement cost of the mask must have been set for 'unit'.
+		/// Returns true when at least one tile's danger mask was set, otherwise false.
+		/// </summary>
+		/// <param name="unit"></param>
+		/// <returns></returns>
 #if TODO_RR
         public bool map_get_danger_mask(Unit unit)
         {
@@ -715,17 +738,17 @@ namespace SharpGeneral
         }
 #endif
 
-        /// <summary>
-        /// Get a list of way points the unit moves along to it's destination.
-        /// This includes check for unseen influence by enemy units (e.g.
-        /// Surprise Contact).
-        /// </summary>
-        /// <param name="unit"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="count"></param>
-        /// <param name="ambush_unit"></param>
-        /// <returns></returns>
+		/// <summary>
+		/// Get a list of way points the unit moves along to it's destination.
+		/// This includes check for unseen influence by enemy units (e.g.
+		/// Surprise Contact).
+		/// </summary>
+		/// <param name="unit"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="count"></param>
+		/// <param name="ambush_unit"></param>
+		/// <returns></returns>
 #if TODO_RR
         public Way_Point[] map_get_unit_way_points(Unit unit, int x, int y, out int count, out Unit ambush_unit)
         {
@@ -807,32 +830,33 @@ namespace SharpGeneral
             return way;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Backup/restore spot mask to/from backup mask. Used for Undo Turn.
         ====================================================================
         */
-        public void map_backup_spot_mask()
-        {
-            map_clear_mask(MAP_MASK.F_BACKUP);
-            for (int x = 0; x < map_w; x++)
-                for (int y = 0; y < map_h; y++)
-                    map_mask_tile(x, y).backup = map_mask_tile(x, y).spot;
-        }
-        public void map_restore_spot_mask()
-        {
-            for (int x = 0; x < map_w; x++)
-                for (int y = 0; y < map_h; y++)
-                    map_mask_tile(x, y).spot = map_mask_tile(x, y).backup;
-            map_clear_mask(MAP_MASK.F_BACKUP);
-        }
+		public void map_backup_spot_mask ()
+		{
+			map_clear_mask (MAP_MASK.F_BACKUP);
+			for (int x = 0; x < map_w; x++)
+				for (int y = 0; y < map_h; y++)
+					map_mask_tile (x, y).backup = map_mask_tile (x, y).spot;
+		}
 
-        /// <summary>
-        /// Get unit's merge partners and set mask 'merge'.
-        /// At maximum MAP_MERGE_UNIT_LIMIT units.
-        /// All unused entries in partners are set 0.
-        /// </summary>
-        public const int MAP_MERGE_UNIT_LIMIT = 6;
+		public void map_restore_spot_mask ()
+		{
+			for (int x = 0; x < map_w; x++)
+				for (int y = 0; y < map_h; y++)
+					map_mask_tile (x, y).spot = map_mask_tile (x, y).backup;
+			map_clear_mask (MAP_MASK.F_BACKUP);
+		}
+
+		/// <summary>
+		/// Get unit's merge partners and set mask 'merge'.
+		/// At maximum MAP_MERGE_UNIT_LIMIT units.
+		/// All unused entries in partners are set 0.
+		/// </summary>
+		public const int MAP_MERGE_UNIT_LIMIT = 6;
 #if TODO_RR
         public void map_get_merge_units(Unit unit, out Unit[] partners, out int count)
         {
@@ -860,16 +884,16 @@ namespace SharpGeneral
         }
 
 #endif
-        /// <summary>
-        /// Check if unit may transfer strength to unit (if not NULL) or create
-        /// a stand alone unit (if unit NULL) on the coordinates.
-        /// </summary>
-        /// <param name="unit"></param>
-        /// <param name="str"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="dest"></param>
-        /// <returns></returns>
+		/// <summary>
+		/// Check if unit may transfer strength to unit (if not NULL) or create
+		/// a stand alone unit (if unit NULL) on the coordinates.
+		/// </summary>
+		/// <param name="unit"></param>
+		/// <param name="str"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="dest"></param>
+		/// <returns></returns>
 #if TODO_RR
         public bool map_check_unit_split(Unit unit, int str, int x, int y, Unit dest)
         {
@@ -894,7 +918,7 @@ namespace SharpGeneral
             return true;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Get unit's split partners assuming unit wants to give 'str' strength
         points and set mask 'split'. At maximum MAP_SPLIT_UNIT_LIMIT units.
@@ -902,7 +926,7 @@ namespace SharpGeneral
         this is not checked here.
         ====================================================================
         */
-        public const int MAP_SPLIT_UNIT_LIMIT = 6;
+		public const int MAP_SPLIT_UNIT_LIMIT = 6;
 #if TODO_RR
         public void map_get_split_units_and_hexes(Unit unit, int str, out Unit[] partners, out int count)
         {
@@ -935,7 +959,7 @@ namespace SharpGeneral
             throw new NotImplementedException();
         }
 #endif
-        /*
+		/*
         ====================================================================
         Get a list (vis_units) of all visible units by checking spot mask.
         ====================================================================
@@ -953,14 +977,14 @@ namespace SharpGeneral
                     }
         }
 #endif
-        /// <summary>
-        /// Draw a map tile terrain to surface. (fogged if mask::fog is set)
-        /// </summary>
-        /// <param name="surf"></param>
-        /// <param name="map_x"></param>
-        /// <param name="map_y"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+		/// <summary>
+		/// Draw a map tile terrain to surface. (fogged if mask::fog is set)
+		/// </summary>
+		/// <param name="surf"></param>
+		/// <param name="map_x"></param>
+		/// <param name="map_y"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
 #if TODO_RR
         public void map_draw_terrain(SDL_Surface surf, int map_x, int map_y, int x, int y)
         {
@@ -996,19 +1020,19 @@ namespace SharpGeneral
             }
         }
 #endif
-        /// <summary>
-        /// Draw tile units. If mask::fog is set no units are drawn.
-        /// If 'ground' is True the ground unit is drawn as primary
-        /// and the air unit is drawn small (and vice versa).
-        /// If 'select' is set a selection frame is added.
-        /// </summary>
-        /// <param name="surf"></param>
-        /// <param name="map_x"></param>
-        /// <param name="map_y"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="ground"></param>
-        /// <param name="select"></param>
+		/// <summary>
+		/// Draw tile units. If mask::fog is set no units are drawn.
+		/// If 'ground' is True the ground unit is drawn as primary
+		/// and the air unit is drawn small (and vice versa).
+		/// If 'select' is set a selection frame is added.
+		/// </summary>
+		/// <param name="surf"></param>
+		/// <param name="map_x"></param>
+		/// <param name="map_y"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="ground"></param>
+		/// <param name="select"></param>
 #if TODO_RR
         public void map_draw_units(SDL_Surface surf, int map_x, int map_y, int x, int y, bool ground, bool select)
         {
@@ -1130,16 +1154,16 @@ namespace SharpGeneral
             }
         }
 #endif
-        /// <summary>
-        /// Draw danger tile. Expects 'surf' to contain a fully drawn tile at
-        /// the given position which will be tinted by overlaying the danger
-        /// terrain surface.
-        /// </summary>
-        /// <param name="surf"></param>
-        /// <param name="map_x"></param>
-        /// <param name="map_y"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+		/// <summary>
+		/// Draw danger tile. Expects 'surf' to contain a fully drawn tile at
+		/// the given position which will be tinted by overlaying the danger
+		/// terrain surface.
+		/// </summary>
+		/// <param name="surf"></param>
+		/// <param name="map_x"></param>
+		/// <param name="map_y"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
 #if TODO_RR
         public void map_apply_danger_to_tile(SDL_Surface surf, int map_x, int map_y, int x, int y)
         {
@@ -1148,16 +1172,16 @@ namespace SharpGeneral
         }
 #endif
 
-        /// <summary>
-        /// Draw terrain and units.
-        /// </summary>
-        /// <param name="surf"></param>
-        /// <param name="map_x"></param>
-        /// <param name="map_y"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="ground"></param>
-        /// <param name="select"></param>
+		/// <summary>
+		/// Draw terrain and units.
+		/// </summary>
+		/// <param name="surf"></param>
+		/// <param name="map_x"></param>
+		/// <param name="map_y"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="ground"></param>
+		/// <param name="select"></param>
 #if TODO_RR
         public void map_draw_tile(SDL_Surface surf, int map_x, int map_y, int x, int y, bool ground, bool select)
         {
@@ -1165,7 +1189,7 @@ namespace SharpGeneral
             map_draw_units(surf, map_x, map_y, x, y, ground, select);
         }
 #endif
-        /*
+		/*
         ====================================================================
         Set/update spot mask by engine's current player or unit.
         The update adds the tiles seen by unit.
@@ -1235,31 +1259,37 @@ namespace SharpGeneral
         }
 #endif
 
-        /*
+		/*
         ====================================================================
         Set mask::fog (which is the actual fog of the engine) to either
         spot mask, in_range mask (covers sea_embark), merge mask,
         deploy mask.
         ====================================================================
         */
-        public void map_set_fog(MAP_MASK type)
-        {
-            int x, y;
-            for (y = 0; y < map_h; y++)
-                for (x = 0; x < map_w; x++)
-                {
-                    switch (type)
-                    {
-                        case MAP_MASK.F_SPOT: mask[x, y].fog = !mask[x, y].spot; break;
-                        case MAP_MASK.F_IN_RANGE: mask[x, y].fog = ((mask[x, y].in_range == 0 && !mask[x, y].sea_embark) || mask[x, y].blocked); break;
-                        //TODO_RR case MAP_MASK.F_MERGE_UNIT: mask[x, y].fog = (mask[x, y].merge_unit == null); break;
-                        //TODO_RR case MAP_MASK.F_SPLIT_UNIT: mask[x, y].fog = (mask[x, y].split_unit == null) && !mask[x, y].split_okay; break;
-                        case MAP_MASK.F_DEPLOY: mask[x, y].fog = !mask[x, y].deploy; break;
-                        default: mask[x, y].fog = false; break;
-                    }
-                }
-        }
-        /*
+		public void map_set_fog (MAP_MASK type)
+		{
+			int x, y;
+			for (y = 0; y < map_h; y++)
+				for (x = 0; x < map_w; x++) {
+					switch (type) {
+					case MAP_MASK.F_SPOT:
+						mask [x, y].fog = !mask [x, y].spot;
+						break;
+					case MAP_MASK.F_IN_RANGE:
+						mask [x, y].fog = ((mask [x, y].in_range == 0 && !mask [x, y].sea_embark) || mask [x, y].blocked);
+						break;
+					//TODO_RR case MAP_MASK.F_MERGE_UNIT: mask[x, y].fog = (mask[x, y].merge_unit == null); break;
+					//TODO_RR case MAP_MASK.F_SPLIT_UNIT: mask[x, y].fog = (mask[x, y].split_unit == null) && !mask[x, y].split_okay; break;
+					case MAP_MASK.F_DEPLOY:
+						mask [x, y].fog = !mask [x, y].deploy;
+						break;
+					default:
+						mask [x, y].fog = false;
+						break;
+					}
+				}
+		}
+		/*
         ====================================================================
         Set the fog to players spot mask by using mask::aux (not mask::spot)
         ====================================================================
@@ -1298,21 +1328,21 @@ namespace SharpGeneral
                         mask[x, y].fog = true;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Check if this map tile is visible to the engine (isn't covered
         by mask::fog or mask::spot as modification is allowed and it may be
         another's player fog (e.g. one human against cpu))
         ====================================================================
         */
-        // #define MAP_CHECK_VIS( mapx, mapy ) ( ( !modify_fog && !mask[mapx, mapy].fog ) || ( modify_fog && mask[mapx, mapy].spot ) )
+		// #define MAP_CHECK_VIS( mapx, mapy ) ( ( !modify_fog && !mask[mapx, mapy].fog ) || ( modify_fog && mask[mapx, mapy].spot ) )
 #if TODO_RR
         public bool MAP_CHECK_VIS(int mapx, int mapy)
         {
             return (!Engine.modify_fog && !mask[mapx, mapy].fog) || (Engine.modify_fog && mask[mapx, mapy].spot);
         }
 #endif
-        /*
+		/*
         ====================================================================
         Modify the various influence masks.
         ====================================================================
@@ -1398,7 +1428,7 @@ namespace SharpGeneral
                         map_add_vis_unit_infl(unit);
         }
 #endif
-        /*
+		/*
         ====================================================================
         Check if unit may air/sea embark/debark at x,y.
         If 'init' != 0, used relaxed rules for deployment
@@ -1477,7 +1507,7 @@ namespace SharpGeneral
             return false;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Embark/debark unit and return if an enemy was spotted.
         If 'enemy_spotted' is 0, don't recalculate spot mask.
@@ -1539,7 +1569,7 @@ namespace SharpGeneral
                         fields.Add(new MapCoord(x, y));
         }
 #endif
-        /*
+		/*
         ====================================================================
         Set deploy mask by player's field list. If first entry is (-1,-1),
         create a default mask, using the initial layout of spotting and 
@@ -1581,7 +1611,7 @@ namespace SharpGeneral
         }
 #endif
 
-        /*
+		/*
         ====================================================================
         Check whether (mx, my) can serve as a deploy center for the given
         unit (assuming it is close to it, which is not checked). If no unit
@@ -1607,7 +1637,7 @@ namespace SharpGeneral
         }
 
 #endif
-        /*
+		/*
         ====================================================================
         Add any deploy center and its surrounding to the deploy mask, if it
         can supply 'unit'. If 'unit' is not set, add any deploy center.
@@ -1629,7 +1659,7 @@ namespace SharpGeneral
         }
 #endif
 
-        /*
+		/*
         ====================================================================
         Set the deploy mask for this unit. If 'init', use the initial deploy
         mask (or a default one). If not, set the valid deploy centers. In a
@@ -1662,27 +1692,27 @@ namespace SharpGeneral
             }
         }
 #endif
-        /*
+		/*
         ====================================================================
         Mark this field being a deployment-field for the given player.
         ====================================================================
         */
-        public void map_set_deploy_field(int mx, int my, int player)
-        {
-            throw new System.NotImplementedException();
-        }
+		public void map_set_deploy_field (int mx, int my, int player)
+		{
+			throw new System.NotImplementedException ();
+		}
 
-        /*
+		/*
         ====================================================================
         Check whether this field is a deployment-field for the given player.
         ====================================================================
         */
-        public int map_is_deploy_field(int mx, int my, int player)
-        {
-            throw new System.NotImplementedException();
-        }
+		public int map_is_deploy_field (int mx, int my, int player)
+		{
+			throw new System.NotImplementedException ();
+		}
 
-        /*
+		/*
         ====================================================================
         Check if unit may be deployed to mx, my or return undeployable unit
         there. If 'air_mode' is set the air unit is checked first.
@@ -1724,7 +1754,7 @@ namespace SharpGeneral
         }
 #endif
 
-        /*
+		/*
         ====================================================================
         Check the supply level of tile (mx, my) in the context of 'unit'.
         (hex tiles with SUPPLY_GROUND have 100% supply)
@@ -1789,7 +1819,7 @@ namespace SharpGeneral
             return supply_level;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Check if this map tile is a supply point for the given unit.
         ====================================================================
@@ -1821,7 +1851,7 @@ namespace SharpGeneral
             return true;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Checks whether this hex (mx, my) is supplied by a depot in the
         context of 'unit'.
@@ -1839,7 +1869,7 @@ namespace SharpGeneral
             return 0;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Get drop zone for unit (all close hexes that are free).
         ====================================================================
@@ -1859,7 +1889,7 @@ namespace SharpGeneral
                     mask[unit.x, unit.y].deploy = true;
         }
 #endif
-        /*
+		/*
         ====================================================================
         Check if units are close to each other. This means on neighbored
         hex tiles.
@@ -1872,6 +1902,6 @@ namespace SharpGeneral
         }
 #endif
 
-    }
-
+	}
 }
+
