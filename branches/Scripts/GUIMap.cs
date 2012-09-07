@@ -6,8 +6,6 @@ using System.IO;
 using System.Xml.Serialization;
 using Engine;
 
-namespace UI
-{
 	public class GUIMap : MonoBehaviour
 	{
 	
@@ -127,4 +125,3 @@ namespace UI
 	
 		}
 	}
-}
