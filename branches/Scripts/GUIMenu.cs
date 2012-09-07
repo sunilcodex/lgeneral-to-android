@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-namespace UI
-{
 	public class GUIMenu : MonoBehaviour
 	{
 	
@@ -53,4 +51,3 @@ namespace UI
         
 		}
 	}
-}
