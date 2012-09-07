@@ -4,7 +4,7 @@
  * Fecha: 12/01/2009
  * Hora: 13:49
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÛn | Editar Encabezados Est·ndar
+ * Para cambiar esta plantilla use Herramientas | Opciones | Codificaci√≥n | Editar Encabezados Est√°ndar
  */
 using UnityEngine;
 using System;
@@ -13,7 +13,7 @@ using System;
 //TODO_RR using System.Drawing.Drawing2D;
 //TODO_RR using System.Drawing.Imaging;
 
-namespace SharpGeneral
+namespace Engine
 {
     /// <summary>
     /// a dummy SDL_Surface.
