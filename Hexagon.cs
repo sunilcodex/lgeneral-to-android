@@ -9,12 +9,6 @@ public class Hexagon : MonoBehaviour
 
 	public int maxTextures;
 	public int actualTexture;
-	private float x0;
-	private float x1;
-	private float x2;
-	private float x3;
-	private float x4;
-	private float x5;
 	
 	public void Start ()
 	{
@@ -59,7 +53,7 @@ public class Hexagon : MonoBehaviour
 		
 		float factor = 1f / maxTextures;
 		float dist = 1f * factor - 0f * factor;
-		float epsilon = 0.03f;
+		//float epsilon = 0.03f;
 		/*Vector2 uv0 = new Vector2((0.25f+epsilon)*factor+(actualTexture-1)*dist,1f);
                 Vector2 uv1 = new Vector2((0f+epsilon)*factor+(actualTexture-1)*dist,0.5f);
                 Vector2 uv2 = new Vector2((0.25f+epsilon)*factor+(actualTexture-1)*dist,0f);
