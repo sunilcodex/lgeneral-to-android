@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,7 +30,7 @@ namespace Engine
 		public Matrix (int w, int h)
 		{
 			if (w < 0 || h <0)
-				throw new Exception ("Width or Height less or equal than zero");
+				throw new Exception("Width or Height less than zero");
 			Width = w;
 			Height = h;
 			data = new T[w, h];
@@ -39,14 +39,14 @@ namespace Engine
 		public T this [int i, int j] {
 			get 
 			{ 
-				if (i < 0 || j <0)
-					throw new Exception ("Width or Height less or equal than zero");
+				if (i < 0 || j <0 || i>Width || j>Height)
+					throw new IndexOutOfRangeException("Width or Height out of range");
 				return data [i, j];
 			}
 			set 
 			{ 
-				if (i <0 || j <0)
-					throw new Exception ("Width or Height less or equal than zero");
+				if (i <0 || j <0 || i>Width || j>Height)
+					throw new IndexOutOfRangeException("Width or Height out of range");
 				data [i, j] = value;
 			}
 		}
