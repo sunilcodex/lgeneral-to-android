@@ -54,9 +54,13 @@ namespace Engine
 
         public static SDL_Surface LoadSurface(string fname, bool applyTransparency)
         {
-            SDL_Surface sdl = new SDL_Surface();
+#if TODO_RR
+			Falta aplicar la transparencia
+#endif
+			SDL_Surface sdl = new SDL_Surface();
             try
             {
+				
                 if (fname != null)
                 {
 					sdl.bitmap = Resources.Load("Textures/Terrain/"+fname) as Texture2D;
