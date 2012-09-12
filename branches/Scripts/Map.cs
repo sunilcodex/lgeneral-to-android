@@ -1,14 +1,15 @@
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;
-
+using System.Xml.Serialization;
 //TODO_RR using System.Drawing;
 //TODO_RR using System.Drawing.Drawing2D;
 //TODO_RR using System.Drawing.Imaging;
 namespace Engine
 {
+	[Serializable]
 	public class Way_Point
 	{
 		public int x, y;
@@ -52,21 +53,47 @@ namespace Engine
 		F_SPLIT_UNIT = (1 << 22),
 		F_DISTANCE = (1 << 23)
 	}
-
-	public class Map_Tile
+	
+	[Serializable]
+	public class Map_Tile : IParseable<Map_Tile>
 	{
 		public string name;             /* name of this map tile */
-		public Terrain_Type terrain;  /* terrain properties */
-		public int terrain_id;         /* id of terrain properties */
-		public int image_offset;       /* image offset in prop.image */
-		public int strat_image_offset; /* offset in the list of strategic tiny terrain images */
-		//TODO_RR public Nation nation;         /* nation that owns this flag (NULL == no nation) */
-		//TODO_RR public Player player;         /* dito */
-		public bool obj;                /* military objective ? */
-		public int deploy_center;      /* deploy allowed? */
-		//TODO_RR public Unit g_unit;           /* ground/naval unit pointer */
-		//TODO_RR public Unit a_unit;           /* air unit pointer */
-		//TODO_RR public Unit backupUnit;
+        [XmlIgnore]
+        public Terrain_Type terrain;  /* terrain properties */
+        [XmlIgnore]
+        public int terrain_id;         /* id of terrain properties */
+        [XmlIgnore]
+        public int image_offset;       /* image offset in prop.image */
+        public int strat_image_offset; /* offset in the list of strategic tiny terrain images */
+		//TODO_RR [XmlIgnore]
+        //TODO_RR public Nation nation;         /* nation that owns this flag (NULL == no nation) */
+		//TODO_RR [XmlIgnore]
+        //TODO_RR public Player player;         /* dito */
+        [XmlIgnore]
+        public bool obj;                /* military objective ? */
+        [XmlIgnore]
+        public int deploy_center;      /* deploy allowed? */
+		//TODO_RR [XmlIgnore]
+        //TODO_RR public Unit g_unit;           /* ground/naval unit pointer */
+		//TODO_RR [XmlIgnore]
+        //TODO_RR public Unit a_unit;           /* air unit pointer */
+		//TODO_RR [XmlIgnore]
+        //TODO_RR public Unit backupUnit;
+		
+		public override string ToString()
+        {
+            return name + ":" + terrain.name + ":" + strat_image_offset;
+        }
+		
+		public Map_Tile Parse(string str)
+        {
+            string[] s = str.Split(':');
+            this.name = s[0];
+            this.terrain = new Terrain_Type();
+            this.terrain.name = s[1];
+            this.strat_image_offset = int.Parse(s[2]);
+            return this;
+        }
 	}
 
 
@@ -115,14 +142,20 @@ namespace Engine
 		public int ctrl_air;
 		public int ctrl_sea; /* each operational region has it's own control mask */
 	}
-
+	
+	[Serializable]
 	public class Map
 	{
         #region Protected and Private
-		public int map_w = 0, map_h = 0;
-		public Map_Tile[,] map;
+		[XmlIgnore]
+        public int map_w { get {return map.Width;}}
+        [XmlIgnore]
+        public int map_h { get { return map.Height; } }
+		public Matrix<Map_Tile> map;
+		[XmlIgnore]
 		public Mask_Tile[,] mask;
 		public const short DIST_AIR_MAX = short.MaxValue;
+		[XmlIgnore]
 		public bool isLoaded = false;
 		public struct MapCoord
 		{
@@ -207,7 +240,7 @@ namespace Engine
             terrain.Load(str);
             string[] tiles = script.GetProperty("tiles").Split('°');
             /* allocate map memory */
-            map = new Map_Tile[map_w, map_h];
+            map = new Matrix<Map_Tile>(tmp_map_w, tmp_map_h); //map = new Map_Tile[map_w, map_h];
             mask = new Mask_Tile[map_w, map_h];
             for (int x = 0; x < map_w; x++)
                 for (int y = 0; y < map_h; y++)
