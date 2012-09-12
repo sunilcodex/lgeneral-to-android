@@ -8,6 +8,7 @@
  */
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Engine
 {
@@ -74,17 +75,27 @@ namespace Engine
 	/// terrain type in a map.
 	/// mov, spt and flags may be different for each weather type
 	/// </summary>
+	[Serializable]
 	public class Terrain_Type
 	{
+		[XmlIgnore]
 		public string id;
 		public string name;
-		//TODO_RR public SDL_Surface[] images;
-		//TODO_RR public SDL_Surface[] images_fogged;
+		[XmlIgnore]
+		public SDL_Surface[] images;
+		[XmlIgnore]
+		public SDL_Surface[] images_fogged;
+		[XmlIgnore]
 		public int[,] mov; //mov cost is array [ mov_type, weatherType ]
+		[XmlIgnore]
 		public int[] spt; // spot cost is array [ weatherType ]
+		[XmlIgnore]
 		public int min_entr;
+		[XmlIgnore]
 		public int max_entr;
+		[XmlIgnore]
 		public int max_ini;
+		[XmlIgnore]
 		public Terrain_flags[] flags; // flags is array [ weatherType ]
 	}
 
@@ -94,12 +105,12 @@ namespace Engine
 	/// </summary>
 	public class Terrain_Icons
 	{
-		//TODO_RR public SDL_Surface fog;       /* mask used to create fog */
-		//TODO_RR public SDL_Surface danger;    /* mask used to create danger zone */
-		//TODO_RR public SDL_Surface grid;      /* contains the grid */
-		//TODO_RR public SDL_Surface select;    /* selecting frame picture */
-		//TODO_RR public SDL_Surface cross;     /* crosshair animation */
-		//TODO_RR public Anim expl1, expl2;     /* explosion animation (attacker, defender)*/
+		public SDL_Surface fog;       /* mask used to create fog */
+		public SDL_Surface danger;    /* mask used to create danger zone */
+		public SDL_Surface grid;      /* contains the grid */
+		public SDL_Surface select;    /* selecting frame picture */
+		public SDL_Surface cross;     /* crosshair animation */
+		public Anim expl1, expl2;     /* explosion animation (attacker, defender)*/
 #if WITH_SOUND
     Wav *wav_expl;   /* explosion */
     Wav *wav_select; /* tile selection */
