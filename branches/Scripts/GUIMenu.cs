@@ -7,11 +7,11 @@ using System.Collections;
 		private bool[] toogleBool = {true,false,false,false};
 		private int activeToogle = 0;
 		private int selGridInt = 0;
-		private string[] selStrings = new string[] {"Mapa 1", "Mapa 2", "Mapa 3", "Mapa 4"};
+		private string[] selStrings = new string[] {"Campaign", "Scenario", "Load Game", "Replay Game", "Online Game"};
 	
 		void OnGUI ()
 		{
-			GUILayout.Window (0, new Rect (0, 0, 300, 300), MenuWindow, "");
+			GUI.Window (0, new Rect ((Screen.width/2)-250, 50, 500, 500), MenuWindow, "");
 		}
 	
 		void DoUpdRButtons ()
@@ -31,23 +31,47 @@ using System.Collections;
 			}  
 		}
 	
-		void rButtonWithGrid ()
+		int rButtonWithGrid ()
 		{
 		
-			selGridInt = GUILayout.SelectionGrid (selGridInt, selStrings, 2);
+			return GUILayout.SelectionGrid (selGridInt, selStrings, 5); 
+			//DoUpdRButtons();
+			
 		}
 	
 		void MenuWindow (int windowID)
 		{
 		
-			GUILayout.Label ("LGeneral");
+			GUILayout.Label ("Rotulo");
 			GUILayout.Space (20);
-			//DoUpdRButtons();
-			rButtonWithGrid ();
-			GUILayout.Space (20);
-			GUILayout.Button ("Empezar");
-			GUILayout.Button ("Salir");
-		
+			selGridInt = rButtonWithGrid ();
+			GUI.Box (new Rect(10,100,480,325),"Panel con Botones");	
+			switch(selGridInt)
+			{
+				case 0:
+					//TODO_RR insertar codigo para GUI de campaña
+					break;
+				case 1:
+					//TODO_RR insertar codigo para GUI de escenario
+					break;
+				case 2:
+					//TODO_RR insertar codigo para GUI de Load Game
+					break;
+				case 3:
+					//TODO_RR insertar codigo para GUI de replay Game
+					break;
+				case 4:
+					//TODO_RR insertar codigo para GUI de Online Game
+					break;
+			}
+			GUI.BeginGroup(new Rect(190,350,200,300));
+			if (GUILayout.Button ("START",GUILayout.Width(100))){
+				//TODO_RR insertar codigo para empezar con la aplicacion
+			}
+			if (GUILayout.Button ("EXIT",GUILayout.Width(100))){
+				//TODO_RR insertar codigo para empezar con la aplicacion
+			}
+			GUI.EndGroup();		
         
 		}
 	}
