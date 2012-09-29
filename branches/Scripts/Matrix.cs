@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml.Serialization;
 using System.Xml;
 
-namespace Engine
+namespace DataFile
 {
 	public interface IParseable<T>
 	{
