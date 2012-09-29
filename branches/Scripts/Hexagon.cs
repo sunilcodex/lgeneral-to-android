@@ -14,8 +14,7 @@ public class Hexagon : MonoBehaviour
 	{
 		MeshFilter meshFilter = GetComponent<MeshFilter> ();
 		if (meshFilter == null) {
-			Debug.LogError ("MeshFilter no añadida al objeto");
-			return;
+			throw new MissingComponentException ("MeshFilter no añadida al objeto");
 		}
 		Vector3 p0 = new Vector3 (-0.5f, 0, Mathf.Sqrt (3) / 2);
 		Vector3 p1 = new Vector3 (-1, 0, 0);
