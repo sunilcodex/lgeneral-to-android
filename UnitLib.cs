@@ -4,7 +4,7 @@
  * Fecha: 09/01/2009
  * Hora: 16:19
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | Codificación | Editar Encabezados Estándar
+ * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÃ³n | Editar Encabezados EstÃ¡ndar
  */
 
 using System;
@@ -317,7 +317,7 @@ namespace Engine
                     unit.def_cls = int.Parse(sub.GetProperty("def_close"));
                     /* flags */
                     string flags = sub.GetProperty("flags");
-                    foreach (string flag in flags.Split('°'))
+                    foreach (string flag in flags.Split('Â°'))
                     {
                         unit.flags |= (UnitFlags)System.Enum.Parse(typeof(UnitFlags), flag.ToUpper());
                     }
