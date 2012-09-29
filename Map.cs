@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
+using DataFile;
 //TODO_RR using System.Drawing;
 //TODO_RR using System.Drawing.Drawing2D;
 //TODO_RR using System.Drawing.Imaging;
@@ -65,21 +66,20 @@ namespace Engine
         [XmlIgnore]
         public int image_offset;       /* image offset in prop.image */
         public int strat_image_offset; /* offset in the list of strategic tiny terrain images */
-		//TODO_RR [XmlIgnore]
-        //TODO_RR public Nation nation;         /* nation that owns this flag (NULL == no nation) */
-		//TODO_RR [XmlIgnore]
-        //TODO_RR public Player player;         /* dito */
+		[XmlIgnore]
+        public Nation nation;         /* nation that owns this flag (NULL == no nation) */
+		[XmlIgnore]
+        public Player player;         /* dito */
         [XmlIgnore]
         public bool obj;                /* military objective ? */
         [XmlIgnore]
         public int deploy_center;      /* deploy allowed? */
-		//TODO_RR [XmlIgnore]
-        //TODO_RR public Unit g_unit;           /* ground/naval unit pointer */
-		//TODO_RR [XmlIgnore]
-        //TODO_RR public Unit a_unit;           /* air unit pointer */
-		//TODO_RR [XmlIgnore]
-        //TODO_RR public Unit backupUnit;
-		
+		[XmlIgnore]
+        public Unit g_unit;           /* ground/naval unit pointer */
+		[XmlIgnore]
+        public Unit a_unit;           /* air unit pointer */
+		[XmlIgnore]
+        public Unit backupUnit;
 		public override string ToString()
         {
             return name + ":" + terrain.name + ":" + strat_image_offset;
@@ -127,10 +127,10 @@ namespace Engine
 		public int vis_air_infl;
 		public int aux; /* used to setup any of the upper values */
 		public bool backup; /* used to backup spot mask for undo unit move */
-		//TODO_RR public Unit merge_unit; 
+		public Unit merge_unit; 
 		/* if not NULL this is a pointer to a unit the one who called map_get_merge_units()
                          may merge with. you'll need to remember the other unit as it is not saved here */
-		//TODO_RR public Unit split_unit; /* target unit may transfer strength to */
+		public Unit split_unit; /* target unit may transfer strength to */
 		public bool split_okay; /* unit may transfer a new subunit to this tile */
 		public bool deploy; /* deploy mask: "true": unit may deploy their, "false" unit may not deploy their; setup by deploy.c */
 		public bool danger; /* true: mark this tile as being dangerous to enter */
@@ -372,7 +372,7 @@ namespace Engine
 						mask [i, j].blocked = false;
 					if ((flags & MAP_MASK.F_BACKUP) == MAP_MASK.F_BACKUP)
 						mask [i, j].backup = false;
-					//TODO_RR if ((flags & MAP_MASK.F_MERGE_UNIT) == MAP_MASK.F_MERGE_UNIT) mask[i, j].merge_unit = null;
+					if ((flags & MAP_MASK.F_MERGE_UNIT) == MAP_MASK.F_MERGE_UNIT) mask[i, j].merge_unit = null;
 					if ((flags & MAP_MASK.F_DEPLOY) == MAP_MASK.F_DEPLOY)
 						mask [i, j].deploy = false;
 					if ((flags & MAP_MASK.F_CTRL_GRND) == MAP_MASK.F_CTRL_GRND)
@@ -388,7 +388,7 @@ namespace Engine
 					if ((flags & MAP_MASK.F_DANGER) == MAP_MASK.F_DANGER)
 						mask [i, j].danger = false;
 					if ((flags & MAP_MASK.F_SPLIT_UNIT) == MAP_MASK.F_SPLIT_UNIT) {
-						//TODO_RR mask[i, j].split_unit = null;
+						mask[i, j].split_unit = null;
 						mask [i, j].split_okay = false;
 					}
 				}
@@ -399,7 +399,7 @@ namespace Engine
 		/// </summary>
 		/// <param name="unit"></param>
 		/// <returns></returns>
-#if TODO_RR
+
         public Unit map_swap_unit(Unit unit)
         {
             Unit old;
@@ -416,19 +416,19 @@ namespace Engine
             unit.terrain = map[unit.x, unit.y].terrain;
             return old;
         }
-#endif
+
 		/// <summary>
 		/// Insert, Remove unit pointer from map.
 		/// </summary>
 		/// <param name="unit"></param>
-#if TODO_RR
+
         public void map_insert_unit(Unit unit)
         {
             Unit old = map_swap_unit(unit);
             map_tile(unit.x, unit.y).backupUnit = old;
         }
-#endif
-#if TODO_RR
+
+
         public void map_remove_unit(Unit unit)
         {
 
@@ -438,7 +438,6 @@ namespace Engine
                 map_tile(unit.x, unit.y).g_unit = map_tile(unit.x, unit.y).backupUnit;
             map_tile(unit.x, unit.y).backupUnit = null;
         }
-#endif
 		/// <summary>
 		/// Get neighbored tiles clockwise with id between 0 and 5.
 		/// </summary>
@@ -1311,8 +1310,8 @@ namespace Engine
 					case MAP_MASK.F_IN_RANGE:
 						mask [x, y].fog = ((mask [x, y].in_range == 0 && !mask [x, y].sea_embark) || mask [x, y].blocked);
 						break;
-					//TODO_RR case MAP_MASK.F_MERGE_UNIT: mask[x, y].fog = (mask[x, y].merge_unit == null); break;
-					//TODO_RR case MAP_MASK.F_SPLIT_UNIT: mask[x, y].fog = (mask[x, y].split_unit == null) && !mask[x, y].split_okay; break;
+					case MAP_MASK.F_MERGE_UNIT: mask[x, y].fog = (mask[x, y].merge_unit == null); break;
+					case MAP_MASK.F_SPLIT_UNIT: mask[x, y].fog = (mask[x, y].split_unit == null) && !mask[x, y].split_okay; break;
 					case MAP_MASK.F_DEPLOY:
 						mask [x, y].fog = !mask [x, y].deploy;
 						break;
@@ -1548,18 +1547,18 @@ namespace Engine
         tile is not manipulated.
         ====================================================================
         */
-#if TODO_RR
+
         public void map_embark_unit(Unit unit, int x, int y, int type, out bool enemy_spotted)
         {
             throw new System.NotImplementedException();
         }
-#endif
-#if TODO_RR
+
+
         public void map_debark_unit(Unit unit, int x, int y, int type, out bool enemy_spotted)
         {
             throw new System.NotImplementedException();
         }
-#endif
+
 #if TODO_RR
         void map_add_default_deploy_fields(Player player, List<MapCoord> fields)
         {
@@ -1752,14 +1751,14 @@ namespace Engine
         'player' is the index of the player.
         ====================================================================
         */
-#if TODO_RR
+
         public int map_check_deploy(Unit unit, int mx, int my, int player, int init, int air_mode)
         {
             throw new NotImplementedException();
 
         }
-#endif
-#if TODO_RR
+
+
         public Unit map_get_undeploy_unit(int x, int y, bool air_region)
         {
             if (air_region)
@@ -1785,7 +1784,7 @@ namespace Engine
                     return null;
             }
         }
-#endif
+
 
 		/*
         ====================================================================
