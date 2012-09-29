@@ -24,6 +24,7 @@ namespace Engine
         public Texture2D bitmap;
         //TODO_RR public System.Drawing.Graphics surf;
         public string name;
+		public Material bitmapMaterial;
 
         public SDL_Surface()
         {
@@ -63,8 +64,17 @@ namespace Engine
 				
                 if (fname != null)
                 {
-					sdl.bitmap = Resources.Load("Textures/Terrain/"+fname) as Texture2D;
+					sdl.bitmap = Resources.Load(fname) as Texture2D;
                     sdl.name = fname;
+					if (applyTransparency){
+						
+						sdl.bitmapMaterial = new Material(Shader.Find("Transparent/Diffuse"));
+						sdl.bitmapMaterial.mainTexture = sdl.bitmap;
+					}
+					else{
+						sdl.bitmapMaterial = new Material(Shader.Find("Diffuse"));
+						sdl.bitmapMaterial.mainTexture = sdl.bitmap;
+					}
                 }
                 return sdl;
             }
