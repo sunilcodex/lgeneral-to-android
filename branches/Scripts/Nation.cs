@@ -4,11 +4,12 @@
  * Fecha: 09/01/2009
  * Hora: 16:33
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÛn | Editar Encabezados Est·ndar
+ * Para cambiar esta plantilla use Herramientas | Opciones | Codificaci√≥n | Editar Encabezados Est√°ndar
  */
 
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Engine
 {
@@ -16,23 +17,63 @@ namespace Engine
     /// A nation provides a full name and a flag icon for units
     /// (which belong to a specific nation).
     /// </summary>
+    [Serializable]
     public class Nation
     {
         string id;
         string name;
         int flag_offset;
 
+
         /*
         ====================================================================
         Nations
         ====================================================================
         */
+        [XmlIgnore]
         public static Nation[] nations;
+        [XmlIgnore]
         public static int nation_count = 0;
+        [XmlIgnore]
         public static SDL_Surface nation_flags;
+        [XmlIgnore]
         public static int nation_flag_width = 0;
+        [XmlIgnore]
         public static int nation_flag_height = 0;
 
+        public string Name {
+            get {
+                return name;
+            }
+            set
+            {
+                name = value;
+            }
+        }
+
+        public string ID
+        {
+            get
+            {
+                return id;
+            }
+            set
+            {
+                id = value;
+            }
+        }
+
+        public int Flag_offset
+        {
+            get
+            {
+                return flag_offset;
+            }
+            set
+            {
+                flag_offset = value;
+            }
+        }
 
         /// <summary>
         /// Read nations from SRCDIR/nations/fname.
