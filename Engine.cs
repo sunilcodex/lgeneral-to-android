@@ -4,7 +4,7 @@
  * Fecha: 09/01/2009
  * Hora: 15:53
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÛn | Editar Encabezados Est·ndar
+ * Para cambiar esta plantilla use Herramientas | Opciones | Codificaci√≥n | Editar Encabezados Est√°ndar
  */
 
 using System;
