@@ -9,8 +9,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
+using Engine;
 
-namespace Engine
+namespace DataFile
 {
 
     /// <summary>
@@ -45,12 +47,14 @@ namespace Engine
         JET = (1 << 26),  /* airplane is a jet */
     }
 
+	[Serializable]
     public class Trgt_Type
     {
         public string id;
         public string name;
     }
-
+	
+	[Serializable]
     public class Mov_Type
     {
         public string id;
@@ -59,7 +63,8 @@ namespace Engine
 	    public Wav wav_move;
 #endif
     }
-
+	
+	[Serializable]
     public class Unit_Class
     {
         public string id;
@@ -70,12 +75,18 @@ namespace Engine
     /// <summary>
     /// Unit map tile info icons (strength, move, attack ...)
     /// </summary>
+    [Serializable]
     public class Unit_Info_Icons
     {
+		public string str_img_name, atk_img_name, mov_img_name, guard_img_name;
         public int str_w, str_h;
+        [XmlIgnore]
         public SDL_Surface str;
+        [XmlIgnore]
         public SDL_Surface atk;
+        [XmlIgnore]
         public SDL_Surface mov;
+        [XmlIgnore]
         public SDL_Surface guard;
     }
 
@@ -97,6 +108,7 @@ namespace Engine
     Unit lib entry.
     ====================================================================
     */
+	[Serializable]
     public class Unit_Lib_Entry
     {
 
@@ -109,8 +121,6 @@ namespace Engine
         ====================================================================
         */
         public static int TARGET_TYPE_LIMIT = 10;
-
-
 
         public string id;       /* identification of this entry */
         public string name;     /* name */
@@ -131,8 +141,12 @@ namespace Engine
                        chance */
         public int ammo;       /* max ammunition */
         public int fuel;       /* max fuel (0 if not used) */
+        [XmlIgnore]
         public SDL_Surface icon;      /* tactical icon */
+        public string icon_img_name;
+        [XmlIgnore]
         public SDL_Surface icon_tiny; /* half the size; used to display air and ground unit at one tile */
+        public string icon_tiny_img_name;
         public UnitIconStyle icon_type;          /* either single or all_dirs */
         public int icon_w, icon_h;     /* single icon size */
         public int icon_tiny_w, icon_tiny_h; /* single icon size */
@@ -227,20 +241,28 @@ namespace Engine
                     unit_info_icons = new Unit_Info_Icons();
                     path = "units/" + script.GetProperty("strength_icons");
                     unit_info_icons.str = SDL_Surface.LoadSurface(path, true);
+					string route = "Textures\\" + path;
+                    unit_info_icons.mov_img_name = route.Replace("\\", "/").Replace(".bmp", "");
                     unit_info_icons.str_w = int.Parse(script.GetProperty("strength_icon_width"));
                     unit_info_icons.str_h = int.Parse(script.GetProperty("strength_icon_height"));
 
                     str = script.GetProperty("attack_icon");
                     path = "units/" + str;
                     unit_info_icons.atk = SDL_Surface.LoadSurface(path, true);
+					route = "Textures\\" + path;
+                    unit_info_icons.atk_img_name = route.Replace("\\","/").Replace(".bmp","");
                     str = script.GetProperty("move_icon");
                     path = "units/" + str;
                     unit_info_icons.mov = SDL_Surface.LoadSurface(path, true);
+					route = "Textures\\" + path;
+                    unit_info_icons.mov_img_name = route.Replace("\\", "/").Replace(".bmp", "");
                     str = script.GetProperty("guard_icon");
                     if (string.IsNullOrEmpty(str))
                         str = "pg_guard.bmp";
                     path = "units/" + str;
                     unit_info_icons.guard = SDL_Surface.LoadSurface(path, true);
+					route = "Textures\\" + path;
+                    unit_info_icons.guard_img_name = route.Replace("\\", "/").Replace(".bmp", "");
 
                 }
                 /* icons */
@@ -354,6 +376,8 @@ namespace Engine
                     if (unit.icon_type == UnitIconStyle.UNIT_ICON_ALL_DIRS)
                     {
                         unit.icon = SDL_Surface.CreateSurface(width * 6, height, true);
+						string icon_name = icons.name.Replace("data\\gfx", "Textures").Replace("\\","/").Replace(".bmp","");
+                        unit.icon_img_name = icon_name;
                         unit.icon_w = width;
                         unit.icon_h = height;
                         SDL_Surface.full_copy_image(unit.icon, icons, 0, offset);
@@ -371,6 +395,8 @@ namespace Engine
                         unit.icon_h = height;
                         /* create pic and copy first pic */
                         unit.icon = SDL_Surface.CreateSurface(unit.icon_w * 2, unit.icon_h, true);
+						string icon_name = icons.name.Replace("data\\gfx", "Textures").Replace("\\", "/").Replace(".bmp", "");
+                        unit.icon_img_name = icon_name;
                         SDL_Surface.copy_image(unit.icon, 0, 0, unit.icon_w, unit.icon_h, icons, 0, offset);
                         unit.icon.name = unit.icon.name + unit.name;
                         /* remove measure dots */
@@ -384,6 +410,7 @@ namespace Engine
                     }
                     float scale = 1.5f;
                     unit.icon_tiny = SDL_Surface.CreateSurface((int)(unit.icon.w * (1.0 / scale)), (int)(unit.icon.h * (1.0 / scale)), true);
+					unit.icon_tiny_img_name = icons.name.Replace("data\\gfx", "Textures").Replace("\\", "/").Replace(".bmp", "");
                     unit.icon_tiny_w = (int)((unit.icon_w * (1.0 / scale)));
                     unit.icon_tiny_h = (int)(unit.icon_h * (1.0 / scale));
                     for (int j = 0; j < unit.icon_tiny.h; j++)
@@ -731,6 +758,7 @@ failure:
         These may only be loaded if unit_lib_main_loaded is False.
         ====================================================================
         */
+		[XmlIgnore]
         bool unit_lib_main_loaded = false;
         public Trgt_Type[] trgt_types;
         public int trgt_type_count = 0;
@@ -755,6 +783,11 @@ failure:
         ====================================================================
         */
         List<Unit_Lib_Entry> unit_lib = new List<Unit_Lib_Entry>();
+        public List<Unit_Lib_Entry> Unit_Lib
+        {
+            get { return unit_lib; }
+            set { unit_lib = value; }
+        }
 
         /*
         ====================================================================
@@ -919,6 +952,20 @@ StrToFlag[] fct_units = new StrToFlag[]{
             /* summarize */
             unit.eval_score = (2 * attack + 2 * defense + misc) / 5;
         }
+		
+		/// <summary>
+		/// Uploads the unit info icons which had only route where he was in the XML file UnitDB
+		/// </summary>
+		public void load_unit_icons(){
+			this.unit_info_icons.str = SDL_Surface.LoadSurface(unit_info_icons.str_img_name,true);
+			this.unit_info_icons.atk = SDL_Surface.LoadSurface(unit_info_icons.atk_img_name,true);
+			this.unit_info_icons.mov = SDL_Surface.LoadSurface(unit_info_icons.mov_img_name,true);
+			this.unit_info_icons.guard = SDL_Surface.LoadSurface(unit_info_icons.guard_img_name,true);
+			foreach( Unit_Lib_Entry item in this.unit_lib){
+				item.icon = SDL_Surface.LoadSurface(item.icon_img_name,true);
+				item.icon_tiny = SDL_Surface.LoadSurface(item.icon_tiny_img_name,true);
+			}
+		}
 
     }
 }
