@@ -9,6 +9,8 @@
 
 using System;
 using System.Collections.Generic;
+using DataFile;
+using System.Xml.Serialization;
 
 namespace Engine
 {
@@ -32,6 +34,7 @@ namespace Engine
     /// Player info. The players are created by Scenario but managed
     /// by this module.
     /// </summary>
+    [Serializable]
     public class Player
     {
         public string id;           /* identification */
