@@ -9,6 +9,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
+using DataFile;
 
 namespace Engine
 {
@@ -51,6 +53,7 @@ namespace Engine
     /// To determine wether a unit has a transporter unit.trsp_prop.id
     /// is checked. ( 0 = no transporter, 1 = has transporter )
     /// </summary>
+    [Serializable]
     public class Unit
     {
         /// <summary>
