@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Engine
 {
@@ -51,6 +52,7 @@ namespace Engine
     Scenario Info
     ====================================================================
     */
+	[Serializable]
     public class Scen_Info
     {
         public string fname;    /* Scenario knows it's own file_name in the Scenario path */
@@ -86,6 +88,7 @@ namespace Engine
         VSUBCOND_UNITS_SAVED
     };
 
+	[Serializable]
     public class VSubCond
     {
         public VSUBCOND type;           /* type as above */
@@ -133,6 +136,14 @@ namespace Engine
         public static VCond[] vconds;          /* victory conditions */
         public static int vcond_count = 0;
         static int[,] casualties;	/* sum of casualties grouped by unit class and player */
+		public static int[,] Casualties {
+            get {
+                return casualties;
+            }
+            set {
+                casualties = value;
+            }
+        }
         public static string map_fname;
 
 
