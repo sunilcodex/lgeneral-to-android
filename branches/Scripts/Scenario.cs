@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
+using DataFile;
 
 namespace Engine
 {
@@ -136,15 +136,9 @@ namespace Engine
         public static VCond[] vconds;          /* victory conditions */
         public static int vcond_count = 0;
         static int[,] casualties;	/* sum of casualties grouped by unit class and player */
-		public static int[,] Casualties {
-            get {
-                return casualties;
-            }
-            set {
-                casualties = value;
-            }
-        }
         public static string map_fname;
+        public static List<string> unitsToAdd;
+        public static List<Flag> list_flags;
 
 
         /*
@@ -192,10 +186,14 @@ namespace Engine
                     unit_lib.UnitLibLoad(unitlib, Unit_Lib_Entry.UNIT_LOAD.UNIT_LIB_MAIN);
                     string addUnits = listblocks[0].GetProperty("add");
                     if (addUnits != null)
+                    {
+                        unitsToAdd = new List<string>();
                         foreach (string unitToadd in addUnits.Split('?'))
                         {
+                            unitsToAdd.Add(unitToadd);
                             unit_lib.UnitLibLoad(unitToadd, Unit_Lib_Entry.UNIT_LOAD.UNIT_LIB_ADD);
                         }
+                    }
                 }
 
                 /* map and weather */
@@ -294,23 +292,30 @@ namespace Engine
                 /* flags */
                 Console.WriteLine("Loading Flags");
                 List<Block> flags = script.GetBlock("flags")[0].Blocks;
+                list_flags = new List<Flag>();
                 foreach (Block flag in flags)
                 {
+                    Flag flag_aux = new Flag();
                     int x = int.Parse(flag.GetProperty("x"));
                     int y = int.Parse(flag.GetProperty("y"));
+                    flag_aux.x = x;
+                    flag_aux.y = y;
                     int obj;
                     string objStr = flag.GetProperty("obj");
                     if (string.IsNullOrEmpty(objStr))
                         obj = 0;
                     else
                         obj = int.Parse(objStr);
+                    flag_aux.obj = obj;
                     string str = flag.GetProperty("nation");
+                    flag_aux.name = str;
                     Nation nation = Nation.nation_find(str);
                     Engine.map.map[x, y].nation = nation;
                     Engine.map.map[x, y].player = Player.player_get_by_nation(nation);
                     if (Engine.map.map[x, y].nation != null)
                         Engine.map.map[x, y].deploy_center = 1;
                     Engine.map.map[x, y].obj = (obj != 0);
+                    list_flags.Add(flag_aux);
                 }
                 /* victory conditions */
                 //scen_result[0] = 0;
@@ -660,6 +665,7 @@ namespace Engine
             }
             return true;
         }
+
 #endif
 
         /*
