@@ -53,8 +53,8 @@ namespace Engine
     /// To determine wether a unit has a transporter unit.trsp_prop.id
     /// is checked. ( 0 = no transporter, 1 = has transporter )
     /// </summary>
-    [Serializable]
-    public class Unit
+	[Serializable]
+   	public class Unit
     {
         /// <summary>
         /// unit life bar stuff */
@@ -66,52 +66,77 @@ namespace Engine
         public const int BAR_TILE_WIDTH = 3;
         public const int BAR_TILE_HEIGHT = 4;
 
-
+        [XmlIgnore]
         public Unit_Lib_Entry prop;        /* properties */
         public Unit_Lib_Entry trsp_prop;   /* transporters properties */
+        [XmlIgnore]
         public Unit_Lib_Entry sel_prop;   /* selected props: either prop or trsp_prop */
+        [XmlIgnore]
         public Unit backup;                /* used to backup various unit values that may temporaly change (e.g. expected losses) */
         public string name;                /* unit name */
+        [XmlIgnore]
         public Player player;              /* controlling player */
         public Nation nation;              /* nation unit belongs to */
+        [XmlIgnore]
         public Terrain_Type terrain;        /* terrain the unit is currently on */
         public int x, y;                   /* map position */
         public int str;                    /* strength */
         public int entr;                   /* entrenchment */
         public int exp;                    /* experience */
+        [XmlIgnore]
         public int exp_level;              /* exp level computed from exp */
         public int delay;                  /* delay in turns before unit becomes avaiable
 	                                   as reinforcement */
+        [XmlIgnore]
         public UnitEmbarkTypes embark;                 /* embark type */
+        [XmlIgnore]
         public UnitLookingDirection orient;  /* current orientation */
+        [XmlIgnore]
         public int icon_offset;            /* offset in unit's sel_prop.icon */
+        [XmlIgnore]
         public int icon_tiny_offset;       /* offset in sep_prop.tiny_icon */
+        [XmlIgnore]
         public int supply_level;           /* in percent; military targets are centers of supply */
+        [XmlIgnore]
         public int cur_fuel;               /* current fuel */
+        [XmlIgnore]
         public int cur_ammo;               /* current ammo */
+        [XmlIgnore]
         public int cur_mov;                /* movement points this turn */
+        [XmlIgnore]
         public int cur_atk_count;          /* number of attacks this turn */
+        [XmlIgnore]
         public bool unused;                 /* unit didn't take an action this turn so far */
+        [XmlIgnore]
         public int damage_bar_width;       /* current life bar width in map.life_icons */
+        [XmlIgnore]
         public int damage_bar_offset;      /* offset in map.damage_icons */
+        [XmlIgnore]
         public int suppr;                  /* unit suppression for a single fight 
 	                                   (caused by artillery, cleared after fight) */
+        [XmlIgnore]
         public int turn_suppr;             /* unit suppression for whole turn
 	                                   caused by tactical bombing, low fuel(< 20) or 
 	                                   low ammo (< 2) */
+        [XmlIgnore]
         public bool is_guarding;            /* do not include to list when cycling units */
+        [XmlIgnore]
         public int killed;                 /* 1: remove from map & delete this unit
 					                   2: delete only */
+        [XmlIgnore]
         public bool fresh_deploy;           /* if this is true this unit was deployed in this turn
 	                                   and as long as it is unused it may be undeployed in the 
 	                                   same turn */
         public string tag; /* if tag is set the unit belongs to a unit group that
 	                                   is monitored by the victory conditions units_killed()
 	                                   and units_saved() */
+        [XmlIgnore]
         public int eval_score;             /* between 0 - 1000 indicating the worth of the unit */
         /* AI eval */
+        [XmlIgnore]
         public int target_score;           /* when targets of an AI unit are gathered this value is set
 	                                   to the result score for attack of unit on this target */
+		
         /*
         ====================================================================
         CreateAction a unit by passing a Unit struct with the following stuff set:
