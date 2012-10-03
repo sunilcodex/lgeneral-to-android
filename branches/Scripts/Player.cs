@@ -42,9 +42,40 @@ namespace Engine
         public PLAYERCONTROL ctrl;            /* controlled by human or CPU */
         public string ai_fname;     /* dll with AI routines */
         public int strat;           /* strategy: -2 very defensive to 2 very aggressive */
+        [XmlIgnore]
         public Nation[] nations;   /* list of pointers to nations controlled by this player */
+        public Nation_DB_File[] Nations {
+            get {
+                Nation_DB_File[] nations_aux = new Nation_DB_File[nation_count];
+                for (int i = 0; i < nation_count; i++) {
+                    nations_aux[i] = new Nation_DB_File();
+                    nations_aux[i].id = nations[i].ID;
+                    nations_aux[i].name = nations[i].Name;
+                    nations_aux[i].flag_offset = nations[i].Flag_offset;
+                }
+                return nations_aux;
+            }
+            set {
+                nations = new Nation[nation_count];
+                for (int i = 0; i < nation_count; i++) {
+                    nations[i] = new Nation();
+                    nations[i].ID = value[i].id;
+                    nations[i].Name = value[i].name;
+                    nations[i].Flag_offset = value[i].flag_offset;
+                }
+            }
+        }
         public int nation_count;   /* number of nations controlled */
+        [XmlIgnore]
         public List<Player> allies;   /* list of the player's allies */
+        public List<Player> Allies {
+            get {
+                return allies;
+            }
+            set {
+                allies = value;
+            }
+        }
         public int air_trsp_count; /* number of air transporters */
         public int sea_trsp_count; /* number of sea transporters */
         public Unit_Lib_Entry air_trsp; /* default air transporter */
@@ -57,10 +88,12 @@ namespace Engine
         public bool no_init_deploy; /* whether player may initially deploy */
 
         /* ai callbacks loaded from module ai_fname */
+        [XmlIgnore]
         public AiInit ai_init;
+        [XmlIgnore]
         public AiRun ai_run;
+        [XmlIgnore]
         public AiFinalize ai_finalize;
-
 
         /*
         ====================================================================
