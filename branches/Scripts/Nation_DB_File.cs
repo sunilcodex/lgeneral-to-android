@@ -33,18 +33,21 @@ namespace DataFile
                 this.nations[i].Flag_offset = Nation.nations[i].Flag_offset;
             }
             this.nation_count = Nation.nation_count;
-            this.nation_flags_img = Nation.nation_flags.name.Replace("gfx","Textures");
+            string str = Nation.nation_flags.name.Replace("data\\gfx","Textures");
+            str = str.Replace(".bmp","");
+            this.nation_flags_img = str.Replace("\\","/");
             this.nation_flag_width = Nation.nation_flag_width;
             this.nation_flag_height = Nation.nation_flag_height;
         }
-		
-		public void nationDBTOnationatt(){
-			Nation.nations = this.nations;
-			Nation.nation_count = this.nation_count;
-			Nation.nation_flags = SDL_Surface.LoadSurface(this.nation_flags_img,false);
-			Nation.nation_flag_height = this.nation_flag_height;
-			Nation.nation_flag_width = this.nation_flag_width;
-		}
+
+        public void nationDBTOnationatt()
+        {
+            Nation.nations = this.nations;
+            Nation.nation_count = this.nation_count;
+            Nation.nation_flags = SDL_Surface.LoadSurface(this.nation_flags_img, false);
+            Nation.nation_flag_height = this.nation_flag_height;
+            Nation.nation_flag_width = this.nation_flag_width;
+        }
     }
     
 }
