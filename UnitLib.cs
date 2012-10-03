@@ -782,6 +782,7 @@ failure:
         of UnitLibLoad().
         ====================================================================
         */
+		[XmlIgnore]
         List<Unit_Lib_Entry> unit_lib = new List<Unit_Lib_Entry>();
         public List<Unit_Lib_Entry> Unit_Lib
         {
