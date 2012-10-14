@@ -10,6 +10,9 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using UnityEngine;
+using System.IO;
+using DataFile;
 
 namespace Engine
 {
@@ -78,42 +81,26 @@ namespace Engine
         /// <summary>
         /// Read nations from SRCDIR/nations/fname.
         /// </summary>
-#if TODO_RR
-        public static int nations_load(string fname)
-        {
-            string path = Util.MakeGamedirFile("nations", fname);
-            try
+        public static int nations_load(string fname){
+			string path = "Assets/Resources/DB/"+fname;
+			try{
+				XmlSerializer SerializerObj = new XmlSerializer(typeof(Nation_DB_File));
+		        // Create a new file stream for reading the XML file
+		        FileStream ReadFileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+		        // Load the object saved above by using the Deserialize function
+		        Nation_DB_File nationDB = (Nation_DB_File)SerializerObj.Deserialize(ReadFileStream);
+				ReadFileStream.Close();
+				nationDB.nationDBTOnationatt();
+				return 0;
+			}
+			catch (Exception e)
             {
-                Script pd = Script.CreateScript(path);
-                /* icon size */
-                nation_flag_width = int.Parse(pd.GetProperty("icon_width"));
-                nation_flag_height = int.Parse(pd.GetProperty("icon_height"));
-                /* icons */
-                string str = pd.GetProperty("icons");
-                path ="flags/" + str;
-                nation_flags = SDL_Surface.LoadSurface(path, false);
-                /* nations */
-                List<Block> entries = pd.GetBlock("nations")[0].Blocks;
-                nation_count = entries.Count;
-                nations = new Nation[nation_count];
-                int i = 0;
-                foreach (Block sub in entries)
-                {
-                    nations[i] = new Nation();
-                    nations[i].id = sub.Name;
-                    nations[i].name = sub.GetProperty("name");
-                    nations[i].flag_offset  = int.Parse(sub.GetProperty("icon_id"));
-                    nations[i].flag_offset *= nation_flag_height;
-                    i++;
-                }
+                Debug.LogError("exception: " + e);
+				return -1;
             }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine("exception: " + e);
-            }
-            return 0;
-        }
-#endif
+            
+		}
+
         /// <summary>
         /// Delete nations.
         /// </summary>
