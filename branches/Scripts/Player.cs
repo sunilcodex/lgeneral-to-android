@@ -229,7 +229,7 @@ namespace Engine
             foreach (Player player in players)
             {
                 for (int i = 0; i < player.nation_count; i++)
-                    if (nation == player.nations[i])
+                    if (nation.ID == player.nations[i].ID)
                         return player;
             }
             return null;
