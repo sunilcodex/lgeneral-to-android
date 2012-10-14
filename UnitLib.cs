@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using Engine;
+using UnityEngine;
+using System.IO;
 
 namespace DataFile
 {
@@ -171,516 +173,68 @@ namespace DataFile
             UNIT_LIB_ADD = 0,
             UNIT_LIB_MAIN
         };
-#if TODO_RR
-        public int UnitLibLoad(string fname, UNIT_LOAD main)
-        {
-            string str;
-
-            /* there can be only one main library */
-            if ((main == UNIT_LOAD.UNIT_LIB_MAIN) && unit_lib_main_loaded)
-            {
-                Console.WriteLine(fname + ": can't load as main unit library (which is already loaded): loading as 'additional' instead\n");
-                main = UNIT_LOAD.UNIT_LIB_ADD;
-            }
-
-            try
-            {
-                string path = Util.MakeGamedirFile("units", fname);
-                Script script = Script.CreateScript(path);
-                if (main == UNIT_LOAD.UNIT_LIB_MAIN)
-                {
-
-                    /* target types */
-                    List<Block> listblocks = script.GetBlock("target_types");
-
-                    trgt_types = new Trgt_Type[listblocks[0].Blocks.Count];
-                    int i = 0;
-                    foreach (Block sub in listblocks[0].Blocks)
-                    {
-                        trgt_types[i] = new Trgt_Type();
-                        trgt_types[i].id = sub.Name;
-                        trgt_types[i].name = sub.GetProperty("name");
-                        i++;
-                    }
-                    trgt_type_count = i;
-
-                    /* movement types */
-                    listblocks = script.GetBlock("move_types");
-                    mov_types = new Mov_Type[listblocks[0].Blocks.Count];
-                    mov_type_count = 0;
-                    foreach (Block sub in listblocks[0].Blocks)
-                    {
-                        mov_types[mov_type_count] = new Mov_Type();
-                        mov_types[mov_type_count].id = sub.Name;
-                        mov_types[mov_type_count].name = sub.GetProperty("name");
-
-#if WITH_SOUND   
-                    string str = sub.GetProperty("sound");
-                    if (str != null)
-                    {
-                        mov_types[mov_type_count].wav_move = wav_load(str, 0);
-                    }
-#endif
-                        mov_type_count++;
-                    }
-
-                    /* unit classes */
-                    listblocks = script.GetBlock("unit_classes");
-                    unit_classes = new Unit_Class[listblocks[0].Blocks.Count];
-
-                    unit_class_count = 0;
-                    foreach (Block sub in listblocks[0].Blocks)
-                    {
-                        unit_classes[unit_class_count] = new Unit_Class();
-                        unit_classes[unit_class_count].id = sub.Name;
-                        unit_classes[unit_class_count++].name = sub.GetProperty("name");
-                        /* ignore sounds so far */
-                    }
-
-                    /* unit map tile icons */
-                    unit_info_icons = new Unit_Info_Icons();
-                    path = "units/" + script.GetProperty("strength_icons");
-                    unit_info_icons.str = SDL_Surface.LoadSurface(path, true);
-					string route = "Textures\\" + path;
-                    unit_info_icons.mov_img_name = route.Replace("\\", "/").Replace(".bmp", "");
-                    unit_info_icons.str_w = int.Parse(script.GetProperty("strength_icon_width"));
-                    unit_info_icons.str_h = int.Parse(script.GetProperty("strength_icon_height"));
-
-                    str = script.GetProperty("attack_icon");
-                    path = "units/" + str;
-                    unit_info_icons.atk = SDL_Surface.LoadSurface(path, true);
-					route = "Textures\\" + path;
-                    unit_info_icons.atk_img_name = route.Replace("\\","/").Replace(".bmp","");
-                    str = script.GetProperty("move_icon");
-                    path = "units/" + str;
-                    unit_info_icons.mov = SDL_Surface.LoadSurface(path, true);
-					route = "Textures\\" + path;
-                    unit_info_icons.mov_img_name = route.Replace("\\", "/").Replace(".bmp", "");
-                    str = script.GetProperty("guard_icon");
-                    if (string.IsNullOrEmpty(str))
-                        str = "pg_guard.bmp";
-                    path = "units/" + str;
-                    unit_info_icons.guard = SDL_Surface.LoadSurface(path, true);
-					route = "Textures\\" + path;
-                    unit_info_icons.guard_img_name = route.Replace("\\", "/").Replace(".bmp", "");
-
-                }
-                /* icons */
-                str = script.GetProperty("icon_type");
-                if (str == "single")
-                    icon_type = UnitIconStyle.UNIT_ICON_SINGLE;
-                else
-                    icon_type = UnitIconStyle.UNIT_ICON_ALL_DIRS;
-                str = script.GetProperty("icons");
-                path = "units/" + str;
-                Console.WriteLine("  Loading Tactical Icons");
-                SDL_Surface icons = SDL_Surface.LoadSurface(path, true);
-                /* unit classes */
-                List<Block> unit_lib_block = script.GetBlock("unit_lib");
-                foreach (Block sub in unit_lib_block[0].Blocks)
-                {
-                    Unit_Lib_Entry unit = new Unit_Lib_Entry();
-                    /* identification */
-                    unit.id = sub.Name;
-                    /* name */
-                    unit.name = sub.GetProperty("name");
-                    /* class id */
-                    unit.unit_class = 0;
-                    str = sub.GetProperty("class");
-                    for (int i = 0; i < unit_class_count; i++)
-                        if (str == unit_classes[i].id)
-                        {
-                            unit.unit_class = i;
-                            break;
-                        }
-
-                    /* target type id */
-                    unit.trgt_type = 0;
-                    str = sub.GetProperty("target_type");
-                    for (int i = 0; i < trgt_type_count; i++)
-                        if (str == trgt_types[i].id)
-                        {
-                            unit.trgt_type = i;
-                            break;
-                        }
-                    /* initiative */
-                    unit.ini = int.Parse(sub.GetProperty("initiative"));
-                    /* spotting */
-                    unit.spt = int.Parse(sub.GetProperty("spotting"));
-                    /* movement */
-                    unit.mov = int.Parse(sub.GetProperty("movement"));
-                    /* move type id */
-                    unit.mov_type = 0;
-                    str = sub.GetProperty("move_type");
-                    for (int i = 0; i < mov_type_count; i++)
-                        if (str == mov_types[i].id)
-                        {
-                            unit.mov_type = i;
-                            break;
-                        }
-                    /* fuel */
-                    unit.fuel = int.Parse(sub.GetProperty("fuel"));
-                    /* range */
-                    unit.rng = int.Parse(sub.GetProperty("range"));
-                    /* ammo */
-                    unit.ammo = int.Parse(sub.GetProperty("ammo"));
-                    Block attacks = sub.GetBlock("attack")[0];
-                    /* attack count */
-                    unit.atk_count = int.Parse(attacks.GetProperty("count"));
-                    unit.atks = new int[trgt_type_count];
-                    /* attack values */
-                    for (int i = 0; i < trgt_type_count; i++)
-                        unit.atks[i] = int.Parse(attacks.GetProperty(trgt_types[i].id));
-                    /* ground defense */
-                    unit.def_grnd = int.Parse(sub.GetProperty("def_ground"));
-                    /* air defense */
-                    unit.def_air = int.Parse(sub.GetProperty("def_air"));
-                    /* close defense */
-                    unit.def_cls = int.Parse(sub.GetProperty("def_close"));
-                    /* flags */
-                    string flags = sub.GetProperty("flags");
-                    foreach (string flag in flags.Split('°'))
-                    {
-                        unit.flags |= (UnitFlags)System.Enum.Parse(typeof(UnitFlags), flag.ToUpper());
-                    }
-
-                    /* set the entrenchment rate */
-                    unit.entr_rate = 2;
-                    if ((unit.flags & UnitFlags.LOW_ENTR_RATE) == UnitFlags.LOW_ENTR_RATE)
-                        unit.entr_rate = 1;
-                    else
-                        if ((unit.flags & UnitFlags.INFANTRY) == UnitFlags.INFANTRY)
-                            unit.entr_rate = 3;
-                    /* time period of usage */
-                    unit.start_year = unit.start_month = unit.end_year = 0;
-                    str = sub.GetProperty("start_year");
-                    if (str != null) unit.start_year = int.Parse(str);
-                    str = sub.GetProperty("start_month");
-                    if (str != null) unit.start_month = int.Parse(str);
-                    str = sub.GetProperty("expired");
-                    if (str != null) unit.end_year = int.Parse(str);
-                    /* icon */
-                    int width, height, offset;
-                    Int32 color_key;
-                    /* icon id */
-                    int icon_id = int.Parse(sub.GetProperty("icon_id"));
-                    /* icon_type */
-                    unit.icon_type = icon_type;
-                    /* get position and size in icons surface */
-                    unit_get_icon_geometry(icon_id, icons, out width, out height, out offset, out color_key);
-                    /* picture is copied from unit_pics first
-                     * if picture_type is not ALL_DIRS, picture is a single picture looking to the right;
-                     * add a flipped picture looking to the left 
-                     */
-
-                    if (unit.icon_type == UnitIconStyle.UNIT_ICON_ALL_DIRS)
-                    {
-                        unit.icon = SDL_Surface.CreateSurface(width * 6, height, true);
-						string icon_name = icons.name.Replace("data\\gfx", "Textures").Replace("\\","/").Replace(".bmp","");
-                        unit.icon_img_name = icon_name;
-                        unit.icon_w = width;
-                        unit.icon_h = height;
-                        SDL_Surface.full_copy_image(unit.icon, icons, 0, offset);
-                        /* remove measure dots */
-                        SDL_Surface.SetPixel(unit.icon, 0, 0, color_key);
-                        SDL_Surface.SetPixel(unit.icon, 0, unit.icon_h - 1, color_key);
-                        SDL_Surface.SetPixel(unit.icon, unit.icon_w - 1, 0, color_key);
-                        /* set transparency */
-                        SDL_Surface.SDL_SetColorKey(unit.icon, color_key);
-                    }
-                    else
-                    {
-                        /* set size */
-                        unit.icon_w = width;
-                        unit.icon_h = height;
-                        /* create pic and copy first pic */
-                        unit.icon = SDL_Surface.CreateSurface(unit.icon_w * 2, unit.icon_h, true);
-						string icon_name = icons.name.Replace("data\\gfx", "Textures").Replace("\\", "/").Replace(".bmp", "");
-                        unit.icon_img_name = icon_name;
-                        SDL_Surface.copy_image(unit.icon, 0, 0, unit.icon_w, unit.icon_h, icons, 0, offset);
-                        unit.icon.name = unit.icon.name + unit.name;
-                        /* remove measure dots */
-                        SDL_Surface.SetPixel(unit.icon, 0, 0, color_key);
-                        SDL_Surface.SetPixel(unit.icon, 0, unit.icon_h - 1, color_key);
-                        SDL_Surface.SetPixel(unit.icon, unit.icon_w - 1, 0, color_key);
-                        /* get second by flipping first one */
-                        SDL_Surface.copy_image180(unit.icon, unit.icon_w, 0, unit.icon_w, unit.icon_h, icons, 0, offset);
-                        /* set transparency */
-                        SDL_Surface.SDL_SetColorKey(unit.icon, color_key);
-                    }
-                    float scale = 1.5f;
-                    unit.icon_tiny = SDL_Surface.CreateSurface((int)(unit.icon.w * (1.0 / scale)), (int)(unit.icon.h * (1.0 / scale)), true);
-					unit.icon_tiny_img_name = icons.name.Replace("data\\gfx", "Textures").Replace("\\", "/").Replace(".bmp", "");
-                    unit.icon_tiny_w = (int)((unit.icon_w * (1.0 / scale)));
-                    unit.icon_tiny_h = (int)(unit.icon_h * (1.0 / scale));
-                    for (int j = 0; j < unit.icon_tiny.h; j++)
-                    {
-                        for (int i = 0; i < unit.icon_tiny.w; i++)
-                            SDL_Surface.SetPixel(unit.icon_tiny, i, j,
-                                SDL_Surface.GetPixel(unit.icon, (int)(scale * i), (int)(scale * j)));
-                    }
-                    /* use color key of 'big' picture */
-                    SDL_Surface.SDL_SetColorKey(unit.icon_tiny, color_key);
-                    /* read sounds -- well as there are none so far ... */
-#if WITH_SOUND
-                    if ( parser_get_value( sub, "move_sound", &str, 0 ) ) {
-                        // FIXME reloading the same sound more than once is a
-                        // big waste of loadtime, runtime, and memory
-                        if ( ( unit.wav_move = wav_load( str, 0 ) ) )
-                            unit.wav_alloc = 1;
-                        else {
-                            unit.wav_move = mov_types[unit.mov_type].wav_move;
-                            unit.wav_alloc = 0;
-                        }
-                    }
-                    else {
-                        unit.wav_move = mov_types[unit.mov_type].wav_move;
-                        unit.wav_alloc = 0;
-                    }
-#endif
-                    /* add unit to database */
-                    unit_lib.Add(unit);
-                    /* absolute evaluation */
-                    unit_lib_eval_unit(unit);
-                }
-
-                /* relative evaluate of units */
-                int best_air = 0;
-                int best_sea = 0;
-                int best_ground = 0;
-                foreach (Unit_Lib_Entry unit in unit_lib)
-                {
-                    if ((unit.flags & UnitFlags.FLYING) == UnitFlags.FLYING)
-                        best_air = Math.Max(unit.eval_score, best_air);
-                    else
-                    {
-                        if ((unit.flags & UnitFlags.SWIMMING) == UnitFlags.SWIMMING)
-                            best_sea = Math.Max(unit.eval_score, best_sea);
-                        else
-                            best_ground = Math.Max(unit.eval_score, best_ground);
-                    }
-                }
-                foreach (Unit_Lib_Entry unit in unit_lib)
-                {
-                    unit.eval_score *= 1000;
-                    if ((unit.flags & UnitFlags.FLYING) == UnitFlags.FLYING)
-                        unit.eval_score /= best_air;
-                    else
-                    {
-                        if ((unit.flags & UnitFlags.SWIMMING) == UnitFlags.SWIMMING)
-                            unit.eval_score /= best_sea;
-                        else
-                            unit.eval_score /= best_ground;
-                    }
-                }
-
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine("exception: " + e);
-            }
-            return 0;
-#if TODO
-    int i, j, icon_id;
-    SDL_Surface *icons = NULL;
-    int icon_type;
-    int width, height, offset;
-    Uint32 color_key;
-    int byte_size, y_offset;
-    char *pix_buffer;
-    Unit_Lib_Entry *unit;
-    int best_ground = 0,
-        best_air = 0,
-        best_sea = 0; /* used to relativate evaluations */
-    List *entries, *flags;
-    PData *pd, *sub, *subsub;
-    string path;
-    string str, flag;
-    string domain = 0;
-    float scale;
-    /* log info */
-    int  log_dot_limit = 40; /* maximum of dots */
-    int  log_dot_count = 0; /* actual number of dots displayed */
-    int  log_units_per_dot = 0; /* number of units a dot represents */
-    int  log_unit_count = 0; /* if > units_per_dot a new dot is added */
-    string log_str;
-    /* there can be only one main library */
-    if ( main == UNIT_LIB_MAIN && unit_lib_main_loaded ) {
-        fprintf( stderr, tr("%s: can't load as main unit library (which is already loaded): loading as 'additional' instead\n"),
-                 fname );
-        main = UNIT_LIB_ADD;
-    }
-    /* parse file */
-    sprintf( path, "%s/units/%s", get_gamedir(), fname );
-    sprintf( log_str, tr("  Parsing '%s'"), fname );
-    write_line( sdl.screen, log_font, log_str, log_x, &log_y ); refresh_screen( 0, 0, 0, 0 );
-    if ( ( pd = parser_read_file( fname, path ) ) == 0 ) goto parser_failure;
-    domain = determine_domain(pd, fname);
-    locale_load_domain(domain, 0/*FIXME*/);
-    /* if main read target types & co */
-
-            ...
-            
-    /* unit lib entries */
-    if ( !parser_get_entries( pd, "unit_lib", &entries ) ) goto parser_failure;
-      /* LOG INIT */
-      log_units_per_dot = entries.count / log_dot_limit;
-      log_dot_count = 0;
-      log_unit_count = 0;
-      /* (LOG) */
-    list_reset( entries );
-    while ( ( sub = list_next( entries ) ) ) {
-...
-        /* icon */
-        /* icon id */
-        if ( !parser_get_int( sub, "icon_id", &icon_id ) ) goto parser_failure;
-        /* icon_type */
-        unit.icon_type = icon_type;
-        /* get position and size in icons surface */
-        unit_get_icon_geometry( icon_id, icons, &width, &height, &offset, &color_key );
-        /* picture is copied from unit_pics first
-         * if picture_type is not ALL_DIRS, picture is a single picture looking to the right;
-         * add a flipped picture looking to the left 
-         */
-        if ( unit.icon_type == UNIT_ICON_ALL_DIRS ) {
-            unit.icon = create_surf( width * 6, height, SDL_SWSURFACE );
-            unit.icon_w = width;
-            unit.icon_h = height;
-            FULL_DEST( unit.icon );
-            SOURCE( icons, 0, offset );
-            blit_surf();
-            /* remove measure dots */
-            set_pixel( unit.icon, 0, 0, color_key );
-            set_pixel( unit.icon, 0, unit.icon_h - 1, color_key );
-            set_pixel( unit.icon, unit.icon_w - 1, 0, color_key );
-            /* set transparency */
-            SDL_SetColorKey( unit.icon, SDL_SRCCOLORKEY, color_key );
-        }
-        else {
-            /* set size */
-            unit.icon_w = width;
-            unit.icon_h = height;
-            /* create pic and copy first pic */
-            unit.icon = create_surf( unit.icon_w * 2, unit.icon_h, SDL_SWSURFACE );
-            DEST( unit.icon, 0, 0, unit.icon_w, unit.icon_h );
-            SOURCE( icons, 0, offset );
-            blit_surf();
-            /* remove measure dots */
-            set_pixel( unit.icon, 0, 0, color_key );
-            set_pixel( unit.icon, 0, unit.icon_h - 1, color_key );
-            set_pixel( unit.icon, unit.icon_w - 1, 0, color_key );
-            /* set transparency */
-            SDL_SetColorKey( unit.icon, SDL_SRCCOLORKEY, color_key );
-            /* get format info */
-            byte_size = icons.format.BytesPerPixel;
-            y_offset = 0;
-            pix_buffer = calloc( byte_size, sizeof( char ) );
-            /* get second by flipping first one */
-            for ( j = 0; j < unit.icon_h; j++ ) {
-                for ( i = 0; i < unit.icon_w; i++ ) {
-                    memcpy( pix_buffer,
-                            unit.icon.pixels +
-                            y_offset +
-                            ( unit.icon_w - 1 - i ) * byte_size,
-                            byte_size );
-                    memcpy( unit.icon.pixels +
-                            y_offset +
-                            unit.icon_w * byte_size +
-                            i * byte_size,
-                            pix_buffer, byte_size );
-                }
-                y_offset += unit.icon.pitch;
-            }
-            /* free mem */
-            free( pix_buffer );
-        }
-        scale = 1.5;
-        unit.icon_tiny = create_surf( unit.icon.w * ( 1.0 / scale ), unit.icon.h * ( 1.0 / scale ), SDL_SWSURFACE );
-        unit.icon_tiny_w = unit.icon_w * ( 1.0 / scale ); unit.icon_tiny_h = unit.icon_h * ( 1.0 / scale );
-        for ( j = 0; j < unit.icon_tiny.h; j++ ) {
-            for ( i = 0; i < unit.icon_tiny.w; i++ )
-                set_pixel( unit.icon_tiny,
-                           i, j, 
-                           get_pixel( unit.icon, scale * i, scale * j ) );
-        }
-        /* use color key of 'big' picture */
-        SDL_SetColorKey( unit.icon_tiny, SDL_SRCCOLORKEY, color_key );
-        /* read sounds -- well as there are none so far ... */
-#if WITH_SOUND
-        if ( parser_get_value( sub, "move_sound", &str, 0 ) ) {
-            // FIXME reloading the same sound more than once is a
-            // big waste of loadtime, runtime, and memory
-            if ( ( unit.wav_move = wav_load( str, 0 ) ) )
-                unit.wav_alloc = 1;
-            else {
-                unit.wav_move = mov_types[unit.mov_type].wav_move;
-                unit.wav_alloc = 0;
-            }
-        }
-        else {
-            unit.wav_move = mov_types[unit.mov_type].wav_move;
-            unit.wav_alloc = 0;
-        }
-#endif      
-        /* add unit to database */
-        list_add( unit_lib, unit );
-        /* absolute evaluation */
-        unit_lib_eval_unit( unit );
-        /* LOG */
-        log_unit_count++;
-        if ( log_unit_count >= log_units_per_dot ) {
-            log_unit_count = 0;
-            if ( log_dot_count < log_dot_limit ) {
-                log_dot_count++;
-                strcpy( log_str, "  [                                        ]" );
-                for ( i = 0; i < log_dot_count; i++ )
-                    log_str[3 + i] = '*';
-                write_text( log_font, sdl.screen, log_x, log_y, log_str, 255 );
-                SDL_UpdateRect( sdl.screen, log_font.last_x, log_font.last_y, log_font.last_width, log_font.last_height );
-            }
-        }
-    }
-    parser_free( &pd );
-    /* LOG */
-    write_line( sdl.screen, log_font, log_str, log_x, &log_y ); refresh_screen( 0, 0, 0, 0 );
-    /* relative evaluate of units */
-    list_reset( unit_lib );
-    while ( ( unit = list_next( unit_lib ) ) ) {
-        if ( unit.flags & FLYING )
-            best_air = MAXIMUM( unit.eval_score, best_air );
-        else {
-            if ( unit.flags & SWIMMING )
-                best_sea = MAXIMUM( unit.eval_score, best_sea );
-            else
-                best_ground = MAXIMUM( unit.eval_score, best_ground );
-        }
-    }
-    list_reset( unit_lib );
-    while ( ( unit = list_next( unit_lib ) ) ) {
-        unit.eval_score *= 1000;
-        if ( unit.flags & FLYING )
-            unit.eval_score /= best_air;
-        else {
-            if ( unit.flags & SWIMMING )
-                unit.eval_score /= best_sea;
-            else
-                unit.eval_score /= best_ground;
-        }
-    }
-    free(domain);
-    SDL_FreeSurface(icons);
-    return 1;
-parser_failure:        
-    fprintf( stderr, "%s\n", parser_get_error() );
-failure:
-    unit_lib_delete();
-    if ( pd ) parser_free( &pd );
-    free(domain);
-    SDL_FreeSurface(icons);
-    return 0;
-#endif
-        }
-#endif
+		
+		public int UnitLibLoad(string fname){
+			string path = "Assets/Resources/DB/"+fname;
+			try{
+				XmlSerializer SerializerObj = new XmlSerializer(typeof(Unit_Lib_Entry));
+        		// Create a new file stream for reading the XML file
+        		FileStream ReadFileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        		// Load the object saved above by using the Deserialize function
+        		Unit_Lib_Entry LoadedObject = (Unit_Lib_Entry)SerializerObj.Deserialize(ReadFileStream);
+				ReadFileStream.Close();
+				this.ammo = LoadedObject.ammo;
+				this.atks = LoadedObject.atks;
+				this.atk_count = LoadedObject.atk_count;
+				this.def_air = LoadedObject.def_air;
+				this.def_cls = LoadedObject.def_cls;
+				this.def_grnd = LoadedObject.def_grnd;
+				this.end_year = LoadedObject.end_year;
+				this.entr_rate = LoadedObject.entr_rate;
+				this.eval_score = LoadedObject.eval_score;
+				this.flags = LoadedObject.flags;
+				this.fuel = LoadedObject.fuel;
+				this.icon = SDL_Surface.LoadSurface(LoadedObject.icon_img_name,true);
+				this.icon_h = LoadedObject.icon_h;
+				this.icon_tiny = SDL_Surface.LoadSurface(LoadedObject.icon_tiny_img_name,true);
+				this.icon_tiny_h = LoadedObject.icon_tiny_h;
+				this.icon_tiny_w = LoadedObject.icon_tiny_w;
+				this.icon_type = LoadedObject.icon_type;
+				this.icon_w = LoadedObject.icon_w;
+				this.id = LoadedObject.id;
+				this.ini = LoadedObject.ini;
+				this.mov = LoadedObject.mov;
+				this.mov_type = LoadedObject.mov_type;
+				this.mov_types = LoadedObject.mov_types;
+				this.mov_type_count = LoadedObject.mov_type_count;
+				this.name = LoadedObject.name;
+				this.rng = LoadedObject.rng;
+				this.spt = LoadedObject.spt;
+				this.start_month = LoadedObject.start_month;
+				this.start_year = LoadedObject.start_year;
+				this.trgt_type = LoadedObject.trgt_type;
+				this.trgt_types = LoadedObject.trgt_types;
+				this.trgt_type_count = LoadedObject.trgt_type_count;
+				this.unit_class = LoadedObject.unit_class;
+				this.unit_classes = LoadedObject.unit_classes;
+				this.unit_class_count = LoadedObject.unit_class_count;
+				this.unit_info_icons = new Unit_Info_Icons();
+				this.unit_info_icons.atk = SDL_Surface.LoadSurface(LoadedObject.unit_info_icons.atk_img_name,true);
+				this.unit_info_icons.guard = SDL_Surface.LoadSurface(LoadedObject.unit_info_icons.guard_img_name,true);
+				this.unit_info_icons.mov = SDL_Surface.LoadSurface(LoadedObject.unit_info_icons.mov_img_name,true);
+				this.unit_info_icons.str = SDL_Surface.LoadSurface(LoadedObject.unit_info_icons.str_img_name,true);
+				this.unit_info_icons.str_h = LoadedObject.unit_info_icons.str_h;
+				this.unit_info_icons.str_w = LoadedObject.unit_info_icons.str_w;
+				this.unit_lib = LoadedObject.unit_lib;
+				this.unit_lib_main_loaded = true;
+				
+				return 0;
+			}catch(Exception ex){
+				Debug.LogError("exception: "+ex.Message);
+				return -1;
+			}
+			
+		}
 
         /*
         ====================================================================
