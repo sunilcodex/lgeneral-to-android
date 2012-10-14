@@ -73,14 +73,15 @@ namespace Engine
     /// </summary>
     public sealed class Engine
     {
-#if TODO_RR
+
         public static Setup setup = DB.setup;
         public static STATUS status = DB.status;                    /* statuses defined in engine_tools.h */
 		public static Scenario scen = DB.scen;
+#if TODO_RR
         public static campaign camp = DB.camp;
-        public static Terrain terrain = DB.Terrain;
-        public static Map map = DB.map;
 #endif
+        public static Terrain terrain = DB.terrain;
+        public static Map map = DB.map;
         public static bool term_game = false;
 #if TODO_RR
         public static Bitmap Sdl_screen;
