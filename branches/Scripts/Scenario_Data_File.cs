@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using Engine;
@@ -69,6 +69,7 @@ namespace DataFile
             }
         }
         public Player player;
+		public Map map;
 
         public void scenTOscen_data(string nationdbname, string unitdbname) {
             this.scen_info = Scenario.scen_info;
@@ -76,6 +77,9 @@ namespace DataFile
             this.unit_db_name = unitdbname;
             this.unitsToAdd = Scenario.unitsToAdd;
             this.map_fname = Scenario.map_fname;
+			if (string.IsNullOrEmpty(this.map_fname)){
+				this.map = Scenario.mapScen;
+			}
             this.weather = Scenario.weather;
             this.list_flags = Scenario.list_flags;
             this.list_players = Player.players;
@@ -84,21 +88,10 @@ namespace DataFile
             this.vconds = Scenario.vconds;
             this.player = Scenario.player;
             this.units = Scenario.units;
-        }
-
-        public void scen_dataTOscen() {
-            Scenario.scen_info = this.scen_info;
-            Scenario.map_fname = this.map_fname;
-            Scenario.unitsToAdd = this.unitsToAdd;
-            Scenario.weather = this.weather;
-            Scenario.vcond_check_type = this.vcond_check_type;
-            Scenario.vcond_count = this.vcond_count;
-            Scenario.vconds = this.vconds;
-            Scenario.units = this.units;
-            Scenario.player = this.player;
-            Player.players = this.list_players;
-            Scenario.units = this.units;
-            Scenario.list_flags = this.list_flags;
+			 foreach (Unit ubase in this.units){
+                ubase.name = ubase.DeleteOrdinal(ubase.name);
+            }
+			
         }
     }
 }
