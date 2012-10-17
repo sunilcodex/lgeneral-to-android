@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using Engine;
+using EngineA;
 using UnityEngine;
 using System.IO;
 
@@ -305,7 +305,13 @@ namespace DataFile
             return null;
         }
 
-
+		public Unit_Lib_Entry unit_lib_find_by_name(string name)
+        {
+            foreach (Unit_Lib_Entry entry in unit_lib)
+                if (entry.name == name)
+                    return entry;
+            return null;
+        }
         /*
         ====================================================================
         Target types, movement types, unit classes
