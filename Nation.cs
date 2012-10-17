@@ -14,7 +14,7 @@ using UnityEngine;
 using System.IO;
 using DataFile;
 
-namespace Engine
+namespace EngineA
 {
     /// <summary>
     /// A nation provides a full name and a flag icon for units
