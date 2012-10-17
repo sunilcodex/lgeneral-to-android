@@ -6,7 +6,7 @@ using Miscellaneous;
 using System.IO;
 using UnityEngine;
 
-namespace Engine
+namespace EngineA
 {
 	[Serializable]
     public class Way_Point
