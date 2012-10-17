@@ -5,14 +5,14 @@ using System;
 using System.Xml;
 using System.IO;
 using System.Xml.Serialization;
-using Engine;
+using EngineA;
 using Miscellaneous;
 
 public class GUIMap : MonoBehaviour
 {
 	
 	public GameObject hexPrefab;
-	public string mapname;
+	public string scen_name;
 	
 	private bool IsEven (int number)
 	{
@@ -39,25 +39,18 @@ public class GUIMap : MonoBehaviour
 				Hexagon hexScript = hex.GetComponent(typeof(Hexagon)) as  Hexagon;
 				hexScript.actualTexture = map.map[j,i].strat_image_offset;
 				hexScript.maxTextures = TextureTable.GetMaxTextureOf (map.map[j,i].terrain.name.ToLower());
-				SDL_Surface sdl = SDL_Surface.LoadSurface("Textures/terrain/"+map.map[j,i].terrain.name.ToLower(),false);
-				hex.renderer.sharedMaterial = sdl.bitmapMaterial;
+				hex.renderer.sharedMaterial =  map.map[j,i].terrain.images[0].bitmapMaterial;
 			}
 		}
 	}
 
 	void Awake ()
 	{
-		
-		XmlSerializer SerializerObj = new XmlSerializer (typeof(Map));
-		// Create a new file stream for reading the XML file
-		FileStream ReadFileStream = new FileStream ("Assets/Maps/" + mapname + ".xml", 
-									FileMode.Open, FileAccess.Read, FileShare.Read);
-		// Load the object saved above by using the Deserialize function
-		Map LoadedObj = (Map)SerializerObj.Deserialize (ReadFileStream);
-		LoadedObj.isLoaded = true;
-		// Cleanup
-		ReadFileStream.Close ();
-		MakeMap(LoadedObj);
+		if (string.IsNullOrEmpty(scen_name)){
+			throw new Exception("name of scenario not found");
+		}
+		Scenario.scen_load(scen_name);
+		MakeMap(Engine.map);
 	}
 	
 	// Use this for initialization
