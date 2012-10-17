@@ -8,7 +8,13 @@ using System.Collections;
 		private bool[] toogleBool = {true,false,false,false};
 		private int activeToogle = 0;
 		private int selGridInt = 0;
-		private string[] selStrings = new string[] {"Campaign", "Scenario", "Load Game", "Replay Game", "Online Game"};
+		private int selCampaign = 0;
+		private string[] campaigns = new string[] {"1939\nGermany launches a series of blizkrieg attacks in Europe, beggining with Poland",
+												   "1941 West\nHungry for the oil of the Middle East, the Axis moves through North Africa",
+												   "1941 East\nIn the greatest invasion of history, the Axis strikes into the Soviet Union",
+												   "1943 West\nThe Axis must defend the soft underbelly of Europe from the Allies",
+												   "1943 East\nOverextended Soviet forces, the Axis tries to regain the initiative in the East"};
+		private string[] selOption = new string[] {"Campaign", "Scenario", "Load Game", "Replay Game", "Online Game"};
 	
 		void OnGUI ()
 		{
@@ -35,7 +41,7 @@ using System.Collections;
 		int rButtonWithGrid ()
 		{
 		
-			return GUILayout.SelectionGrid (selGridInt, selStrings, 5); 
+			return GUILayout.SelectionGrid (selGridInt, selOption, 5); 
 			//DoUpdRButtons();
 			
 		}
@@ -46,11 +52,11 @@ using System.Collections;
 			GUILayout.Label ("Rotulo");
 			GUILayout.Space (20);
 			selGridInt = rButtonWithGrid ();
-			GUI.Box (new Rect(10,100,480,325),"Panel con Botones");	
+			GUI.Box (new Rect(10,100,480,325),"");	
 			switch(selGridInt)
 			{
 				case 0:
-					//TODO_RR insertar codigo para GUI de campaña
+					selCampaign = GUI.SelectionGrid(new Rect(10,150,480,220),selCampaign,campaigns,1);
 					break;
 				case 1:
 					//TODO_RR insertar codigo para GUI de escenario
