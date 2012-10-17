@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Xml.Serialization;
 
-namespace Engine
+namespace EngineA
 {
     [Serializable]
     public class Flag
