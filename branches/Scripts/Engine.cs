@@ -13,7 +13,7 @@ using System.Text;
 using System.Collections.Generic;
 using DataFile;
 
-namespace Engine
+namespace EngineA
 {
     /* ACTION */
     public enum STATUS
