@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using DataFile;
 
-namespace Engine
+namespace EngineA
 {
     /// <summary>
     /// Embark types for a unit.
@@ -82,8 +82,8 @@ namespace Engine
         public int x, y;                   /* map position */
         public int str;                    /* strength */
         public int entr;                   /* entrenchment */
+		[XmlIgnore]
         public int exp;                    /* experience */
-        [XmlIgnore]
         public int exp_level;              /* exp level computed from exp */
         public int delay;                  /* delay in turns before unit becomes avaiable
 	                                   as reinforcement */
@@ -216,7 +216,16 @@ namespace Engine
         {
             this.name = Ordinal(number) + " " + stem;
         }
-
+		
+		public string DeleteOrdinal(string name){
+			string str ="";
+			string[] aux = name.Split();
+			for (int i=1; i<aux.Length-1; i++){
+				str = str + aux[i]+" ";
+			}
+			str = str + aux[aux.Length-1];
+			return str;
+		}
         protected static string Ordinal(int number)
         {
             string suffix = String.Empty;
