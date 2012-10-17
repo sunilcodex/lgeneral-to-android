@@ -13,7 +13,7 @@ using System;
 //TODO_RR using System.Drawing.Drawing2D;
 //TODO_RR using System.Drawing.Imaging;
 
-namespace Engine
+namespace EngineA
 {
     /// <summary>
     /// a dummy SDL_Surface.
