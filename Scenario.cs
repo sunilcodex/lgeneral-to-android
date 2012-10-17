@@ -6,7 +6,7 @@ using DataFile;
 using UnityEngine;
 using Miscellaneous;
 
-namespace Engine
+namespace EngineA
 {
     /*
     ====================================================================
@@ -155,7 +155,7 @@ namespace Engine
 			try
             {
 				
-				string path = "Assets/Scenarios/"+fname+".xml";
+				string path = "Assets/Scenarios/"+fname;
 				XmlSerializer SerializerObj = new XmlSerializer(typeof(Scenario_Data_File));
 				// Create a new file stream for reading the XML file
         		FileStream ReadFileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
