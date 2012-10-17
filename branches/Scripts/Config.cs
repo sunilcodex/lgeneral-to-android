@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 namespace Miscellaneous
@@ -36,6 +36,10 @@ namespace Miscellaneous
         public static int sound_volume;
         public static int music_on;
         public static int music_volume;
+		public static int hex_w = 60;
+		public static int hex_h = 50;
+		public static int hex_x_offset = 45;
+		public static int hex_y_offset = 25;
 
 #if TODO_RR
         public static void check_config_dir_name()
