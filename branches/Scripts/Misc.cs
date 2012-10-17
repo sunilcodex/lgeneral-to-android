@@ -4,14 +4,14 @@
  * Fecha: 12/01/2009
  * Hora: 13:38
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÛn | Editar Encabezados Est·ndar
+ * Para cambiar esta plantilla use Herramientas | Opciones | Codificaci√≥n | Editar Encabezados Est√°ndar
  */
 
 using System;
 
 namespace Miscellaneous
 {
-	using Engine;
+	using EngineA;
 
     /// <summary>
     /// Description of Misc.
