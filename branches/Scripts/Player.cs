@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using DataFile;
 using System.Xml.Serialization;
 
-namespace Engine
+namespace EngineA
 {
     public delegate void AiInit();
     public delegate bool AiRun();
