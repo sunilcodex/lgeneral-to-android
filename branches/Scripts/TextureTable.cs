@@ -1,4 +1,5 @@
 using System;
+using DataFile;
 
 namespace Miscellaneous
 {
@@ -38,6 +39,26 @@ namespace Miscellaneous
 				return -1;
 			}
 		
+		}
+		
+		public static int elegirImgTex(int num, string name){
+			int numr =0;
+			if (name=="mountain" && num<=39){
+				numr= 1;
+			}
+			else if (name=="mountain" && num>39){
+				numr= 2;
+			}
+			return numr;
+		}
+		
+		public static int elegirImgUnit(Unit_Lib_Entry unit){
+			if (unit.offset_img<=2490){
+				return 1;
+			}
+			else{
+				return 2;
+			}
 		}
 	}
 }
