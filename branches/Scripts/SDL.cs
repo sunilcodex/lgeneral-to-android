@@ -24,7 +24,6 @@ namespace EngineA
         public Texture2D bitmap;
         //TODO_RR public System.Drawing.Graphics surf;
         public string name;
-		public Material bitmapMaterial;
 
         public SDL_Surface()
         {
@@ -55,9 +54,6 @@ namespace EngineA
 
         public static SDL_Surface LoadSurface(string fname, bool applyTransparency)
         {
-#if TODO_RR
-			Falta aplicar la transparencia
-#endif
 			SDL_Surface sdl = new SDL_Surface();
             try
             {
@@ -65,7 +61,12 @@ namespace EngineA
                 if (fname != null)
                 {
 					sdl.bitmap = Resources.Load(fname) as Texture2D;
+					sdl.w = sdl.bitmap.width;
+					sdl.h = sdl.bitmap.height;
                     sdl.name = fname;
+					sdl.w = sdl.bitmap.width;
+					sdl.h = sdl.bitmap.height;
+#if TODO_RR
 					if (applyTransparency){
 						
 						sdl.bitmapMaterial = new Material(Shader.Find("Transparent/Diffuse"));
@@ -75,12 +76,13 @@ namespace EngineA
 						sdl.bitmapMaterial = new Material(Shader.Find("Diffuse"));
 						sdl.bitmapMaterial.mainTexture = sdl.bitmap;
 					}
+#endif
                 }
                 return sdl;
             }
             catch (Exception e)
             {
-				Debug.LogError(e.Message);
+				Debug.LogError("error trying to load and create a Texture2D " + fname);
                 return sdl;
                 //throw e;
             }
@@ -109,15 +111,36 @@ namespace EngineA
             return sur;
         }
 #endif
-#if TODO_RR
-        public static void full_copy_image(SDL_Surface dest, SDL_Surface src, int xpos, int ypos)
+        public static void full_copy_image(SDL_Surface dest, SDL_Surface src)
         {
-            Graphics graphic = Graphics.FromImage(dest.bitmap);
-            graphic.DrawImage(src.bitmap, 0, 0, new Rectangle(xpos, ypos, dest.w, dest.h), GraphicsUnit.Pixel);
+			if (src==null || dest==null)
+				throw new Exception("the source or destination image is null");
+			try{
+				Texture2D nueva = new Texture2D(src.w,src.h);
+				for (int i=0;i<src.w;i++){
+					for (int j=0; j<src.h;j++){
+						Color c = src.bitmap.GetPixel(i,j);
+						nueva.SetPixel(i,j,c);
+					}
+				}
+				nueva.Apply();
+				dest = new SDL_Surface();
+				dest.bitmap = nueva;
+				dest.w = src.w;
+				dest.h = src.h;
+				dest.name = src.name;	
+				
+			}
+			catch(Exception e){
+				Debug.LogError("Problems with the copy of image: " + e.Message);
+			}
+            	
+						
+			
         }
 
         //TODO_RR static ImageAttributes imageAttr = new ImageAttributes();
-#endif
+		
 #if TODO_RR
         public static void set_alpha(int alpha)
         {
@@ -139,17 +162,27 @@ namespace EngineA
             imageAttr.SetColorMatrix(myColorMatrix);
         }
 #endif
-#if TODO_RR
-        public static void copy_image(SDL_Surface dest, int xdest, int ydest, int w, int h, SDL_Surface src, int xsrc, int ysrc)
+
+        public static void copy_image(SDL_Surface dest, int w, int h, SDL_Surface src, int xsrc, int ysrc)
         {
-            Graphics graphic;
-            if (dest.surf != null && dest.bitmap == null)
-                graphic = dest.surf;
-            else
-                graphic = Graphics.FromImage(dest.bitmap);
-            graphic.DrawImage(src.bitmap, xdest, ydest, new Rectangle(xsrc, ysrc, w, h), GraphicsUnit.Pixel);
+			if (src==null || dest==null)
+				throw new Exception("the source or destination image is null");
+			try{
+				Color[] pixels = src.bitmap.GetPixels(xsrc,ysrc,w,h);
+				Texture2D tex = new Texture2D (w, h,TextureFormat.RGB24, false);
+				tex.SetPixels (pixels);
+				tex.Apply ();
+				dest.bitmap = tex;
+				dest.w = w;
+				dest.h = h;
+				dest.name = src.name;
+			}
+			catch(Exception e){
+				Debug.LogError("Problems with the copy of image: " + e.Message);
+			}
+            
         }
-#endif
+
 #if TODO_RR
         public static void copy_image(SDL_Surface dest, int xdest, int ydest,
                                        int w, int h, SDL_Surface src, int xsrc, int ysrc, int alpha)
@@ -170,22 +203,32 @@ namespace EngineA
             graphic.DrawImage(src.bitmap, xdest, ydest, new Rectangle(xsrc, ysrc, w, h), GraphicsUnit.Pixel);
         }
 #endif
-#if TODO_RR
-        public static void copy_image180(SDL_Surface dest, int xdest, int ydest, int w, int h, SDL_Surface src, int xsrc, int ysrc)
-        {
-            Graphics graphic;
-            if (dest.surf != null && dest.bitmap == null)
-                graphic = dest.surf;
-            else
-                graphic = Graphics.FromImage(dest.bitmap);
-            Image img = new Bitmap(w, h);
-            Graphics g = Graphics.FromImage(img);
-            g.DrawImage(src.bitmap, 0, 0, new Rectangle(xsrc, ysrc, w, h), GraphicsUnit.Pixel);
 
-            img.RotateFlip(RotateFlipType.RotateNoneFlipX);
-            graphic.DrawImage(img, xdest, ydest, new Rectangle(0, 0, w, h), GraphicsUnit.Pixel);
+        public static void copy_image180(SDL_Surface dest, SDL_Surface src)
+        {
+			if (src==null || dest==null)
+				throw new Exception("the source or destination image is null");
+			try{
+				Texture2D nueva = new Texture2D(src.w,src.h);
+				for (int i=0;i<src.w;i++){
+					for (int j=0; j<src.h;j++){
+						Color c = src.bitmap.GetPixel(i,j);
+						nueva.SetPixel(src.w-i-1,j,c);
+					}
+				}
+				nueva.Apply();
+				dest = new SDL_Surface();
+				dest.bitmap = nueva;
+				dest.w = src.w;
+				dest.h = src.h;
+				dest.name = src.name;
+			}
+			catch (Exception e){
+				Debug.LogError("Problems with the rotate of image: " + e.Message);
+			}
+            
         }
-#endif
+
 #if TODO_RR
         public static void SDL_SetColorKey(SDL_Surface dest, int color_key)
         {
