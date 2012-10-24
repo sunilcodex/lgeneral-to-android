@@ -41,12 +41,12 @@ namespace Miscellaneous
 		
 		}
 		
-		public static int elegirImgTex(int num, string name){
+		public static int elegirImgTex(int num){
 			int numr =0;
-			if (name=="mountain" && num<=39){
+			if (num<=39){
 				numr= 1;
 			}
-			else if (name=="mountain" && num>39){
+			else if (num>39){
 				numr= 2;
 			}
 			return numr;
