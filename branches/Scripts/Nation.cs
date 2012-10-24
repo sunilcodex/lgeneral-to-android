@@ -100,7 +100,20 @@ namespace EngineA
             }
             
 		}
-
+		
+#if TODO_RR
+		public static void nationstofile(){
+			for (int i=0; i<nations.Length;i++){
+				Debug.Log(nations[i].name+" "+nations[i].flag_offset);
+				SDL_Surface dest = new SDL_Surface();
+				SDL_Surface.copy_image(dest,Nation.nation_flag_width,
+					Nation.nation_flag_height,Nation.nation_flags,0,
+					(Nation.nation_flags.h-nations[i].flag_offset-Nation.nation_flag_height),false);
+				byte[] bytes = dest.bitmap.EncodeToPNG();
+				File.WriteAllBytes(Application.dataPath + "/../Imagenes/"+nations[i].name+".png", bytes);
+			}
+		}
+#endif
         /// <summary>
         /// Delete nations.
         /// </summary>
@@ -153,24 +166,15 @@ namespace EngineA
             NATION_DRAW_FLAG_NORMAL = 0,
             NATION_DRAW_FLAG_OBJ
         }
-#if TODO_RR
-        public static void nation_draw_flag(Nation nation, SDL_Surface surf, int x, int y, bool isObj)
+
+        public static void nation_draw_flag(Nation nation, SDL_Surface surf)
         {
-            if (isObj)
-            {
-                //SDL_Surface.copy_image(surf, x, y, nation_flag_width, nation_flag_height,
-                //DEST(surf, x, y, nation_flag_width, nation_flag_height);
-                //fill_surf(0xffff00);
-                SDL_Surface.copy_image(surf, x + 1, y + 1, nation_flag_width - 2, nation_flag_height - 2,
-                    nation_flags, 1, nation.flag_offset + 1);
-            }
-            else
-            {
-                SDL_Surface.copy_image(surf, x, y, nation_flag_width, nation_flag_height,
-                                       nation_flags, 0, nation.flag_offset);
-            }
+			if (surf==null){
+				throw new Exception("the Surface is null");
+			}
+            SDL_Surface.copy_image(surf,Nation.nation_flags,20,1,Nation.nation_flag_width,
+									Nation.nation_flag_height,0,(Nation.nation_flags.h-nation.flag_offset-Nation.nation_flag_height));
         }
-#endif
 
         /*
 		====================================================================
