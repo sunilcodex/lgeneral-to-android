@@ -217,7 +217,7 @@ namespace EngineA
             this.name = Ordinal(number) + " " + stem;
         }
 		
-		public string DeleteOrdinal(string name){
+		public static string DeleteOrdinal(string name){
 			string str ="";
 			string[] aux = name.Split();
 			for (int i=1; i<aux.Length-1; i++){
