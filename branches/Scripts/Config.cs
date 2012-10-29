@@ -40,7 +40,7 @@ namespace Miscellaneous
 		public static int hex_h = 50;
 		public static int hex_x_offset = 45;
 		public static int hex_y_offset = 25;
-
+		public static string pathTexTerrain = "Textures/terrain/";
 #if TODO_RR
         public static void check_config_dir_name()
         {
