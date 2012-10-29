@@ -11,16 +11,9 @@ public class GUIMap : MonoBehaviour
 	
 	public GameObject hexPrefab;
 	public string scen_name;
-	private string pathTexTerrain = "Textures/terrain/";
 	
-	private bool IsEven (int number)
-	{
-		if (number % 2 == 0) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+	
+	
 	
 	private void MakeMap (Map map)
 	{
@@ -28,7 +21,7 @@ public class GUIMap : MonoBehaviour
 		for (int i=0; i<map.map_h; i++) {
 			for (int j=0; j<map.map_w; j++) {
 				GameObject hex;
-				if (IsEven (j)) {
+				if (Misc.IsEven (j)) {
 					//hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * 1.5f, 0, -Mathf.Sqrt (3) * i), Quaternion.identity);
 					hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * Config.hex_x_offset, 0, 
 													-Config.hex_h * i), Quaternion.identity);
@@ -40,41 +33,19 @@ public class GUIMap : MonoBehaviour
 				}
 				//put hex as child of map
 				hex.transform.parent = this.gameObject.transform;
-				AddTextureTerrain (hex, map.map [j, i]);
-				
-#if TODO_RR
-				
-				Hexagon hexScript = hex.GetComponent (typeof(Hexagon)) as  Hexagon;
-				//Load texture terrain
-				hexScript.actualTexture = map.map [j, i].strat_image_offset;
-				hexScript.maxTextures = TextureTable.GetMaxTextureOf (map.map [j, i].terrain.name.ToLower ());
-				if (map.map [j, i].terrain.name.ToLower () == "mountain") {
-					int numT = TextureTable.elegirImgTex (map.map [j, i].strat_image_offset, "mountain");
-					string path = pathTexTerrain + map.map [j, i].terrain.name.ToLower () + numT;
-					SDL_Surface sdl = SDL_Surface.LoadSurface (path, false);
-					hex.renderer.material = sdl.bitmapMaterial;
-				} else {
-					string path = pathTexTerrain + map.map [j, i].terrain.name.ToLower ();
-					SDL_Surface sdl = SDL_Surface.LoadSurface (path, false);
-					hex.renderer.material = sdl.bitmapMaterial;
+				//TODO_RR AddTextureTerrain (hex, map.map [j, i]);
+				SDL_Surface hexTex;
+				//Draw Terrain
+				hexTex = map.map_draw_terrain(j,i);
+				if (map.map [j, i].g_unit!=null || map.map [j, i].a_unit!=null){
+					hexTex = map.map_draw_units(hexTex,j,i,false);
 				}
-				
-
-				//Add texture Unit
-				if (map.map[j,i].g_unit!=null){
-					AddTextureUnit(map.map[j,i].g_unit.name, hex);
-				}
-				//Add texture flag
-				if (map.map[j,i].nation!=null){
-					AddTextureFlag(map.map[j,i].nation,hex);
-				}
-				
-#endif
+				hex.renderer.material.mainTexture = hexTex.bitmap;
 				
 			}
 		}
 	}
-
+#if TODO_RR
 	private void AddTextureTerrain (GameObject hex, Map_Tile tile)
 	{
 		int offset;
@@ -106,16 +77,7 @@ public class GUIMap : MonoBehaviour
 		
 	}
 
-	private void AddTextureUnit (string unit_name, GameObject hex)
-	{
-		List<Material> materials = new List<Material> ();
-		Material[] aux = hex.renderer.sharedMaterials;
-		for (int i=0; i<aux.Length; i++) {
-			materials.Add (aux [i]);
-		}
-		Unit_Lib_Entry unit_lib = DB.UnitLib;
-		Unit_Lib_Entry unit_aux = unit_lib.unit_lib_find_by_name (Unit.DeleteOrdinal (unit_name));
-	}
+#endif
 
 	void Awake ()
 	{
