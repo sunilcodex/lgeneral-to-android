@@ -67,15 +67,36 @@ namespace EngineA
                     sdl.name = fname;
 					sdl.w = sdl.bitmap.width;
 					sdl.h = sdl.bitmap.height;
+#if TODO_RR
 					if (applyTransparency){
-						
-						sdl.bitmapMaterial = new Material(Shader.Find("Transparent/Diffuse"));
+						Color[] c = sdl.bitmap.GetPixels();
+						for (int i=0; i<c.Length; i++){
+							if (c[i]==Color.black){
+								c[i].b = c[i].b;
+								c[i].r = c[i].r;
+								c[i].g = c[i].g;
+								c[i].a = 0;
+								
+							}
+							else{
+								c[i].b = c[i].b;
+								c[i].r = c[i].r;
+								c[i].g = c[i].g;
+								c[i].a = 1;
+							}
+						}
+						sdl.bitmap.SetPixels(c);
+						sdl.bitmap.Apply();
+						sdl.bitmapMaterial = new Material(Shader.Find("Transparent/Cutout/Diffuse"));
 						sdl.bitmapMaterial.mainTexture = sdl.bitmap;
 					}
 					else{
 						sdl.bitmapMaterial = new Material(Shader.Find("Diffuse"));
 						sdl.bitmapMaterial.mainTexture = sdl.bitmap;
 					}
+#endif
+					sdl.bitmapMaterial = new Material(Shader.Find("Diffuse"));
+					sdl.bitmapMaterial.mainTexture = sdl.bitmap;
                 }
                 return sdl;
             }
@@ -111,6 +132,7 @@ namespace EngineA
             return sur;
         }
 #endif
+		
         public static void full_copy_image(SDL_Surface dest, SDL_Surface src)
         {
 			if (src==null || dest==null)
@@ -239,13 +261,73 @@ namespace EngineA
 				Debug.LogError("Problems with the copy: "+ e.Message);
 			}
 		}
+		
+		public static void copy_image_without_key(SDL_Surface dest,SDL_Surface src,int xdest, 
+												  int ydest,Color key){
+			try{
+				for (int i=0; i<src.w;i++){
+					for (int j=0; j<src.h;j++){
+						Color c = src.bitmap.GetPixel(i,j);
+						if (c!=key){
+							dest.bitmap.SetPixel(xdest+i,ydest+j,c);
+						}
+					}
+				}
+				dest.bitmap.Apply();
+			}
+			catch(Exception e){
+				Debug.LogError(e.Message);
+			}
+			
+		}
+		
+		public static void putPixelBlack(SDL_Surface surf){
+			try{
+				surf.bitmap.SetPixel(0,0,Color.black);
+				surf.bitmap.SetPixel(surf.bitmap.width,surf.bitmap.height-1,Color.black);
+				surf.bitmap.SetPixel(surf.bitmap.width,surf.bitmap.height-2,Color.black);
+				surf.bitmap.SetPixel(surf.bitmap.width-1,surf.bitmap.height-1,Color.black);
+				surf.bitmap.SetPixel(surf.bitmap.width-1,surf.bitmap.height-2,Color.black);
+				surf.bitmap.SetPixel(0,surf.bitmap.height-1,Color.black);
+				surf.bitmap.Apply();
+			}
+			catch(Exception e){
+				Debug.LogError(e.Message);
+			}
+			
 
-#if TODO_RR
-        public static void SDL_SetColorKey(SDL_Surface dest, int color_key)
+		}
+
+
+        public static void SDL_SetColorKey(SDL_Surface dest, Color color_key)
         {
-            dest.bitmap.MakeTransparent(Color.FromArgb(color_key));
+			try{
+				Color[] c = dest.bitmap.GetPixels();
+				for (int i=0; i<c.Length; i++){
+					if (c[i]==color_key){
+						c[i].b = c[i].b;
+						c[i].r = c[i].r;
+						c[i].g = c[i].g;
+						c[i].a = 0;
+						
+					}
+					else{
+						c[i].b = c[i].b;
+						c[i].r = c[i].r;
+						c[i].g = c[i].g;
+						c[i].a = 1;
+					}
+				}
+				dest.bitmap.SetPixels(c);
+				dest.bitmap.Apply();
+				dest.bitmapMaterial=new Material(Shader.Find("Transparent/Cutout/Diffuse"));
+				dest.bitmapMaterial.mainTexture = dest.bitmap;
+			}
+            catch(Exception e){
+				Debug.LogError(e.Message);
+			}
         }
-#endif
+
     }
 
     public class Anim
