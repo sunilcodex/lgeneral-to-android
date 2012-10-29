@@ -89,7 +89,7 @@ namespace DataFile
             this.player = Scenario.player;
             this.units = Scenario.units;
 			 foreach (Unit ubase in this.units){
-                ubase.name = ubase.DeleteOrdinal(ubase.name);
+                ubase.name = Unit.DeleteOrdinal(ubase.name);
             }
 			
         }
