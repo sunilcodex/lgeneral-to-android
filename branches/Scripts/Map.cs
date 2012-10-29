@@ -58,24 +58,24 @@ namespace EngineA
 	{
 		public string name;             /* name of this map tile */
 		public Terrain_Type terrain;  /* terrain properties */
-        [XmlIgnore]
+		[XmlIgnore]
 		public int terrain_id;         /* id of terrain properties */
-        [XmlIgnore]
+		[XmlIgnore]
 		public int image_offset;       /* image offset in prop.image */
 		public int strat_image_offset; /* offset in the list of strategic tiny terrain images */
-        [XmlIgnore]
+		[XmlIgnore]
 		public Nation nation;         /* nation that owns this flag (NULL == no nation) */
-        [XmlIgnore]
+		[XmlIgnore]
 		public Player player;         /* dito */
-        [XmlIgnore]
+		[XmlIgnore]
 		public bool obj;                /* military objective ? */
-        [XmlIgnore]
+		[XmlIgnore]
 		public int deploy_center;      /* deploy allowed? */
-        [XmlIgnore]
+		[XmlIgnore]
 		public Unit g_unit;           /* ground/naval unit pointer */
-        [XmlIgnore]
+		[XmlIgnore]
 		public Unit a_unit;           /* air unit pointer */
-        [XmlIgnore]
+		[XmlIgnore]
 		public Unit backupUnit;
 	}
 
@@ -83,7 +83,7 @@ namespace EngineA
 	/// <summary>
 	/// Map mask tile.
 	/// </summary>
-    public class Mask_Tile
+	public class Mask_Tile
 	{
 		public bool fog; /* if true the engine covers this tile with fog. if ENGINE_MODIFY_FOG is set
                     this fog may change depending on the action (range of unit, merge partners
@@ -132,38 +132,35 @@ namespace EngineA
 		public int map_w = 0, map_h = 0;
 		[XmlIgnore]
 		public Map_Tile[,] map;
-        public Map_Tile[][] Tile {
-            get {
-                Map_Tile[][] arr = new Map_Tile[map_w][];
-                for (int i = 0; i < map_w; i++)
-                {
-                    arr[i] = new Map_Tile[map_h];
-                }
 
-                for (int i = 0; i < map_w; i++)
-                {
-                    for (int j = 0; j < map_h; j++)
-                    {
-                        arr[i][j] = map[i,j];
-                    }
-                }
-                return arr;
-            }
-            set {
-                map = new Map_Tile[map_w, map_h];
-                for (int i = 0; i < map_w; i++)
-                {
-                    for (int j = 0; j < map_h; j++)
-                    {
-                        map[i, j] = value[i][j];
-                    }
-                }
-            }
-        }
+		public Map_Tile[][] Tile {
+			get {
+				Map_Tile[][] arr = new Map_Tile[map_w][];
+				for (int i = 0; i < map_w; i++) {
+					arr [i] = new Map_Tile[map_h];
+				}
+
+				for (int i = 0; i < map_w; i++) {
+					for (int j = 0; j < map_h; j++) {
+						arr [i] [j] = map [i, j];
+					}
+				}
+				return arr;
+			}
+			set {
+				map = new Map_Tile[map_w, map_h];
+				for (int i = 0; i < map_w; i++) {
+					for (int j = 0; j < map_h; j++) {
+						map [i, j] = value [i] [j];
+					}
+				}
+			}
+		}
+
 		[XmlIgnore]
 		public Mask_Tile[,] mask;
 		public const short DIST_AIR_MAX = short.MaxValue;
-        [XmlIgnore]
+		[XmlIgnore]
 		public bool isLoaded = false;
 		public string terrainDB;
 		public struct MapCoord
@@ -232,22 +229,22 @@ namespace EngineA
 		/// <returns></returns>
 		public int map_load (string fname)
 		{
-			string path = "Assets/Maps/"+fname;
-			try{
-				XmlSerializer SerializerObj = new XmlSerializer(typeof(Map));
-        		// Create a new file stream for reading the XML file
-        		FileStream ReadFileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-        		// Load the object saved above by using the Deserialize function
-       	 		Map mapLoad = (Map)SerializerObj.Deserialize(ReadFileStream);
-        		// Cleanup
-        		ReadFileStream.Close();
+			string path = "Assets/Maps/" + fname;
+			try {
+				XmlSerializer SerializerObj = new XmlSerializer (typeof(Map));
+				// Create a new file stream for reading the XML file
+				FileStream ReadFileStream = new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				// Load the object saved above by using the Deserialize function
+				Map mapLoad = (Map)SerializerObj.Deserialize (ReadFileStream);
+				// Cleanup
+				ReadFileStream.Close ();
 				/* map size */
 				map_w = mapLoad.map_w;
 				map_h = mapLoad.map_h;
 				/* load terrains */
 				terrainDB = mapLoad.terrainDB;
 				Terrain terrain = Engine.terrain;
-				if (terrain.Load (terrainDB)==-1)
+				if (terrain.Load (terrainDB) == -1)
 					return -1;
 				/* allocate map memory */
 				this.mask = new Mask_Tile[map_w, map_h];
@@ -266,7 +263,7 @@ namespace EngineA
 						this.map [x, y].obj = false;
 						/* check tile type */
 						for (int j = 0; j < terrain.terrainTypeCount; j++) {
-							if (terrain.terrainTypes [j].id [0] == this.map[x,y].terrain.id[0]) {
+							if (terrain.terrainTypes [j].id [0] == this.map [x, y].terrain.id [0]) {
 								this.map [x, y].terrain = terrain.terrainTypes [j];
 								this.map [x, y].terrain_id = j;
 							}
@@ -275,17 +272,15 @@ namespace EngineA
 						if (this.map [x, y].terrain == null)
 							this.map [x, y].terrain = terrain.terrainTypes [0];
 						
-						if (this.map[x,y].terrain.id[0] == '?')
-	                    {
-	                        this.map[x, y].strat_image_offset = Misc.RANDOM(0,
-							TextureTable.GetMaxTextureOf(map[x,y].terrain.name))+1;
-	                    }
+						if (this.map [x, y].terrain.id [0] == '?') {
+							this.map [x, y].strat_image_offset = Misc.RANDOM (0,
+							TextureTable.GetMaxTextureOf (map [x, y].terrain.name)) + 1;
+						}
 					}
 				this.isLoaded = true;
 				return 1;
-			}
-			catch(Exception ex){
-				Debug.LogError("exception: "+ ex.Message);
+			} catch (Exception ex) {
+				Debug.LogError ("exception: " + ex.Message);
 				return -1;
 			}	
 		}
@@ -982,37 +977,55 @@ namespace EngineA
 		/// <param name="map_y"></param>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
-#if TODO_RR
-		public void map_draw_terrain (SDL_Surface surf, int map_x, int map_y, int x, int y)
+
+		public SDL_Surface map_draw_terrain (int map_x, int map_y)
 		{
 			int cur_weather = 0;
-			int hex_w = Engine.terrain.hex_w;
-			int hex_h = Engine.terrain.hex_h;
+			int offset;
+			string path;
 			Map_Tile tile;
 			if (map_x < 0 || map_y < 0 || map_x >= map_w || map_y >= map_h)
-				return;
+				throw new Exception ("Position of the tile out of the map");
 			tile = map [map_x, map_y];
+			if (tile.terrain.name.ToLower () == "mountain") {
+				int numT = TextureTable.elegirImgTex (tile.strat_image_offset);
+				path = Config.pathTexTerrain + tile.terrain.name.ToLower () + numT;
+				offset = 0;
+				if (numT == 1) {
+					offset = tile.strat_image_offset * Config.hex_w - Config.hex_w;
+				} else {
+					offset = (tile.strat_image_offset - 39) * Config.hex_w - Config.hex_w;
+				}
+			
+			} else {
+				path = Config.pathTexTerrain + tile.terrain.name.ToLower ();
+				offset = (tile.strat_image_offset * Config.hex_w) - Config.hex_w;			
+			}
+			SDL_Surface terraintex = SDL_Surface.LoadSurface (path, false);
+			SDL_Surface hextex = new SDL_Surface ();
+			SDL_Surface.copy_image (hextex, Config.hex_w, Config.hex_h, terraintex, offset, 0);
+			//Add texture flag
+			if (tile.nation != null) {
+				hextex = Nation.nation_draw_flag (tile.nation, hextex);
+			} 
+			return hextex;
+#if TODO_RR			
 			/* terrain */
 			if (mask [map_x, map_y].fog) {
-				SDL_Surface sdl = tile.terrain.images_fogged [cur_weather];
+				SDL_Surface sdl = SDL_Surface.LoadSurface(tile.terrain.images_fogged [cur_weather]);
 				surf.surf.DrawImage (sdl.bitmap, x, y, new Rectangle (tile.image_offset, 0, hex_w, hex_h), GraphicsUnit.Pixel);
 			} else {
 				SDL_Surface sdl = tile.terrain.images [cur_weather];
 				surf.surf.DrawImage (sdl.bitmap, x, y, new Rectangle (tile.image_offset, 0, hex_w, hex_h), GraphicsUnit.Pixel);
 			}
-			/* nation flag */
-			if (tile.nation != null) {
-				Nation.nation_draw_flag (tile.nation, surf,
-                                   x + ((hex_w - Nation.nation_flag_width) >> 1),
-                                   y + hex_h - Nation.nation_flag_height - 2,
-                                   tile.obj);
-			}
+			
 			/* grid */
 			if (Config.grid) {
 				SDL_Surface.copy_image (surf, x, y, hex_w, hex_h, Engine.terrain.terrainIcons.grid, 0, 0);
 			}
-		}
 #endif
+		}
+
 		/// <summary>
 		/// Draw tile units. If mask::fog is set no units are drawn.
 		/// If 'ground' is True the ground unit is drawn as primary
@@ -1026,92 +1039,81 @@ namespace EngineA
 		/// <param name="y"></param>
 		/// <param name="ground"></param>
 		/// <param name="select"></param>
-#if TODO_RR
-		public void map_draw_units (SDL_Surface surf, int map_x, int map_y, int x, int y, bool ground, bool select)
+		public SDL_Surface map_draw_units (SDL_Surface hexTex, int map_x, int map_y,bool ground)
 		{
-			int hex_w = Engine.terrain.hex_w;
-			int hex_h = Engine.terrain.hex_h;
 			Player cur_player = Engine.cur_player;
 			Unit unit = null;
 			Map_Tile tile;
+			
 			if (map_x < 0 || map_y < 0 || map_x >= map_w || map_y >= map_h)
-				return;
+				throw new Exception ("Position out of map");
 			tile = map [map_x, map_y];
 			/* units */
 			if (MAP_CHECK_VIS (map_x, map_y)) {
 				if (tile.g_unit != null) {
-					if (ground || tile.a_unit == null) {
-						SDL_Surface.copy_image (surf.surf,
-                                              x + ((hex_w - tile.g_unit.sel_prop.icon_w) >> 1),
-                                              y + ((hex_h - tile.g_unit.sel_prop.icon_h) >> 1),
-                                              tile.g_unit.sel_prop.icon_w, tile.g_unit.sel_prop.icon_h,
-                                              tile.g_unit.sel_prop.icon, tile.g_unit.icon_offset, 0);
-						unit = tile.g_unit;
-					} else {
-						/* small ground unit */
-						SDL_Surface.copy_image (surf.surf,
-                                              x + ((hex_w - tile.g_unit.sel_prop.icon_tiny_w) >> 1),
-                                              y + ((hex_h - tile.g_unit.sel_prop.icon_tiny_h) >> 1) + 4,
-                                              tile.g_unit.sel_prop.icon_tiny_w, tile.g_unit.sel_prop.icon_tiny_h,
-                                             tile.g_unit.sel_prop.icon_tiny, tile.g_unit.icon_tiny_offset, 0);
-						unit = tile.a_unit;
-					}
+					unit = tile.g_unit;
+					bool resize = (ground || tile.a_unit == null)?false:true;
+					draw_unit_on_texture(hexTex,unit,resize);
 				}
 				if (tile.a_unit != null) {
-					if (!ground || tile.g_unit == null) {
-						/* large air unit */
-						SDL_Surface.copy_image (surf.surf,
-                                                x + ((hex_w - tile.a_unit.sel_prop.icon_w) >> 1),
-                                                y + 6,
-                                                tile.a_unit.sel_prop.icon_w, tile.a_unit.sel_prop.icon_h,
-                                                tile.a_unit.sel_prop.icon, tile.a_unit.icon_offset, 0);
-
-						unit = tile.a_unit;
-					} else {
-						/* small air unit */
-						SDL_Surface.copy_image (surf.surf,
-                                                x + ((hex_w - tile.a_unit.sel_prop.icon_tiny_w) >> 1),
-                                                y + 6,
-                                                tile.a_unit.sel_prop.icon_tiny_w, tile.a_unit.sel_prop.icon_tiny_h,
-                                                tile.a_unit.sel_prop.icon_tiny, tile.a_unit.icon_tiny_offset, 0);
-						unit = tile.g_unit;
-					}
+					unit = tile.a_unit;
+					bool resize = (!ground || tile.g_unit == null)?false:true;
+					draw_unit_on_texture(hexTex,unit,resize);
 				}
 				/* unit info icons */
 				if (unit != null && Config.show_bar) {
+#if TODO_RR
+					if ((cur_player != null) && Player.player_is_ally (cur_player, unit.player)){
+#endif
 					/* strength */
-					if ((cur_player != null) && Player.player_is_ally (cur_player, unit.player))
-						SDL_Surface.copy_image (surf.surf,
-                                    x + ((hex_w - DB.UnitLib.unit_info_icons.str_w) >> 1),
-                                    y + hex_h - DB.UnitLib.unit_info_icons.str_h,
-                                    DB.UnitLib.unit_info_icons.str_w, DB.UnitLib.unit_info_icons.str_h,
-                                    DB.UnitLib.unit_info_icons.str,
-                                    (unit != null && (unit.CheckLowAmmo () || unit.CheckLowFuel ())) ?
-                                        DB.UnitLib.unit_info_icons.str_w : 0,
-                                    DB.UnitLib.unit_info_icons.str_h * (unit.str - 1 + 15));
-					else
-						SDL_Surface.copy_image (surf.surf,
-                                x + ((hex_w - DB.UnitLib.unit_info_icons.str_w) >> 1),
-                                y + hex_h - DB.UnitLib.unit_info_icons.str_h,
-                                DB.UnitLib.unit_info_icons.str_w, DB.UnitLib.unit_info_icons.str_h,
-                                DB.UnitLib.unit_info_icons.str, 0, DB.UnitLib.unit_info_icons.str_h * (unit.str - 1));
+					if (unit.player.ctrl==PLAYERCONTROL.PLAYER_CTRL_HUMAN){
+						string name = Unit.DeleteOrdinal (unit.name);
+						SDL_Surface sdl_str = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.str_img_name,false);
+						int offset = DB.UnitLib.unit_info_icons.str_h*(unit.str+15);
+						offset = sdl_str.h-offset;
+						SDL_Surface str = new SDL_Surface();
+						SDL_Surface.copy_image(str,DB.UnitLib.unit_info_icons.str_w,
+												DB.UnitLib.unit_info_icons.str_h,sdl_str,0,offset);
+						int xdest = (Config.hex_w-DB.UnitLib.unit_info_icons.str_w)/2;
+						SDL_Surface.copy_image(hexTex,str,xdest,3,DB.UnitLib.unit_info_icons.str_w,
+											   DB.UnitLib.unit_info_icons.str_h,0,0);
 
+						
+					}
+					else{
+						string name = Unit.DeleteOrdinal (unit.name);
+						SDL_Surface sdl_str = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.str_img_name,false);
+						int offset = DB.UnitLib.unit_info_icons.str_h*(unit.str);
+						offset = sdl_str.h-offset;
+						SDL_Surface str = new SDL_Surface();
+						SDL_Surface.copy_image(str,DB.UnitLib.unit_info_icons.str_w,
+												DB.UnitLib.unit_info_icons.str_h,sdl_str,0,offset);
+						int xdest = (Config.hex_w-DB.UnitLib.unit_info_icons.str_w)/2;
+						SDL_Surface.copy_image(hexTex,str,xdest,3,DB.UnitLib.unit_info_icons.str_w,
+											   DB.UnitLib.unit_info_icons.str_h,0,0);
+						
+					}
 					/* for current player only */
+#if TODO_RR
 					if (unit.player == cur_player) {
+#endif
+					if (unit.player.ctrl==PLAYERCONTROL.PLAYER_CTRL_HUMAN){
+						string name = Unit.DeleteOrdinal(unit.name);
+						Unit_Lib_Entry entry = DB.UnitLib.unit_lib_find_by_name(name);
 						/* attack */
+#if TODO_RR
 						if (unit.cur_atk_count > 0) {
-							SDL_Surface.copy_image (surf.surf,
-                                                    x + (hex_w - Engine.terrain.hex_x_offset), y + hex_h - DB.UnitLib.unit_info_icons.atk.h,
-                                                    DB.UnitLib.unit_info_icons.atk.w, DB.UnitLib.unit_info_icons.atk.h,
-                                                    DB.UnitLib.unit_info_icons.atk, 0, 0);
+#endif
+						if (entry.atk_count>0){
+							SDL_Surface atk = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.atk_img_name,false);
+							SDL_Surface.copy_image_without_key(hexTex,atk,15,3,Color.black);
 						}
 						/* move */
-						if (unit.cur_mov > 0) {
-							SDL_Surface.copy_image (surf.surf,
-                             x + Engine.terrain.hex_x_offset - DB.UnitLib.unit_info_icons.mov.w, y + hex_h - DB.UnitLib.unit_info_icons.mov.h,
-                             DB.UnitLib.unit_info_icons.mov.w, DB.UnitLib.unit_info_icons.mov.h,
-                             DB.UnitLib.unit_info_icons.mov, 0, 0);
+						if (entry.mov > 0) {
+							SDL_Surface mov = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.mov_img_name,false);
+							SDL_Surface.copy_image_without_key(hexTex,mov,37,3,Color.black);		
 						}
+#if TODO_RR
 						/* guarding */
 						if (unit.is_guarding) {
 							SDL_Surface.copy_image (surf.surf,
@@ -1121,6 +1123,12 @@ namespace EngineA
                              DB.UnitLib.unit_info_icons.guard, 0, 0);
 
 						}
+#endif
+					}
+				}
+			}
+
+#if TODO_RR
 					}
 				}
 			}
@@ -1131,8 +1139,9 @@ namespace EngineA
                                         Engine.terrain.terrainIcons.select, 0, 0);
 
 			}
-		}
 #endif
+			return hexTex;
+		}
 		/// <summary>
 		/// Draw danger tile. Expects 'surf' to contain a fully drawn tile at
 		/// the given position which will be tinted by overlaying the danger
@@ -1859,10 +1868,78 @@ namespace EngineA
 		{
 			return Misc.is_close (unit.x, unit.y, target.x, target.y);
 		}
-
+		
+		private void draw_unit_on_texture (SDL_Surface hexTex, Unit unit, bool resize)
+		{
+			string name = Unit.DeleteOrdinal (unit.name);
+			Unit_Lib_Entry ulib = DB.UnitLib.unit_lib_find_by_name (name);
+			int ntex = TextureTable.elegirImgUnit (ulib);
+			SDL_Surface sdl = SDL_Surface.LoadSurface (ulib.icon_img_name + 1, false);
+			SDL_Surface dest = new SDL_Surface ();
+			if (ntex == 1) {
+				int offset = (sdl.h - ulib.offset_img - ulib.icon_h);
+				SDL_Surface.copy_image (dest, ulib.icon_w, ulib.icon_h, sdl, 0, offset);
+				SDL_Surface.putPixelBlack (dest);
+				if (unit.player.ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU) {
+					SDL_Surface aux = new SDL_Surface ();
+					SDL_Surface.copy_image180 (aux, dest);
+					dest = aux;
+				}
+				if (dest.w > 51) {
+					SDL_Surface aux = new SDL_Surface ();
+					aux.bitmap = new Texture2D (ulib.icon_tiny_w, ulib.icon_tiny_h, TextureFormat.RGB24, false);
+					float scale = 1.5f;
+					for (int i=0; i<ulib.icon_tiny_w; i++) {
+						for (int j=0; j<ulib.icon_tiny_h; j++) {
+							int x = (int)(scale * i);
+							int y = (int)(scale * j);
+							aux.bitmap.SetPixel (i, j, dest.bitmap.GetPixel (x, y));
+						}
+					}
+					aux.bitmap.Apply ();
+					aux.w = ulib.icon_tiny_w;
+					aux.h = ulib.icon_tiny_h;
+					aux.bitmapMaterial = new Material (Shader.Find ("Diffuse"));
+					aux.bitmapMaterial.mainTexture = aux.bitmap;
+					dest = aux;
+				}
+				int xdest = (Config.hex_w - dest.w) / 2;
+				SDL_Surface.copy_image_without_key (hexTex, dest, xdest + 2, Nation.nation_flag_height + 5, Color.black);
+			} else if (ntex == 2) {
+				int offset = ulib.offset_img + ulib.icon_h;
+				offset = offset - sdl.h;
+				SDL_Surface sdl2 = SDL_Surface.LoadSurface (ulib.icon_img_name + 2, false);
+				offset = sdl2.h - offset;
+				SDL_Surface.copy_image (dest, ulib.icon_w, ulib.icon_h, sdl2, 0, offset);
+				SDL_Surface.putPixelBlack (dest);
+				if (unit.player.ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU) {
+					SDL_Surface aux = new SDL_Surface ();
+					SDL_Surface.copy_image180 (aux, dest);
+					dest = aux;
+				}
+				if (resize) {
+					SDL_Surface aux = new SDL_Surface ();
+					aux.bitmap = new Texture2D (ulib.icon_tiny_w, ulib.icon_tiny_h, TextureFormat.RGB24, false);
+					float scale = 1.5f;
+					for (int i=0; i<ulib.icon_tiny_w; i++) {
+						for (int j=0; j<ulib.icon_tiny_h; j++) {
+							int x = (int)(scale * i);
+							int y = (int)(scale * j);
+							aux.bitmap.SetPixel (i, j, dest.bitmap.GetPixel (x, y));
+						}
+					}
+					aux.bitmap.Apply ();
+					aux.w = ulib.icon_tiny_w;
+					aux.h = ulib.icon_tiny_h;
+					aux.bitmapMaterial = new Material (Shader.Find ("Diffuse"));
+					aux.bitmapMaterial.mainTexture = aux.bitmap;
+					dest = aux;
+				}
+				int xdest = (Config.hex_w - dest.w) / 2;
+				int ydest = (resize)? Nation.nation_flag_height + 1: Nation.nation_flag_height + 5;
+				SDL_Surface.copy_image_without_key (hexTex, dest, xdest + 2, ydest, Color.black);
+			}
+		}
 
 	}
-#if TODO_RR
-	lhkhjkjhk
-#endif
 }
