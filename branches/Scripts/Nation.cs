@@ -167,13 +167,14 @@ namespace EngineA
             NATION_DRAW_FLAG_OBJ
         }
 
-        public static void nation_draw_flag(Nation nation, SDL_Surface surf)
+        public static SDL_Surface nation_draw_flag(Nation nation, SDL_Surface surf)
         {
 			if (surf==null){
 				throw new Exception("the Surface is null");
 			}
-            SDL_Surface.copy_image(surf,Nation.nation_flags,20,1,Nation.nation_flag_width,
+            SDL_Surface.copy_image(surf,Nation.nation_flags,20,3,Nation.nation_flag_width,
 									Nation.nation_flag_height,0,(Nation.nation_flags.h-nation.flag_offset-Nation.nation_flag_height));
+			return surf;
         }
 
         /*
