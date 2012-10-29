@@ -191,6 +191,13 @@ namespace Miscellaneous
             return false;
         }
 
-
+		public static bool IsEven (int number)
+	{
+		if (number % 2 == 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
     }
 }
