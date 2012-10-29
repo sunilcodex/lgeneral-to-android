@@ -43,7 +43,7 @@ namespace DataFile
         {
             Nation.nations = this.nations;
             Nation.nation_count = this.nation_count;
-            Nation.nation_flags = SDL_Surface.LoadSurface(this.nation_flags_img, true);
+            Nation.nation_flags = SDL_Surface.LoadSurface(this.nation_flags_img, false);
             Nation.nation_flag_height = this.nation_flag_height;
             Nation.nation_flag_width = this.nation_flag_width;
         }
