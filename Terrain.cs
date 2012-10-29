@@ -83,7 +83,7 @@ namespace EngineA
         [XmlIgnore]
         public string name;
         [XmlIgnore]
-        public SDL_Surface[] images;
+        public string[] images;
         [XmlIgnore]
         public SDL_Surface[] images_fogged;
         [XmlIgnore]
@@ -184,13 +184,14 @@ namespace EngineA
 					this.terrainTypes[i].name = terrainDB.terrainTypes[i].name;
 					/* each weather type got its own image -- if it's named 'default' we
                     point towards the image of weather_type 0 */
-                	terrainTypes[i].images = new SDL_Surface[weatherTypeCount];
-					for (int j = 0; j < weatherTypeCount; j++)
+                	terrainTypes[i].images = terrainDB.terrainTypes[i].images_name;
+					
+#if TODO_RR
+				for (int j = 0; j < weatherTypeCount; j++)
                 	{
 						terrainTypes[i].images[j] = 
 							SDL_Surface.LoadSurface(terrainDB.terrainTypes[i].images_name[j], true);
 					}
-#if TODO_RR
 				/* fog image */
                 terrainTypes[i].images_fogged = new SDL_Surface[weatherTypeCount];
                 for (int j = 0; j < weatherTypeCount; j++)
