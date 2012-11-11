@@ -237,10 +237,10 @@ namespace EngineA
                     }    
 				}
 				/* units */
-				units = scen_data.units;
-				if (units.Count==0 || units == null){
+				if (scen_data.units.Count==0 || scen_data.units == null){
 					throw new Exception("units not found");
 				}
+				units = new List<Unit>();
 				reinf = new List<Unit>();
                 avail_units = new List<Unit>();
                 vis_units = new List<Unit>();
@@ -248,7 +248,7 @@ namespace EngineA
 				bool unit_delayed = false;
 				Unit unit;
 				int unit_ref = 0;
-				foreach (Unit unit_base in units){
+				foreach (Unit unit_base in scen_data.units){
 					/* unit type */
 					Unit_Lib_Entry unit_prop = unit_lib.unit_lib_find_by_name(unit_base.name);
 					if (unit_prop == null)
@@ -307,6 +307,7 @@ namespace EngineA
                     if (!unit_delayed)
                     {
                         /* add unit to map */
+						units.Add(unit);
                         Engine.map.map_insert_unit(unit);
                     }
 					else
@@ -358,7 +359,7 @@ namespace EngineA
         information.
         ====================================================================
         */
-#if TODO_RR
+
         public static void scen_set_setup()
         {
             scen_clear_setup();
@@ -374,14 +375,14 @@ namespace EngineA
                 Engine.setup.modules[i] = player.ai_fname;
             }
         }
-#endif
+
         /*
         ====================================================================
         Clear the Scenario stuff pointers in 'setup' 
         (loaded by scen_load_info())
         ====================================================================
         */
-#if TODO_RR
+
         public static void scen_clear_setup()
         {
             if (Engine.setup.ctrl != null)
@@ -398,7 +399,7 @@ namespace EngineA
             }
             Engine.setup.player_count = 0;
         }
-#endif
+
         /*
         ====================================================================
         Delete Scenario
@@ -421,7 +422,7 @@ namespace EngineA
             SCEN_PREP_UNIT_FIRST = 0,
             SCEN_PREP_UNIT_NORMAL
         };
-#if TODO_RR
+
         public static void scen_prep_unit(Unit unit, SCEN_PREP type)
         {
             int min_entr, max_entr;
@@ -461,13 +462,12 @@ namespace EngineA
                         unit.entr++;
             }
         }
-#endif
+
         /*
         ====================================================================
         Check if subcondition is fullfilled.
         ====================================================================
         */
-#if TODO_RR
         static bool subcond_check(VSubCond cond)
         {
             int x, y, count;
@@ -524,7 +524,6 @@ namespace EngineA
             return false;
         }
 
-#endif
         /*
         ====================================================================
         Check if the victory conditions are fullfilled and if so
@@ -535,7 +534,6 @@ namespace EngineA
         first one).
         ====================================================================
         */
-#if TODO_RR
         public static bool scen_check_result(bool after_last_turn)
         {
             bool and_okay, or_okay;
@@ -593,7 +591,7 @@ namespace EngineA
             }
             return false;
         }
-#endif
+
         /*
         ====================================================================
         Return True if Scenario is done.
@@ -642,18 +640,16 @@ namespace EngineA
         have 100% supply.
         ====================================================================
         */
-#if TODO_RR
         public static void scen_adjust_unit_supply_level(Unit unit)
         {
             unit.supply_level = Engine.map.map_get_unit_supply_level(unit.x, unit.y, unit);
         }
-#endif
         /*
         ====================================================================
         Get current weather/forecast
         ====================================================================
         */
-#if TODO_RR
+
         public static int scen_get_weather()
         {
             if (turn < scen_info.turn_limit && Config.weather)
@@ -661,7 +657,7 @@ namespace EngineA
             else
                 return 0;
         }
-#endif
+
         public static int scen_get_forecast()
         {
             if (turn + 1 < scen_info.turn_limit)
