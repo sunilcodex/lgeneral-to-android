@@ -128,6 +128,8 @@ namespace EngineA
 	[Serializable]
     public class Map
 	{
+		
+    	
         #region Protected and Private
 		public int map_w = 0, map_h = 0;
 		[XmlIgnore]
@@ -176,7 +178,16 @@ namespace EngineA
         #endregion
 
 		static List<List<MapCoord>> deploy_fields;
-
+		
+		public void map_remove_fog_ai_units ()
+		{
+			for (int x = 0; x < map_w; x++)
+				for (int y = 0; y < map_h; y++) {
+					if (this.map[x,y].g_unit!=null){
+						Debug.Log("entra");
+					}
+				}
+		}
 		/// <summary>
 		/// Check the surrounding tiles and get the one with the highest
 		/// in_range value.
@@ -201,7 +212,7 @@ namespace EngineA
 			next_x = high_x;
 			next_y = high_y;
 		}
-
+		
 		/// <summary>
 		/// Add a unit's influence to the (vis_)infl mask.
 		/// </summary>
@@ -252,6 +263,8 @@ namespace EngineA
 				for (int x = 0; x < map_w; x++)
 					for (int y = 0; y < map_h; y++) {
 						this.mask [x, y] = new Mask_Tile ();
+					//TODO_RR Carga de nieba 
+						this.mask[x,y].spot = true;
 					}
 				for (int y = 0; y < map_h; y++)
 					for (int x = 0; x < map_w; x++) {
@@ -423,6 +436,7 @@ namespace EngineA
 		/// <param name="y"></param>
 		/// <param name="id"></param>
 		/// <returns></returns>
+
 		public Map_Tile map_get_close_hex (int x, int y, int id)
 		{
 			int next_x, next_y;
@@ -469,7 +483,6 @@ namespace EngineA
 			map_clear_mask (MAP_MASK.F_AUX);
 			map_add_unit_spot_mask (unit);
 		}
-
 		/*
         ====================================================================
         Check whether unit can enter (x,y) provided it has 'points' move
@@ -542,6 +555,7 @@ namespace EngineA
         previously not.
         ====================================================================
         */
+
 		void map_add_unit_move_mask_rec (Unit unit, int x, int y, int distance, int points, bool mounted)
 		{
 			int i, next_x, next_y, cost = 0;
@@ -594,7 +608,7 @@ namespace EngineA
 					map_add_unit_move_mask_rec (unit, next_x, next_y, distance + 1, points, mounted);
 				}
 		}
-
+		
 		/// <summary>
 		/// Set movement range of a unit to in_range/sea_embark/mount.
 		/// </summary>
@@ -676,7 +690,7 @@ namespace EngineA
         ====================================================================
         Sets the distance mask beginning with the airfield at (ax, ay).
         ====================================================================
-        */
+        */	
 		public void map_get_dist_air_mask (int ax, int ay, short[,] dist_air_mask)
 		{
 			int x, y;
@@ -698,7 +712,7 @@ namespace EngineA
 		/// </summary>
 		/// <param name="unit"></param>
 		/// <returns></returns>
-#if TODO_RR
+
 		public bool map_get_danger_mask (Unit unit)
 		{
 			int x, y;
@@ -734,7 +748,7 @@ namespace EngineA
 					}
 			return retval;
 		}
-#endif
+
 
 		/// <summary>
 		/// Get a list of way points the unit moves along to it's destination.
@@ -849,7 +863,6 @@ namespace EngineA
 		/// All unused entries in partners are set 0.
 		/// </summary>
 		public const int MAP_MERGE_UNIT_LIMIT = 6;
-
 		public void map_get_merge_units (Unit unit, out Unit[] partners, out int count)
 		{
 			Unit partner;
@@ -958,6 +971,7 @@ namespace EngineA
         */
 		public void map_get_vis_units ()
 		{
+
 			int x, y;
 			for (x = 0; x < map_w; x++)
 				for (y = 0; y < map_h; y++)
@@ -967,6 +981,7 @@ namespace EngineA
 						if (map [x, y].a_unit != null)
 							Scenario.vis_units.Add (map [x, y].a_unit);
 					}
+
 		}
 
 		/// <summary>
@@ -1104,12 +1119,12 @@ namespace EngineA
 #if TODO_RR
 						if (unit.cur_atk_count > 0) {
 #endif
-						if (entry.atk_count>0){
+						if (unit.cur_atk_count>0){
 							SDL_Surface atk = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.atk_img_name,false);
 							SDL_Surface.copy_image_without_key(hexTex,atk,15,3,Color.black);
 						}
 						/* move */
-						if (entry.mov > 0) {
+						if (unit.cur_mov > 0) {
 							SDL_Surface mov = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.mov_img_name,false);
 							SDL_Surface.copy_image_without_key(hexTex,mov,37,3,Color.black);		
 						}
@@ -1183,7 +1198,6 @@ namespace EngineA
         The update adds the tiles seen by unit.
         ====================================================================
         */
-#if TODO_RR
 		public void map_set_spot_mask ()
 		{
 			int x, y, next_x, next_y;
@@ -1217,7 +1231,7 @@ namespace EngineA
 			/* update the visible units list */
 			map_get_vis_units ();
 		}
-#endif
+#if TODO_RR
 		public void map_update_spot_mask (Unit unit, out bool enemy_spotted)
 		{
 			int x, y;
@@ -1240,7 +1254,7 @@ namespace EngineA
 						}
 			}
 		}
-
+		#endif
 
 		/*
         ====================================================================
@@ -1281,7 +1295,6 @@ namespace EngineA
         Set the fog to players spot mask by using mask::aux (not mask::spot)
         ====================================================================
         */
-#if TODO_RR
 		public void map_set_fog_by_player (Player player)
 		{
 			int next_x, next_y;
@@ -1313,7 +1326,6 @@ namespace EngineA
 					else
 						mask [x, y].fog = true;
 		}
-#endif
 		/*
         ====================================================================
         Check if this map tile is visible to the engine (isn't covered
@@ -1332,6 +1344,7 @@ namespace EngineA
         Modify the various influence masks.
         ====================================================================
         */
+
 		public void map_add_unit_infl (Unit unit)
 		{
 			int next_x, next_y;
@@ -1347,7 +1360,7 @@ namespace EngineA
 						mask [next_x, next_y].infl++;
 			}
 		}
-
+#if TODO_RR
 		public void map_remove_unit_infl (Unit unit)
 		{
 			int next_x, next_y;
@@ -1379,7 +1392,7 @@ namespace EngineA
 						mask [next_x, next_y].vis_infl--;
 			}
 		}
-
+		#endif
 		public void map_set_infl_mask ()
 		{
 			map_clear_mask (MAP_MASK.F_INFL | MAP_MASK.F_INFL_AIR);
@@ -1555,6 +1568,7 @@ namespace EngineA
 					if (mask [x, y].deploy)
 						fields.Add (new MapCoord (x, y));
 		}
+
 		/*
         ====================================================================
         Set deploy mask by player's field list. If first entry is (-1,-1),
@@ -1592,7 +1606,6 @@ namespace EngineA
 				j++;
 			}
 		}
-
 
 		/*
         ====================================================================
@@ -1638,7 +1651,7 @@ namespace EngineA
 								mask [next_x, next_y].deploy = true;
 					}
 		}
-
+	
 
 		/*
         ====================================================================
@@ -1725,7 +1738,6 @@ namespace EngineA
 			}
 		}
 
-
 		/*
         ====================================================================
         Check the supply level of tile (mx, my) in the context of 'unit'.
@@ -1792,6 +1804,7 @@ namespace EngineA
 			}
 			return supply_level;
 		}
+		
 		/*
         ====================================================================
         Check if this map tile is a supply point for the given unit.
@@ -1868,7 +1881,7 @@ namespace EngineA
 		{
 			return Misc.is_close (unit.x, unit.y, target.x, target.y);
 		}
-		
+
 		private void draw_unit_on_texture (SDL_Surface hexTex, Unit unit, bool resize)
 		{
 			string name = Unit.DeleteOrdinal (unit.name);
