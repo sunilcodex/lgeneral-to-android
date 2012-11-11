@@ -43,12 +43,12 @@ namespace EngineA
             return surf.bitmap.GetPixel(x, y).ToArgb();
         }
 #endif
-#if TODO_RR
-        public static Int32 GetPixel(SDL_Surface surf, int x, int y)
+
+        public static Color GetPixel(SDL_Surface surf, int x, int y)
         {
-            return surf.bitmap.GetPixel(x, y).ToArgb();
+            return surf.bitmap.GetPixel(x, y);
         }
-#endif
+
         /*
         load a surface from file putting it in soft or hardware mem
         */
