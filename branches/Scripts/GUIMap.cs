@@ -11,6 +11,7 @@ public class GUIMap : MonoBehaviour
 	
 	public GameObject hexPrefab;
 	public string scen_name;
+	public bool fog;
 	
 	
 	
@@ -78,14 +79,23 @@ public class GUIMap : MonoBehaviour
 	}
 
 #endif
-
+	
+	private void onLoadScen(){
+		Engine.engine_set_status(STATUS.STATUS_NONE);
+		Engine.engine_init(scen_name);
+		Engine.engine_run(fog);
+		Engine.engine_begin_turn(Engine.cur_player, DB.setup.type == SETUP.SETUP_LOAD_GAME);
+		//Scenario.scen_load (scen_name);
+		MakeMap (Engine.map);
+	}
+	
 	void Awake ()
 	{
 		if (string.IsNullOrEmpty (scen_name)) {
 			throw new Exception ("name of scenario not found");
 		}
-		Scenario.scen_load (scen_name);
-		MakeMap (Engine.map);
+		onLoadScen();
+				
 	}
 	
 	// Use this for initialization
