@@ -700,6 +700,7 @@
         <start_year>1936</start_year>
         <start_month>9</start_month>
         <end_year>1946</end_year>
+        <offset_img>4400</offset_img>
         <eval_score>98</eval_score>
         <trgt_type_count>0</trgt_type_count>
         <mov_type_count>0</mov_type_count>
@@ -782,6 +783,7 @@
         <start_year>1936</start_year>
         <start_month>9</start_month>
         <end_year>1946</end_year>
+        <offset_img>4400</offset_img>
         <eval_score>98</eval_score>
         <trgt_type_count>0</trgt_type_count>
         <mov_type_count>0</mov_type_count>
@@ -836,6 +838,7 @@
         <start_year>1936</start_year>
         <start_month>9</start_month>
         <end_year>1946</end_year>
+        <offset_img>4400</offset_img>
         <eval_score>98</eval_score>
         <trgt_type_count>0</trgt_type_count>
         <mov_type_count>0</mov_type_count>
@@ -1092,6 +1095,241 @@
       <entr>3</entr>
       <exp_level>0</exp_level>
       <delay>0</delay>
+    </Unit>
+    <Unit>
+      <trsp_prop>
+        <id>85</id>
+        <name>Opel 6700</name>
+        <unit_class>15</unit_class>
+        <trgt_type>0</trgt_type>
+        <ini>1</ini>
+        <mov>8</mov>
+        <mov_type>2</mov_type>
+        <spt>1</spt>
+        <rng>0</rng>
+        <atk_count>1</atk_count>
+        <atks>
+          <int>1</int>
+          <int>0</int>
+          <int>0</int>
+          <int>0</int>
+        </atks>
+        <def_grnd>1</def_grnd>
+        <def_air>0</def_air>
+        <def_cls>0</def_cls>
+        <entr_rate>2</entr_rate>
+        <ammo>4</ammo>
+        <fuel>55</fuel>
+        <icon_img_name>Textures/units/pg</icon_img_name>
+        <icon_tiny_img_name>Textures/units/pg</icon_tiny_img_name>
+        <icon_type>UNIT_ICON_SINGLE</icon_type>
+        <icon_w>41</icon_w>
+        <icon_h>23</icon_h>
+        <icon_tiny_w>27</icon_tiny_w>
+        <icon_tiny_h>15</icon_tiny_h>
+        <flags>TRANSPORTER</flags>
+        <start_year>1936</start_year>
+        <start_month>9</start_month>
+        <end_year>1946</end_year>
+        <offset_img>4400</offset_img>
+        <eval_score>98</eval_score>
+        <trgt_type_count>0</trgt_type_count>
+        <mov_type_count>0</mov_type_count>
+        <unit_class_count>0</unit_class_count>
+        <Unit_Lib />
+      </trsp_prop>
+      <name>7.5 leFk 16nA</name>
+      <nation>
+        <Name>Germany</Name>
+        <ID>ger</ID>
+        <Flag_offset>91</Flag_offset>
+      </nation>
+      <x>0</x>
+      <y>0</y>
+      <str>10</str>
+      <entr>0</entr>
+      <exp_level>0</exp_level>
+      <delay>2</delay>
+    </Unit>
+    <Unit>
+      <trsp_prop>
+        <id>85</id>
+        <name>Opel 6700</name>
+        <unit_class>15</unit_class>
+        <trgt_type>0</trgt_type>
+        <ini>1</ini>
+        <mov>8</mov>
+        <mov_type>2</mov_type>
+        <spt>1</spt>
+        <rng>0</rng>
+        <atk_count>1</atk_count>
+        <atks>
+          <int>1</int>
+          <int>0</int>
+          <int>0</int>
+          <int>0</int>
+        </atks>
+        <def_grnd>1</def_grnd>
+        <def_air>0</def_air>
+        <def_cls>0</def_cls>
+        <entr_rate>2</entr_rate>
+        <ammo>4</ammo>
+        <fuel>55</fuel>
+        <icon_img_name>Textures/units/pg</icon_img_name>
+        <icon_tiny_img_name>Textures/units/pg</icon_tiny_img_name>
+        <icon_type>UNIT_ICON_SINGLE</icon_type>
+        <icon_w>41</icon_w>
+        <icon_h>23</icon_h>
+        <icon_tiny_w>27</icon_tiny_w>
+        <icon_tiny_h>15</icon_tiny_h>
+        <flags>TRANSPORTER</flags>
+        <start_year>1936</start_year>
+        <start_month>9</start_month>
+        <end_year>1946</end_year>
+        <offset_img>4400</offset_img>
+        <eval_score>98</eval_score>
+        <trgt_type_count>0</trgt_type_count>
+        <mov_type_count>0</mov_type_count>
+        <unit_class_count>0</unit_class_count>
+        <Unit_Lib />
+      </trsp_prop>
+      <name>39 Wehr Inf</name>
+      <nation>
+        <Name>Germany</Name>
+        <ID>ger</ID>
+        <Flag_offset>91</Flag_offset>
+      </nation>
+      <x>0</x>
+      <y>0</y>
+      <str>10</str>
+      <entr>0</entr>
+      <exp_level>0</exp_level>
+      <delay>2</delay>
+    </Unit>
+    <Unit>
+      <trsp_prop>
+        <id>85</id>
+        <name>Opel 6700</name>
+        <unit_class>15</unit_class>
+        <trgt_type>0</trgt_type>
+        <ini>1</ini>
+        <mov>8</mov>
+        <mov_type>2</mov_type>
+        <spt>1</spt>
+        <rng>0</rng>
+        <atk_count>1</atk_count>
+        <atks>
+          <int>1</int>
+          <int>0</int>
+          <int>0</int>
+          <int>0</int>
+        </atks>
+        <def_grnd>1</def_grnd>
+        <def_air>0</def_air>
+        <def_cls>0</def_cls>
+        <entr_rate>2</entr_rate>
+        <ammo>4</ammo>
+        <fuel>55</fuel>
+        <icon_img_name>Textures/units/pg</icon_img_name>
+        <icon_tiny_img_name>Textures/units/pg</icon_tiny_img_name>
+        <icon_type>UNIT_ICON_SINGLE</icon_type>
+        <icon_w>41</icon_w>
+        <icon_h>23</icon_h>
+        <icon_tiny_w>27</icon_tiny_w>
+        <icon_tiny_h>15</icon_tiny_h>
+        <flags>TRANSPORTER</flags>
+        <start_year>1936</start_year>
+        <start_month>9</start_month>
+        <end_year>1946</end_year>
+        <offset_img>4400</offset_img>
+        <eval_score>98</eval_score>
+        <trgt_type_count>0</trgt_type_count>
+        <mov_type_count>0</mov_type_count>
+        <unit_class_count>0</unit_class_count>
+        <Unit_Lib />
+      </trsp_prop>
+      <name>39 Wehr Inf</name>
+      <nation>
+        <Name>Germany</Name>
+        <ID>ger</ID>
+        <Flag_offset>91</Flag_offset>
+      </nation>
+      <x>0</x>
+      <y>0</y>
+      <str>10</str>
+      <entr>0</entr>
+      <exp_level>0</exp_level>
+      <delay>3</delay>
+    </Unit>
+    <Unit>
+      <name>PzIID</name>
+      <nation>
+        <Name>Germany</Name>
+        <ID>ger</ID>
+        <Flag_offset>91</Flag_offset>
+      </nation>
+      <x>0</x>
+      <y>0</y>
+      <str>10</str>
+      <entr>0</entr>
+      <exp_level>0</exp_level>
+      <delay>3</delay>
+    </Unit>
+    <Unit>
+      <name>PO Infantry</name>
+      <nation>
+        <Name>Poland</Name>
+        <ID>pol</ID>
+        <Flag_offset>195</Flag_offset>
+      </nation>
+      <x>0</x>
+      <y>0</y>
+      <str>10</str>
+      <entr>0</entr>
+      <exp_level>0</exp_level>
+      <delay>5</delay>
+    </Unit>
+    <Unit>
+      <name>PO Infantry</name>
+      <nation>
+        <Name>Poland</Name>
+        <ID>pol</ID>
+        <Flag_offset>195</Flag_offset>
+      </nation>
+      <x>0</x>
+      <y>0</y>
+      <str>10</str>
+      <entr>0</entr>
+      <exp_level>0</exp_level>
+      <delay>5</delay>
+    </Unit>
+    <Unit>
+      <name>PO Infantry</name>
+      <nation>
+        <Name>Poland</Name>
+        <ID>pol</ID>
+        <Flag_offset>195</Flag_offset>
+      </nation>
+      <x>0</x>
+      <y>0</y>
+      <str>10</str>
+      <entr>0</entr>
+      <exp_level>0</exp_level>
+      <delay>5</delay>
+    </Unit>
+    <Unit>
+      <name>PO TK3</name>
+      <nation>
+        <Name>Poland</Name>
+        <ID>pol</ID>
+        <Flag_offset>195</Flag_offset>
+      </nation>
+      <x>0</x>
+      <y>0</y>
+      <str>10</str>
+      <entr>0</entr>
+      <exp_level>0</exp_level>
+      <delay>5</delay>
     </Unit>
   </Units>
 </Scenario_Data_File>
