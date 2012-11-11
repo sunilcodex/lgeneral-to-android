@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.Serialization;
 using DataFile;
+using Miscellaneous;
 
 namespace EngineA
 {
@@ -460,12 +461,12 @@ namespace EngineA
         hex tiles.
         ====================================================================
         */
-#if TODO_RR
+
         public bool IsClose(Unit target)
         {
             return Misc.is_close(this.x, this.y, target.x, target.y);
         }
-#endif
+
         /*
         ====================================================================
         Check if unit may activly attack (unit initiated attack) or
@@ -478,7 +479,7 @@ namespace EngineA
             UNIT_PASSIVE_ATTACK,
             UNIT_DEFENSIVE_ATTACK
         }
-#if TODO_RR
+
         public bool CheckAttack(Unit target, UNIT_ATTACK type)
         {
             if (target == null || this == target) return false;
@@ -546,7 +547,7 @@ namespace EngineA
                 }
             return true;
         }
-#endif
+
         /*
         ====================================================================
         Compute damage/supression the target takes when unit attacks
@@ -554,7 +555,6 @@ namespace EngineA
         the dices are rolled else it's a stochastical prediction.
         ====================================================================
         */
-#if TODO_RR
         public static void GetDamage(Unit aggressor, Unit unit, Unit target,
                               UNIT_ATTACK type,
                               bool real, bool rugged_def,
@@ -795,7 +795,7 @@ namespace EngineA
                 damage = (int)(kill_chance * atk_strength);
             }
         }
-#endif
+
         /*
         ====================================================================
         Execute a single fight (no defensive fire check) with random values.
@@ -842,7 +842,7 @@ namespace EngineA
         takes place (defending unit's hex) is provided.
         ====================================================================
         */
-#if TODO_RR
+
         public static void GetExpectedLosses(Unit unit, Unit target, out int unit_damage, out int target_damage)
         {
             int damage, suppr;
@@ -870,7 +870,7 @@ namespace EngineA
             unit_damage = unit.str - unit_damage;
             target_damage = target.str - target_damage;
         }
-#endif
+		
         /*
         ====================================================================
         This function checks 'units' for supporters of 'target'
@@ -879,7 +879,7 @@ namespace EngineA
         (which is not created here)
         ====================================================================
         */
-#if TODO_RR
+
         public void GetDefensiveFireUnits(Unit target, List<Unit> units, ref List<Unit> df_units)
         {
             df_units.Clear();
@@ -947,7 +947,7 @@ namespace EngineA
                 df_units.Add(entry);
             }
         }
-#endif
+
 
 
         /*
@@ -1121,7 +1121,7 @@ namespace EngineA
         Check if target may do rugged defense
         ====================================================================
         */
-#if TODO_RR
+
         public bool CheckRuggedDefense(Unit target)
         {
             if (((this.sel_prop.flags & UnitFlags.FLYING) == UnitFlags.FLYING) ||
@@ -1136,7 +1136,7 @@ namespace EngineA
             if (target.entr == 0) return false;
             return true;
         }
-#endif
+
         /*
         ====================================================================
         Compute the rugged defense chance.
@@ -1159,7 +1159,6 @@ namespace EngineA
         deducted by terrain movement. The cost will be adjusted as needed.
         ====================================================================
         */
-#if TODO_RR
         public int CalcFuelUsage(int cost)
         {
             int used = cost;
@@ -1179,7 +1178,7 @@ namespace EngineA
                 used *= 2;
             return used;
         }
-#endif
+		
         /*
         ====================================================================
         Update unit bar.
@@ -1350,7 +1349,7 @@ namespace EngineA
             ATK_TARGET_FIRST,
             ATK_NO_STRIKE
         };
-#if TODO_RR
+
         public FIGHT_TYPES Attack(Unit target, UNIT_ATTACK type, bool real, bool force_rugged)
         {
             int unit_old_str = this.str;//, target_old_str = target.str;
@@ -1546,7 +1545,7 @@ namespace EngineA
             target.sel_prop.ini = target_old_ini;
             return ret;
         }
-#endif
+
 #if TODO_RR
         public bool CheckMove(int x, int y, int stage)
         {
