@@ -12,6 +12,9 @@ using System.Text;
 //TODO_RR using System.Drawing;
 using System.Collections.Generic;
 using DataFile;
+using Miscellaneous;
+using UnityEngine;
+using AI_Enemy;
 
 namespace EngineA
 {
@@ -113,7 +116,7 @@ namespace EngineA
         static int def_suppr_delta;		/* supression delta for defending unit */
         static bool has_danger_zone;	/* whether there are any danger zones */
         public static bool deploy_turn;		/* true if this is the deployment-turn */
-        static Action top_committed_action;/* topmost action not to be removed */
+        static AI_Enemy.Action top_committed_action;/* topmost action not to be removed */
         //static struct MessagePane *camp_pane; /* state of campaign message pane */
         static string last_debriefing;   /* text of last debriefing */
 
@@ -241,7 +244,6 @@ namespace EngineA
         Clear danger zone.
         ====================================================================
         */
-#if TODO_RR
         public static void engine_clear_danger_mask()
         {
             if (has_danger_zone)
@@ -250,14 +252,12 @@ namespace EngineA
                 has_danger_zone = false;
             }
         }
-#endif
 
         /*
         ====================================================================
         Set wanted status.
         ====================================================================
         */
-#if TODO_RR
         public static void engine_set_status(STATUS newstat)
         {
             if (newstat == STATUS.STATUS_NONE && setup.type == SETUP.SETUP_RUN_TITLE)
@@ -269,7 +269,7 @@ namespace EngineA
             else
                 status = newstat;
         }
-#endif
+
         /*
 ====================================================================
 Draw wallpaper and background.
@@ -533,7 +533,6 @@ Draw wallpaper and background.
         Clear the selection if NULL is passed as unit.
         ====================================================================
         */
-#if TODO_RR
         public static void engine_select_unit(Unit unit)
         {
             /* select unit */
@@ -551,10 +550,12 @@ Draw wallpaper and background.
                 air_mode = true;
             else
                 air_mode = false;
+			
             /* get merge partners and set merge_unit mask */
             map.map_get_merge_units(cur_unit, out merge_units, out merge_unit_count);
             /* moving range */
             map.map_get_unit_move_mask(unit);
+
             if (modify_fog && unit.cur_mov > 0)
             {
                 map.map_set_fog(MAP_MASK.F_IN_RANGE);
@@ -566,9 +567,10 @@ Draw wallpaper and background.
             if (modify_fog && Config.supply && (unit.cur_mov != 0)
                  && ((unit.sel_prop.flags & UnitFlags.FLYING) == UnitFlags.FLYING) && (unit.sel_prop.fuel != 0))
                 has_danger_zone = map.map_get_danger_mask(unit);
+
             return;
         }
-#endif
+
         /*
         ====================================================================
         Return current units in avail_units to reinf list. Get all valid
@@ -576,7 +578,6 @@ Draw wallpaper and background.
         avail_units. Aircrafts come first.
         ====================================================================
         */
-#if TODO_RR
         static void engine_update_avail_reinf_list()
         {
             Unit unit;
@@ -608,7 +609,6 @@ Draw wallpaper and background.
                 }
             }
         }
-#endif
 
         /*
         ====================================================================
@@ -616,7 +616,6 @@ Draw wallpaper and background.
         If 'skip_unit_prep' is set scen_prep_unit() is not called.
         ====================================================================
         */
-#if TODO_RR
         public static void engine_select_player(Player player, bool skip_unit_prep)
         {
             Player human;
@@ -721,12 +720,14 @@ Draw wallpaper and background.
             merge_unit_count = 0;
             if (df_units != null)
                 df_units.Clear();
+#if TODO_RR
             Action.actions_clear();
+#endif
 #if TODO
             scroll_block = 0;
 #endif
         }
-#endif
+
         /*
         ====================================================================
         Begin turn of next player. Therefore select next player or use
@@ -735,7 +736,7 @@ Draw wallpaper and background.
         If 'skip_unit_prep' is set scen_prep_unit() is not called.
         ====================================================================
         */
-#if TODO_RR
+
         public static void engine_begin_turn(Player forced_player, bool skip_unit_prep)
         {
             char[] text = new char[400];
@@ -754,6 +755,7 @@ Draw wallpaper and background.
             if ( !deploy_turn && cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN ) 
                 event_wait_until_no_input();
 #endif
+			
             /* get player */
             if (forced_player == null)
             {
@@ -786,6 +788,7 @@ Draw wallpaper and background.
                     engine_select_player(player, skip_unit_prep);
                 }
             }
+
             else
             {
                 engine_select_player(forced_player, skip_unit_prep);
@@ -805,11 +808,14 @@ Draw wallpaper and background.
                 return;
             }
 #endif
+
             /* init ai turn if any */
             if (cur_player != null && cur_player.ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU)
                 cur_player.ai_init();
+#if TODO_RR
             /* turn info */
             engine_show_turn_info();
+#endif
             engine_set_status(deploy_turn ? STATUS.STATUS_DEPLOY : STATUS.STATUS_NONE);
             phase = PHASE.PHASE_NONE;
             /* update screen */
@@ -824,7 +830,6 @@ Draw wallpaper and background.
                 }
                 engine_draw_map();
 #endif
-                refresh_screen(0, 0, 0, 0);
                 blind_cpu_turn = false;
             }
             else
@@ -847,8 +852,9 @@ Draw wallpaper and background.
             {
                 while (!cur_player.ai_run()) ;
             }
+
         }
-#endif
+
         /*
         ====================================================================
         End turn of current player without selecting next player. Here 
@@ -963,76 +969,38 @@ Draw wallpaper and background.
             REGION_AIR,
             REGION_NONE
         };
-#if TODO_RR
-        public static bool engine_get_map_pos(int sx, int sy, out int mx, out int my, out REGION region)
+
+        public static bool engine_get_map_pos(float sx, float sy, out int mx, out int my, out REGION region)
         {
             mx = my = -1;
-            region = REGION.REGION_NONE;
-
+			region = REGION.REGION_NONE;
             int x = 0, y = 0;
-            int screen_x, screen_y;
-            int tile_x, tile_y;
-            int total_y_offset;
-            if (status == STATUS.STATUS_STRAT_MAP)
-            {
-                /* strategic map */
-                if (strat_map.strat_map_get_pos(sx, sy, out mx, out my))
-                {
-                    if (mx < 0 || my < 0 || mx >= Engine.map.map_w || my >= Engine.map.map_h)
-                        return false;
-                    return true;
-                }
-                return false;
-            }
-            /* get the map offset in screen from mouse position */
-            x = (sx - map_sx) / Engine.terrain.hex_x_offset;
-            /* y value computes the same like the x value but their may be an offset of engine::y_offset */
-            total_y_offset = 0;
-            if (Misc.EVEN(map_x) && Misc.ODD(x))
-                total_y_offset = Engine.terrain.hex_y_offset;
-            /* if engine::map_x is odd there must be an offset of engine::y_offset for the start of first tile */
-            /* and all odd tiles receive an offset of -engine::y_offset so the result is:
-                odd: offset = 0 even: offset = engine::y_offset it's best to draw this ;-D
-            */
-            if (Misc.ODD(map_x) && Misc.EVEN(x))
-                total_y_offset = Engine.terrain.hex_y_offset;
-            y = (sy - total_y_offset - map_sy) / Engine.terrain.hex_h;
-            /* compute screen position */
-            if (!engine_get_screen_pos(x + map_x, y + map_y, out screen_x, out screen_y)) return false;
-            /* test mask with  sx - screen_x, sy - screen_y */
-            tile_x = sx - screen_x;
-            tile_y = sy - screen_y;
-            if (tile_x < 0 || tile_y < 0 || tile_x >= terrain.hex_w || tile_y >= terrain.hex_h) return false;
-            if (hex_mask[tile_x, tile_y] == 0)
-            {
-                if (Misc.EVEN(map_x))
-                {
-                    if (tile_y < Engine.terrain.hex_y_offset && Misc.EVEN(x)) y--;
-                    if (tile_y >= Engine.terrain.hex_y_offset && Misc.ODD(x)) y++;
-                }
-                else
-                {
-                    if (tile_y < Engine.terrain.hex_y_offset && Misc.ODD(x)) y--;
-                    if (tile_y >= Engine.terrain.hex_y_offset && Misc.EVEN(x)) y++;
-                }
-                x--;
-            }
-            /* region */
-            if (tile_y < (Engine.terrain.hex_h >> 1))
-                region = REGION.REGION_AIR;
-            else
-                region = REGION.REGION_GROUND;
-            /* add engine map offset and assign */
-            x += map_x;
-            y += map_y;
-            mx = x;
-            my = y;
-            /* check range */
-            if (x < 0 || y < 0 || x >= Engine.map.map_w || y >= Engine.map.map_h) return false;
-            /* ok, tile exists */
-            return true;
+            if (map.isLoaded){
+				int auxWidth = Engine.map.map_w-1;
+				int auxHeight = Engine.map.map_h-1;
+				int width = auxWidth*Config.hex_x_offset;
+				int height = -Config.hex_h*auxHeight-Config.hex_y_offset;
+				if (sx>=-Config.hex_w/2 && sx<=width+Config.hex_w/2 && sy<=Config.hex_h/2 && sy>=height-Config.hex_h/2){
+					x = Misc.GetWidthtPosition(sx);
+					y = Misc.GetHeightPosition(sy,x);
+				}
+				int tile_y = (Misc.IsEven(x))?-y*Config.hex_h:-y*Config.hex_h-Config.hex_y_offset;
+				if (tile_y<sy)
+					region = REGION.REGION_AIR;
+            	else
+                	region = REGION.REGION_GROUND;
+				mx = x;
+            	my = y;
+				/* check range */
+	            if (x < 0 || y < 0 || x >= Engine.map.map_w || y >= Engine.map.map_h) return false;
+	            /* ok, tile exists */
+	            return true;
+			}
+			else{
+				return false;
+			}
+            
         }
-#endif
         /*
         ====================================================================
         If x,y is not on screen center this map tile and check if 
@@ -1289,7 +1257,7 @@ Draw wallpaper and background.
         Get primary unit on tile.
         ====================================================================
         */
-#if TODO_RR
+
         public static Unit engine_get_prim_unit(int x, int y, REGION region)
         {
             if (x < 0 || y < 0 || x >= map.map_w || y >= map.map_h) return null;
@@ -1308,13 +1276,13 @@ Draw wallpaper and background.
                     return map.map[x, y].a_unit;
             }
         }
-#endif
+
         /*
         ====================================================================
         Check if there is a target for current unit on x,y.
         ====================================================================
         */
-#if TODO_RR
+
         public static Unit engine_get_target(int x, int y, REGION region)
         {
             Unit unit;
@@ -1327,7 +1295,7 @@ Draw wallpaper and background.
                     return unit;
             return null;
         }
-#endif
+
 
         /*
         ====================================================================
@@ -1337,43 +1305,44 @@ Draw wallpaper and background.
         the current unit)
         ====================================================================
         */
-#if TODO_RR
         public static Unit engine_get_select_unit(int x, int y, REGION region)
         {
             if (x < 0 || y < 0 || x >= Engine.map.map_w || y >= Engine.map.map_h) return null;
+#if TODO_RR
             if (!Engine.map.mask[x, y].spot) return null;
+#endif
+			
             if (region == REGION.REGION_AIR)
             {
-                if (Engine.map.map[x, y].a_unit != null && Engine.map.map[x, y].a_unit.player == cur_player)
+                if (map.map[x, y].a_unit != null && map.map[x, y].a_unit.player == cur_player)
                 {
-                    if (cur_unit == Engine.map.map[x, y].a_unit)
+                    if (cur_unit == map.map[x, y].a_unit)
                         return null;
                     else
-                        return Engine.map.map[x, y].a_unit;
+                        return map.map[x, y].a_unit;
                 }
                 else
-                    if (Engine.map.map[x, y].g_unit != null && Engine.map.map[x, y].g_unit.player == cur_player)
-                        return Engine.map.map[x, y].g_unit;
+                    if (map.map[x, y].g_unit != null && map.map[x, y].g_unit.player == cur_player)
+                        return map.map[x, y].g_unit;
                     else
                         return null;
             }
             else
             {
-                if (Engine.map.map[x, y].g_unit != null && Engine.map.map[x, y].g_unit.player == cur_player)
+                if (map.map[x, y].g_unit != null && map.map[x, y].g_unit.player == cur_player)
                 {
-                    if (cur_unit == Engine.map.map[x, y].g_unit)
+                    if (cur_unit == map.map[x, y].g_unit)
                         return null;
                     else
-                        return Engine.map.map[x, y].g_unit;
+                        return map.map[x, y].g_unit;
                 }
                 else
-                    if (Engine.map.map[x, y].a_unit != null && Engine.map.map[x, y].a_unit.player == cur_player)
-                        return Engine.map.map[x, y].a_unit;
+                    if (map.map[x, y].a_unit != null && map.map[x, y].a_unit.player == cur_player)
+                        return map.map[x, y].a_unit;
                     else
                         return null;
             }
         }
-#endif
         /*
         ====================================================================
         Get next combatants assuming that cur_unit attacks cur_target.
@@ -1458,9 +1427,11 @@ Draw wallpaper and background.
         /// Initiate engine by loading Scenario either as saved game or
         /// new Scenario by the global 'setup'.
         /// </summary>
-#if TODO_RR
-        public static int engine_init(IGuiSystem f)
+
+        public static int engine_init(String scen_name)
         {
+			
+		
             /* engine */
             /* tile mask */
             /*  1 = map tile directly hit
@@ -1476,15 +1447,14 @@ Draw wallpaper and background.
             map.map_set_spot_mask();
             return 1;
             */
-            form = f;
-
             Player player;
+
 #if USE_DL
     char path[256];
 #endif
             end_scen = false;
-            /* build action queue */
-            Action.actions_create();
+			
+		
             /* Scenario&campaign or title*/
             if (setup.type == SETUP.SETUP_RUN_TITLE)
             {
@@ -1496,21 +1466,20 @@ Draw wallpaper and background.
                 status = STATUS.STATUS_CAMP_BRIEFING;
                 return 1;
             }
-            if (setup.type == SETUP.SETUP_LOAD_GAME)
-            {
-                if (Slots.slot_load(setup.slot_id) == 0) return 0;
-            }
             else
                 if (setup.type == SETUP.SETUP_INIT_CAMP)
                 {
+#if TODO_RR
                     if (campaign.camp_load(setup.fname) == 0) return 0;
                     campaign.camp_set_cur(setup.scen_state);
                     if (campaign.camp_cur_scen == null) return 0;
                     setup.type = SETUP.SETUP_CAMP_BRIEFING;
                     return 1;
+#endif
                 }
                 else
                 {
+					setup.fname = scen_name;
                     if (!Scenario.scen_load(setup.fname)) return 0;
                     if (setup.type == SETUP.SETUP_INIT_SCEN)
                     {
@@ -1525,8 +1494,10 @@ Draw wallpaper and background.
                     /* select first player */
                     cur_player = Player.players_get_first();
                 }
+		
             /* store current settings to setup */
             Scenario.scen_set_setup();
+		
             /* load the ai modules */
             for (int i = 0; i < Player.players.Count; i++)
             {
@@ -1568,12 +1539,15 @@ Draw wallpaper and background.
                 player.ai_finalize = ai_finalize;
             }
 #else
+#if TODO_RR
                     player.ai_init = new AiInit(AI.ai_init);
                     player.ai_run = new AiRun(AI.ai_run);
                     player.ai_finalize = new AiFinalize(AI.ai_finalize);
 #endif
+#endif
                 }
             }
+
             /* no unit selected */
             cur_unit = cur_target = cur_atk = cur_def = move_unit = surp_unit = deploy_unit = surrender_unit = null;
             df_units = new List<Unit>();
@@ -1581,11 +1555,11 @@ Draw wallpaper and background.
             /* tile mask */
             /*  1 = map tile directly hit
                 0 = neighbor */
-            hex_mask = new int[terrain.hex_w, terrain.hex_h];
+            hex_mask = new int[Config.hex_w, Config.hex_h];
 
-            for (int j = 0; j < terrain.hex_h; j++)
-                for (int i = 0; i < terrain.hex_w; i++)
-                    if (SDL_Surface.GetPixel(terrain.terrainIcons.fog, i, j) != 0)
+            for (int j = 0; j < Config.hex_h; j++)
+                for (int i = 0; i < Config.hex_w; i++)
+                    if (SDL_Surface.GetPixel(terrain.terrainIcons.fog, i, j) != Color.black)
                         hex_mask[i, j] = 1;
             /* screen copy buffer */
 #if TODO
@@ -1594,8 +1568,8 @@ Draw wallpaper and background.
 #endif
             /* map geometry */
             map_x = map_y = 0;
-            map_sx = -terrain.hex_x_offset;
-            map_sy = -terrain.hex_h;
+            map_sx = -Config.hex_x_offset;
+            map_sy = -Config.hex_h;
 #if TODO
             for (int i = map_sx, map_sw = 0; i < sdl.screen.w; i += terrain.hex_x_offset)
                 map_sw++;
@@ -1617,15 +1591,19 @@ Draw wallpaper and background.
 #if TODO
             strat_map.strat_map_create();
 #endif
+
             /* clear status */
             status = STATUS.STATUS_NONE;
+	#if TODO_RR
             stateMachine = new EngineStateMachine();
+	#endif
             /* weather */
             Scenario.cur_weather = Scenario.scen_get_weather();
+		
             return 1;
         }
 
-#endif
+
         /// <summary>
         /// Shutdown engine
         /// </summary>
@@ -1636,10 +1614,10 @@ Draw wallpaper and background.
         /// <summary>
         /// Run the engine (starts with the title screen)
         /// </summary>
-#if TODO_RR
-        public static void engine_run()
+        public static void engine_run(bool fog)
         {
             bool reinit = true;
+			Config.fog_of_war = fog;
             if (setup.type == SETUP.SETUP_UNKNOWN)
                 setup.type = SETUP.SETUP_RUN_TITLE;
 #if TODO
@@ -1702,7 +1680,7 @@ Draw wallpaper and background.
             }
 #endif
         }
-#endif
+
         /*
         ====================================================================
         Main game loop.
@@ -1773,10 +1751,7 @@ Draw wallpaper and background.
         {
 			throw new NotImplementedException();
         }
-        public static void refresh_screen(int x, int y, int z, int w)
-        { 
-			throw new NotImplementedException();
-		}
+
 #if TODO_RR
         public static void engine_update(int ms)
         {
