@@ -1077,23 +1077,18 @@ namespace EngineA
 				}
 				/* unit info icons */
 				if (unit != null && Config.show_bar) {
-#if TODO_RR
-					if ((cur_player != null) && Player.player_is_ally (cur_player, unit.player)){
-#endif
 					/* strength */
-					if (unit.player.ctrl==PLAYERCONTROL.PLAYER_CTRL_HUMAN){
-						string name = Unit.DeleteOrdinal (unit.name);
-						SDL_Surface sdl_str = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.str_img_name,false);
-						int offset = DB.UnitLib.unit_info_icons.str_h*(unit.str+15);
-						offset = sdl_str.h-offset;
-						SDL_Surface str = new SDL_Surface();
-						SDL_Surface.copy_image(str,DB.UnitLib.unit_info_icons.str_w,
+					if (unit.player.ctrl==PLAYERCONTROL.PLAYER_CTRL_HUMAN){ //TODO_RR if ((cur_player != null) && Player.player_is_ally (cur_player, unit.player)){
+							string name = Unit.DeleteOrdinal (unit.name);
+							SDL_Surface sdl_str = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.str_img_name,false);
+							int offset = DB.UnitLib.unit_info_icons.str_h*(unit.str+15);
+							offset = sdl_str.h-offset;
+							SDL_Surface str = new SDL_Surface();
+							SDL_Surface.copy_image(str,DB.UnitLib.unit_info_icons.str_w,
 												DB.UnitLib.unit_info_icons.str_h,sdl_str,0,offset);
-						int xdest = (Config.hex_w-DB.UnitLib.unit_info_icons.str_w)/2;
-						SDL_Surface.copy_image(hexTex,str,xdest,3,DB.UnitLib.unit_info_icons.str_w,
+							int xdest = (Config.hex_w-DB.UnitLib.unit_info_icons.str_w)/2;
+							SDL_Surface.copy_image(hexTex,str,xdest,3,DB.UnitLib.unit_info_icons.str_w,
 											   DB.UnitLib.unit_info_icons.str_h,0,0);
-
-						
 					}
 					else{
 						string name = Unit.DeleteOrdinal (unit.name);
@@ -1109,22 +1104,17 @@ namespace EngineA
 						
 					}
 					/* for current player only */
-#if TODO_RR
-					if (unit.player == cur_player) {
-#endif
-					if (unit.player.ctrl==PLAYERCONTROL.PLAYER_CTRL_HUMAN){
+
+					if (unit.player.ctrl==PLAYERCONTROL.PLAYER_CTRL_HUMAN){ //TODO_RR if (unit.player == cur_player) {
 						string name = Unit.DeleteOrdinal(unit.name);
 						Unit_Lib_Entry entry = DB.UnitLib.unit_lib_find_by_name(name);
 						/* attack */
-#if TODO_RR
-						if (unit.cur_atk_count > 0) {
-#endif
-						if (unit.cur_atk_count>0){
+						if (entry.atk_count>0){ //TODO_RR if (unit.cur_atk_count > 0) {
 							SDL_Surface atk = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.atk_img_name,false);
 							SDL_Surface.copy_image_without_key(hexTex,atk,15,3,Color.black);
 						}
 						/* move */
-						if (unit.cur_mov > 0) {
+						if (entry.mov>0){ //TODO_RR if (unit.cur_mov > 0) {
 							SDL_Surface mov = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.mov_img_name,false);
 							SDL_Surface.copy_image_without_key(hexTex,mov,37,3,Color.black);		
 						}
@@ -1141,8 +1131,8 @@ namespace EngineA
 #endif
 					}
 				}
+				
 			}
-
 #if TODO_RR
 					}
 				}
@@ -1157,6 +1147,7 @@ namespace EngineA
 #endif
 			return hexTex;
 		}
+
 		/// <summary>
 		/// Draw danger tile. Expects 'surf' to contain a fully drawn tile at
 		/// the given position which will be tinted by overlaying the danger
@@ -1900,25 +1891,26 @@ namespace EngineA
 				}
 				if (dest.w > 51) {
 					SDL_Surface aux = new SDL_Surface ();
-					aux.bitmap = new Texture2D (ulib.icon_tiny_w, ulib.icon_tiny_h, TextureFormat.RGB24, false);
+					aux.Bitmap = new Texture2D (ulib.icon_tiny_w, ulib.icon_tiny_h, TextureFormat.RGB24, false);
 					float scale = 1.5f;
 					for (int i=0; i<ulib.icon_tiny_w; i++) {
 						for (int j=0; j<ulib.icon_tiny_h; j++) {
 							int x = (int)(scale * i);
 							int y = (int)(scale * j);
-							aux.bitmap.SetPixel (i, j, dest.bitmap.GetPixel (x, y));
+							aux.Bitmap.SetPixel (i, j, dest.Bitmap.GetPixel (x, y));
 						}
 					}
-					aux.bitmap.Apply ();
+					aux.Bitmap.Apply ();
 					aux.w = ulib.icon_tiny_w;
 					aux.h = ulib.icon_tiny_h;
-					aux.bitmapMaterial = new Material (Shader.Find ("Diffuse"));
-					aux.bitmapMaterial.mainTexture = aux.bitmap;
+					aux.BitmapMaterial = new Material (Shader.Find ("Diffuse"));
+					aux.BitmapMaterial.mainTexture = aux.Bitmap;
 					dest = aux;
 				}
 				int xdest = (Config.hex_w - dest.w) / 2;
 				SDL_Surface.copy_image_without_key (hexTex, dest, xdest + 2, Nation.nation_flag_height + 5, Color.black);
-			} else if (ntex == 2) {
+			}
+			else if (ntex == 2) {
 				int offset = ulib.offset_img + ulib.icon_h;
 				offset = offset - sdl.h;
 				SDL_Surface sdl2 = SDL_Surface.LoadSurface (ulib.icon_img_name + 2, false);
@@ -1932,20 +1924,20 @@ namespace EngineA
 				}
 				if (resize) {
 					SDL_Surface aux = new SDL_Surface ();
-					aux.bitmap = new Texture2D (ulib.icon_tiny_w, ulib.icon_tiny_h, TextureFormat.RGB24, false);
+					aux.Bitmap = new Texture2D (ulib.icon_tiny_w, ulib.icon_tiny_h, TextureFormat.RGB24, false);
 					float scale = 1.5f;
 					for (int i=0; i<ulib.icon_tiny_w; i++) {
 						for (int j=0; j<ulib.icon_tiny_h; j++) {
 							int x = (int)(scale * i);
 							int y = (int)(scale * j);
-							aux.bitmap.SetPixel (i, j, dest.bitmap.GetPixel (x, y));
+							aux.Bitmap.SetPixel (i, j, dest.Bitmap.GetPixel (x, y));
 						}
 					}
-					aux.bitmap.Apply ();
+					aux.Bitmap.Apply ();
 					aux.w = ulib.icon_tiny_w;
 					aux.h = ulib.icon_tiny_h;
-					aux.bitmapMaterial = new Material (Shader.Find ("Diffuse"));
-					aux.bitmapMaterial.mainTexture = aux.bitmap;
+					aux.BitmapMaterial = new Material (Shader.Find ("Diffuse"));
+					aux.BitmapMaterial.mainTexture = aux.Bitmap;
 					dest = aux;
 				}
 				int xdest = (Config.hex_w - dest.w) / 2;
