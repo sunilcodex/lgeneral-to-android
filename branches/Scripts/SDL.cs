@@ -21,10 +21,14 @@ namespace EngineA
     public class SDL_Surface
     {
         public int w, h;
-        public Texture2D bitmap;
+        private Texture2D bitmap;
         //TODO_RR public System.Drawing.Graphics surf;
         public string name;
-		public Material bitmapMaterial;
+		private Material bitmapMaterial;
+		public Material BitmapMaterial{
+			get{return bitmapMaterial;}
+			set{bitmapMaterial = value;}
+		}
 
         public SDL_Surface()
         {
