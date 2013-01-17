@@ -25,7 +25,8 @@
   <weatherTypeCount>4</weatherTypeCount>
   <fog>Textures/terrain/fog</fog>
   <grid>Textures/terrain/grid</grid>
-  <select>Textures/terrain/select_frame</select>
+  <selectP>Textures/terrain/select_frame</selectP>
+  <danger>Textures/terrain/damage_bars</danger>
   <cross>Textures/terrain/crosshair</cross>
   <terrainTypes>
     <Terrain_TypeDB>
