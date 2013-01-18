@@ -1,84 +1,60 @@
 using UnityEngine;
 using System.Collections;
+using Miscellaneous;
 
-	[ExecuteInEditMode]
+[ExecuteInEditMode]
 	public class GUIMenu : MonoBehaviour
+{
+	
+	private int selGridInt = 0;
+	private int selCampaign = 0;
+	
+	private string[] selOption = new string[] {"Campaign", "Config"};
+	
+	void OnGUI ()
 	{
-	
-		private bool[] toogleBool = {true,false,false,false};
-		private int activeToogle = 0;
-		private int selGridInt = 0;
-		private int selCampaign = 0;
-		private string[] campaigns = new string[] {"1939\nGermany launches a series of blizkrieg attacks in Europe, beggining with Poland",
-												   "1941 West\nHungry for the oil of the Middle East, the Axis moves through North Africa",
-												   "1941 East\nIn the greatest invasion of history, the Axis strikes into the Soviet Union",
-												   "1943 West\nThe Axis must defend the soft underbelly of Europe from the Allies",
-												   "1943 East\nOverextended Soviet forces, the Axis tries to regain the initiative in the East"};
-		private string[] selOption = new string[] {"Campaign", "Scenario", "Load Game", "Replay Game", "Online Game"};
-	
-		void OnGUI ()
-		{
-			GUI.Window (0, new Rect ((Screen.width/2)-250, 50, 500, 500), MenuWindow, "");
-		}
-	
-		void DoUpdRButtons ()
-		{
-			for (int i=0; i<4; i++) {
-				toogleBool [i] = GUILayout.Toggle (toogleBool [i], "Mapa " + (i + 1));	
-			}
-
-			for (int i=0; i<4; i++) {
-				if (activeToogle != i) {
-					if (toogleBool [i] == true) {
-						toogleBool [activeToogle] = false;
-						toogleBool [i] = true;
-						activeToogle = i;
-					}
-				}
-			}  
-		}
-	
-		int rButtonWithGrid ()
-		{
-		
-			return GUILayout.SelectionGrid (selGridInt, selOption, 5); 
-			//DoUpdRButtons();
-			
-		}
-	
-		void MenuWindow (int windowID)
-		{
-		
-			GUILayout.Label ("Rotulo");
-			GUILayout.Space (20);
-			selGridInt = rButtonWithGrid ();
-			GUI.Box (new Rect(10,100,480,325),"");	
-			switch(selGridInt)
-			{
-				case 0:
-					selCampaign = GUI.SelectionGrid(new Rect(10,150,480,220),selCampaign,campaigns,1);
-					break;
-				case 1:
-					//TODO_RR insertar codigo para GUI de escenario
-					break;
-				case 2:
-					//TODO_RR insertar codigo para GUI de Load Game
-					break;
-				case 3:
-					//TODO_RR insertar codigo para GUI de replay Game
-					break;
-				case 4:
-					//TODO_RR insertar codigo para GUI de Online Game
-					break;
-			}
-			GUI.BeginGroup(new Rect(190,350,200,300));
-			if (GUILayout.Button ("START",GUILayout.Width(100))){
-				//TODO_RR insertar codigo para empezar con la aplicacion
-			}
-			if (GUILayout.Button ("EXIT",GUILayout.Width(100))){
-				//TODO_RR insertar codigo para empezar con la aplicacion
-			}
-			GUI.EndGroup();		
-        
-		}
+		GUI.Window (0, new Rect ((Screen.width / 2) - 200, (Screen.height / 2)-175, 400, 350), MenuWindow, "");
 	}
+	
+	void Start () {
+		Misc.set_random_seed();
+	}
+	
+	int rButtonWithGrid ()
+	{
+		
+		return GUILayout.SelectionGrid (selGridInt, selOption, 2); 
+			
+	}
+	
+	void MenuWindow (int windowID)
+	{
+		
+		GUILayout.Label ("Rotulo");
+		GUILayout.Space (50);
+		selGridInt = rButtonWithGrid ();
+		GUI.Box (new Rect (10, 120, 380, 180), "");	
+		switch (selGridInt) {
+		case 0:
+			if (GUI.Button(new Rect(50, 140, 100, 20), new GUIContent("1939", "Germany launches a series of blizkrieg attacks in Europe, beggining with Poland"))){
+				Config.CampaingSelected = "Poland.xml";
+			}
+			GUI.Button(new Rect(50, 170, 100, 20), new GUIContent("1941 West", "Hungry for the oil of the Middle East, the Axis moves through North Africa"));
+			GUI.Button(new Rect(50, 200, 100, 20), new GUIContent("1941 East", "In the greatest invasion of history, the Axis strikes into the Soviet Union"));
+			GUI.Button(new Rect(50, 230, 100, 20), new GUIContent("1943 West", "The Axis must defend the soft underbelly of Europe from the Allies"));
+			GUI.Button(new Rect(50, 260, 100, 20), new GUIContent("1943 East", "Overextended Soviet forces, the Axis tries to regain the initiative in the East"));
+			GUI.Label(new Rect(200, 175, 150, 100), GUI.tooltip);
+			break;
+		case 1:
+			Config.supply = GUI.Toggle(new Rect(145,155,200,30),Config.supply,"Units must supply?");
+			Config.weather = GUI.Toggle(new Rect(145,185,200,30),Config.weather,"Does weather have?");
+			Config.fog_of_war = GUI.Toggle(new Rect(145,215,200,30),Config.fog_of_war,"Fog of war?");
+			Config.show_cpu_turn = GUI.Toggle(new Rect(145,245,200,30),Config.show_cpu_turn,"Show CPU turn?");
+			break;
+		}
+		if (GUI.Button(new Rect(170,310,55,25),"Exit")){
+			Application.Quit ();
+		}		
+        
+	}
+}
