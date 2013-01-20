@@ -1,14 +1,15 @@
 using UnityEngine;
 using System.Collections;
 using Miscellaneous;
+using EngineA;
 
 [ExecuteInEditMode]
 	public class GUIMenu : MonoBehaviour
 {
 	
 	private int selGridInt = 0;
-	private int selCampaign = 0;
-	
+	public GUIStyle myStyle;
+	public GUIStyle myStyle2;
 	private string[] selOption = new string[] {"Campaign", "Config"};
 	
 	void OnGUI ()
@@ -29,15 +30,16 @@ using Miscellaneous;
 	
 	void MenuWindow (int windowID)
 	{
-		
-		GUILayout.Label ("Rotulo");
-		GUILayout.Space (50);
+		GUI.Label(new Rect(70,40,80,25),"Imagen",myStyle2);
+		GUI.Label(new Rect(200,40,100,25),"LGeneral",myStyle);
+		GUILayout.Space (70);
 		selGridInt = rButtonWithGrid ();
 		GUI.Box (new Rect (10, 120, 380, 180), "");	
 		switch (selGridInt) {
 		case 0:
 			if (GUI.Button(new Rect(50, 140, 100, 20), new GUIContent("1939", "Germany launches a series of blizkrieg attacks in Europe, beggining with Poland"))){
-				Config.CampaingSelected = "Poland.xml";
+				//Config.CampaingSelected = "Poland.xml";
+				OnLoadCampaign("Poland.xml");
 			}
 			GUI.Button(new Rect(50, 170, 100, 20), new GUIContent("1941 West", "Hungry for the oil of the Middle East, the Axis moves through North Africa"));
 			GUI.Button(new Rect(50, 200, 100, 20), new GUIContent("1941 East", "In the greatest invasion of history, the Axis strikes into the Soviet Union"));
@@ -56,5 +58,10 @@ using Miscellaneous;
 			Application.Quit ();
 		}		
         
+	}
+	
+	private void OnLoadCampaign(string scen_fname){
+		Engine.engine_set_status(STATUS.STATUS_NONE);
+		Engine.engine_init(scen_fname);
 	}
 }
