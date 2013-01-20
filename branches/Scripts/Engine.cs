@@ -1453,8 +1453,8 @@ Draw wallpaper and background.
     char path[256];
 #endif
             end_scen = false;
-			
-		
+			/* build action queue */
+			AI_Enemy.Action.actions_create();
             /* Scenario&campaign or title*/
             if (setup.type == SETUP.SETUP_RUN_TITLE)
             {
@@ -1466,19 +1466,7 @@ Draw wallpaper and background.
                 status = STATUS.STATUS_CAMP_BRIEFING;
                 return 1;
             }
-            else
-                if (setup.type == SETUP.SETUP_INIT_CAMP)
-                {
-#if TODO_RR
-                    if (campaign.camp_load(setup.fname) == 0) return 0;
-                    campaign.camp_set_cur(setup.scen_state);
-                    if (campaign.camp_cur_scen == null) return 0;
-                    setup.type = SETUP.SETUP_CAMP_BRIEFING;
-                    return 1;
-#endif
-                }
-                else
-                {
+            else{
 					setup.fname = scen_name;
                     if (!Scenario.scen_load(setup.fname)) return 0;
                     if (setup.type == SETUP.SETUP_INIT_SCEN)
@@ -1493,8 +1481,7 @@ Draw wallpaper and background.
                     }
                     /* select first player */
                     cur_player = Player.players_get_first();
-                }
-		
+			}
             /* store current settings to setup */
             Scenario.scen_set_setup();
 		
