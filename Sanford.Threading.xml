@@ -1,0 +1,353 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sanford.Threading</name>
+    </assembly>
+    <members>
+        <member name="T:Sanford.Threading.DelegateQueue">
+            <summary>
+            Represents an asynchronous queue of delegates.
+            </summary>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.#ctor">
+            <summary>
+            Initializes a new instance of the DelegateQueue class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.#ctor(System.ComponentModel.IContainer)">
+            <summary>
+            Initializes a new instance of the DelegateQueue class with the specified IContainer object.
+            </summary>
+            <param name="container">
+            The IContainer to which the DelegateQueue will add itself.
+            </param>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.BeginInvokePriority(System.Delegate,System.Object[])">
+            <summary>
+            Executes the delegate on the main thread that this object executes on.
+            </summary>
+            <param name="method">
+            A Delegate to a method that takes parameters of the same number and 
+            type that are contained in args. 
+            </param>
+            <param name="args">
+            An array of type Object to pass as arguments to the given method. 
+            </param>
+            <returns>
+            An IAsyncResult interface that represents the asynchronous operation 
+            started by calling this method.
+            </returns>
+            <remarks>
+            The delegate is placed at the beginning of the queue. Its invocation
+            takes priority over delegates already in the queue. 
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.InvokePriority(System.Delegate,System.Object[])">
+            <summary>
+            Executes the delegate on the main thread that this object executes on.
+            </summary>
+            <param name="method">
+            A Delegate to a method that takes parameters of the same number and 
+            type that are contained in args. 
+            </param>
+            <param name="args">
+            An array of type Object to pass as arguments to the given method. 
+            </param>
+            <returns>
+            An IAsyncResult interface that represents the asynchronous operation 
+            started by calling this method.
+            </returns>
+            <remarks>
+            <para>
+            The delegate is placed at the beginning of the queue. Its invocation
+            takes priority over delegates already in the queue. 
+            </para>
+            <para>
+            Unlike BeginInvoke, this method operates synchronously, that is, it 
+            waits until the process completes before returning. Exceptions raised 
+            during the call are propagated back to the caller.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.PostPriority(System.Threading.SendOrPostCallback,System.Object)">
+            <summary>
+            Dispatches an asynchronous message to this synchronization context. 
+            </summary>
+            <param name="d">
+            The SendOrPostCallback delegate to call.
+            </param>
+            <param name="state">
+            The object passed to the delegate.
+            </param>
+            <remarks>
+            The Post method starts an asynchronous request to post a message. 
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.SendPriority(System.Threading.SendOrPostCallback,System.Object)">
+            <summary>
+            Dispatches an synchronous message to this synchronization context. 
+            </summary>
+            <param name="d">
+            The SendOrPostCallback delegate to call.
+            </param>
+            <param name="state">
+            The object passed to the delegate.
+            </param>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.Send(System.Threading.SendOrPostCallback,System.Object)">
+            <summary>
+            Dispatches a synchronous message to this synchronization context. 
+            </summary>
+            <param name="d">
+            The SendOrPostCallback delegate to call.
+            </param>
+            <param name="state">
+            The object passed to the delegate.
+            </param>
+            <remarks>
+            The Send method starts an synchronous request to send a message. 
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.Post(System.Threading.SendOrPostCallback,System.Object)">
+            <summary>
+            Dispatches an asynchronous message to this synchronization context. 
+            </summary>
+            <param name="d">
+            The SendOrPostCallback delegate to call.
+            </param>
+            <param name="state">
+            The object passed to the delegate.
+            </param>
+            <remarks>
+            The Post method starts an asynchronous request to post a message. 
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.BeginInvoke(System.Delegate,System.Object[])">
+            <summary>
+            Executes the delegate on the main thread that this DelegateQueue executes on.
+            </summary>
+            <param name="method">
+            A Delegate to a method that takes parameters of the same number and type that 
+            are contained in args. 
+            </param>
+            <param name="args">
+            An array of type Object to pass as arguments to the given method. This can be 
+            a null reference (Nothing in Visual Basic) if no arguments are needed. 
+            </param>
+            <returns>
+            An IAsyncResult interface that represents the asynchronous operation started 
+            by calling this method.
+            </returns>
+            <remarks>
+            <para>The delegate is called asynchronously, and this method returns immediately. 
+            You can call this method from any thread. If you need the return value from a process 
+            started with this method, call EndInvoke to get the value.</para>
+            <para>If you need to call the delegate synchronously, use the Invoke method instead.</para>
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.EndInvoke(System.IAsyncResult)">
+            <summary>
+            Waits until the process started by calling BeginInvoke completes, and then returns 
+            the value generated by the process.
+            </summary>
+            <param name="result">
+            An IAsyncResult interface that represents the asynchronous operation started 
+            by calling BeginInvoke. 
+            </param>
+            <returns>
+            An Object that represents the return value generated by the asynchronous operation.
+            </returns>
+            <remarks>
+            This method gets the return value of the asynchronous operation represented by the 
+            IAsyncResult passed by this interface. If the asynchronous operation has not completed, this method will wait until the result is available.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.Invoke(System.Delegate,System.Object[])">
+            <summary>
+            Executes the delegate on the main thread that this DelegateQueue executes on.
+            </summary>
+            <param name="method">
+            A Delegate that contains a method to call, in the context of the thread for the DelegateQueue.
+            </param>
+            <param name="args">
+            An array of type Object that represents the arguments to pass to the given method.
+            </param>
+            <returns>
+            An Object that represents the return value from the delegate being invoked, or a 
+            null reference (Nothing in Visual Basic) if the delegate has no return value.
+            </returns>
+            <remarks>
+            <para>Unlike BeginInvoke, this method operates synchronously, that is, it waits until 
+            the process completes before returning. Exceptions raised during the call are propagated 
+            back to the caller.</para>
+            <para>Use this method when calling a method from a different thread to marshal the call 
+            to the proper thread.</para>
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateQueue.Dispose">
+            <summary>
+            Disposes of the DelegateQueue.
+            </summary>
+        </member>
+        <member name="E:Sanford.Threading.DelegateQueue.InvokeCompleted">
+            <summary>
+            Occurs after a method has been invoked as a result of a call to 
+            the BeginInvoke or BeginInvokePriority methods.
+            </summary>
+        </member>
+        <member name="E:Sanford.Threading.DelegateQueue.PostCompleted">
+            <summary>
+            Occurs after a method has been invoked as a result of a call to
+            the Post and PostPriority methods.
+            </summary>
+        </member>
+        <member name="E:Sanford.Threading.DelegateQueue.Disposed">
+            <summary>
+            Represents the method that handles the Disposed delegate of a DelegateQueue.
+            </summary>
+        </member>
+        <member name="P:Sanford.Threading.DelegateQueue.Site">
+            <summary>
+            Gets or sets the ISite associated with the DelegateQueue.
+            </summary>
+        </member>
+        <member name="P:Sanford.Threading.DelegateQueue.InvokeRequired">
+            <summary>
+            Gets a value indicating whether the caller must call Invoke.
+            </summary>
+            <value>
+            <b>true</b> if the caller must call Invoke; otherwise, <b>false</b>.
+            </value>
+            <remarks>
+            This property determines whether the caller must call Invoke when making 
+            method calls to this DelegateQueue. If you are calling a method from a different 
+            thread, you must use the Invoke method to marshal the call to the proper thread.
+            </remarks>
+        </member>
+        <member name="T:Sanford.Threading.DelegateQueue.DelegateQueueAsyncResult">
+            <summary>
+            Implements the IAsyncResult interface for the DelegateQueue class.
+            </summary>
+        </member>
+        <member name="T:Sanford.Threading.AsyncResult">
+            <summary>
+            Provides basic implementation of the IAsyncResult interface.
+            </summary>
+        </member>
+        <member name="M:Sanford.Threading.AsyncResult.#ctor(System.Object,System.AsyncCallback,System.Object)">
+            <summary>
+            Initializes a new instance of the AsyncResult object with the
+            specified owner of the AsyncResult object, the optional callback
+            delegate, and optional state object.
+            </summary>
+            <param name="owner">
+            The owner of the AsyncResult object.
+            </param>
+            <param name="callback">
+            An optional asynchronous callback, to be called when the 
+            operation is complete. 
+            </param>
+            <param name="state">
+            A user-provided object that distinguishes this particular 
+            asynchronous request from other requests. 
+            </param>
+        </member>
+        <member name="M:Sanford.Threading.AsyncResult.Signal">
+            <summary>
+            Signals that the operation has completed.
+            </summary>
+        </member>
+        <member name="P:Sanford.Threading.AsyncResult.Owner">
+            <summary>
+            Gets the owner of this AsyncResult object.
+            </summary>
+        </member>
+        <member name="T:Sanford.Threading.DelegateScheduler">
+            <summary>
+            Provides functionality for timestamped delegate invocation.
+            </summary>
+        </member>
+        <member name="F:Sanford.Threading.DelegateScheduler.Infinite">
+            <summary>
+            A constant value representing an unlimited number of delegate invocations.
+            </summary>
+        </member>
+        <member name="M:Sanford.Threading.DelegateScheduler.#ctor">
+            <summary>
+            Initializes a new instance of the DelegateScheduler class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Threading.DelegateScheduler.#ctor(System.ComponentModel.IContainer)">
+            <summary>
+            Initializes a new instance of the DelegateScheduler class with the
+            specified IContainer.
+            </summary>
+        </member>
+        <member name="M:Sanford.Threading.DelegateScheduler.Add(System.Int32,System.Int32,System.Delegate,System.Object[])">
+            <summary>
+            Adds a delegate to the DelegateScheduler.
+            </summary>
+            <param name="count">
+            The number of times the delegate should be invoked.
+            </param>
+            <param name="millisecondsTimeout">
+            The time in milliseconds between delegate invocation.
+            </param>
+            <param name="method">
+            </param>
+            The delegate to invoke.
+            <param name="args">
+            The arguments to pass to the delegate when it is invoked.
+            </param>
+            <exception cref="T:System.ObjectDisposedException">
+            If the DelegateScheduler has already been disposed.
+            </exception>
+            <remarks>
+            If an unlimited count is desired, pass the DelegateScheduler.Infinity 
+            constant as the count argument.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Threading.DelegateScheduler.Start">
+            <summary>
+            Starts the DelegateScheduler.
+            </summary>
+        </member>
+        <member name="M:Sanford.Threading.DelegateScheduler.Stop">
+            <summary>
+            Stops the DelegateScheduler.
+            </summary>
+        </member>
+        <member name="M:Sanford.Threading.DelegateScheduler.Clear">
+            <summary>
+            Clears the DelegateScheduler of all tasks.
+            </summary>
+        </member>
+        <member name="E:Sanford.Threading.DelegateScheduler.InvokeCompleted">
+            <summary>
+            Raised when a delegate is invoked.
+            </summary>
+        </member>
+        <member name="P:Sanford.Threading.DelegateScheduler.PollingInterval">
+            <summary>
+            Gets or sets the interval in milliseconds in which the 
+            DelegateScheduler polls its queue of delegates in order to 
+            determine when they should run.
+            </summary>
+        </member>
+        <member name="P:Sanford.Threading.DelegateScheduler.IsRunning">
+            <summary>
+            Gets a value indicating whether the DelegateScheduler is running.
+            </summary>
+        </member>
+        <member name="P:Sanford.Threading.DelegateScheduler.SynchronizingObject">
+            <summary>
+            Gets or sets the object used to marshal event-handler calls and delegate invocations.
+            </summary>
+        </member>
+        <member name="T:Sanford.Threading.InvokeCompletedEventArgs">
+            <summary>
+            Represents information about the InvokeCompleted event.
+            </summary>
+        </member>
+    </members>
+</doc>
