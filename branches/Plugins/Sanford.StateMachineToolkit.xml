@@ -1,0 +1,2314 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sanford.StateMachineToolkit</name>
+    </assembly>
+    <members>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.HistoryInitializeBuilder">
+            <summary>
+            Builds the method responsible for initializing states' history type.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.HistoryInitializeBuilder.#ctor(System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the HistoryInitializeBuilder class.
+            </summary>
+            <param name="stateHistoryTypes">
+            The states and their history types.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.HistoryInitializeBuilder.Build">
+            <summary>
+            Builds the method.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.HistoryInitializeBuilder.Result">
+            <summary>
+            Gets the built method.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.EventEnumeratorBuilder">
+            <summary>
+            Builds the event identifiers.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.TransitionEventArgs`2">
+            <summary>
+            Event data for transition events.
+            </summary>
+            <typeparam name="TState">The type of the state.</typeparam>
+            <typeparam name="TEvent">The type of the event.</typeparam>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.TransitionEventArgs`2.#ctor(Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.TransitionEventArgs`2"/> class.
+            </summary>
+            <param name="eventContext">The event context.</param>
+        </member>
+        <member name="F:Sanford.StateMachineToolkit.TransitionEventArgs`2.m_eventContext">
+            <summary>
+            The event context.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.TransitionEventArgs`2.EventID">
+            <summary>
+            Gets the event ID.
+            </summary>
+            <value>The event ID.</value>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.TransitionEventArgs`2.SourceStateID">
+            <summary>
+            Gets the source state ID.
+            </summary>
+            <value>The source state ID.</value>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.TransitionEventArgs`2.EventArgs">
+            <summary>
+            Gets the event arguments.
+            </summary>
+            <value>The event arguments.</value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.TransitionErrorEventArgs`2">
+            <summary>
+            Event data for the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.ExceptionThrown"/> event.
+            </summary>
+            <typeparam name="TState">The type of the state.</typeparam>
+            <typeparam name="TEvent">The type of the event.</typeparam>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.TransitionErrorEventArgs`2.#ctor(Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.TransitionErrorEventArgs`2"/> class.
+            </summary>
+            <param name="eventContext">The event context.</param>
+            <param name="error">The error.</param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.TransitionErrorEventArgs`2.Error">
+            <summary>
+            Gets the error.
+            </summary>
+            <value>The error.</value>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.TransitionErrorEventArgs`2.Empty">
+            <summary>
+            Represents an event with no event data.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.TransitionErrorEventArgs`2.MachineInitialized">
+            <summary>
+            Gets a value indicating whether the state machine was initialized.
+            </summary>
+            <value><c>true</c> if the state machine was initialized; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.TransitionCompletedEventArgs`2">
+            <summary>
+            Event data for the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.TransitionCompleted"/> event.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.TransitionCompletedEventArgs`2.#ctor(`0,Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext,System.Object,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.TransitionCompletedEventArgs`2"/> class.
+            </summary>
+            <param name="targetStateID">The target state ID.</param>
+            <param name="eventContext">The event context.</param>
+            <param name="actionResult">The action result.</param>
+            <param name="error">The error.</param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.TransitionCompletedEventArgs`2.TargetStateID">
+            <summary>
+            Gets the target state ID.
+            </summary>
+            <value>The target state ID.</value>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.TransitionCompletedEventArgs`2.ActionResult">
+            <summary>
+            Gets the action result.
+            </summary>
+            <value>The action result.</value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachine`2">
+            <summary>
+            Represents the base class for all state machines.
+            You do not derive your state machine classes from this class but rather from one 
+            of its derived classes, either the <see cref="T:Sanford.StateMachineToolkit.ActiveStateMachine`2"/> 
+            class or the <see cref="T:Sanford.StateMachineToolkit.PassiveStateMachine`2"/> class.
+            </summary>
+        </member>
+        <member name="F:Sanford.StateMachineToolkit.StateMachine`2.m_currentState">
+            <summary>
+            The current state.
+            </summary>
+        </member>
+        <member name="F:Sanford.StateMachineToolkit.StateMachine`2.m_currentEventContext">
+            <summary>
+            The current event context.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Initialize(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Initializes the StateMachine's initial state.
+            </summary>
+            <param name="initialState">
+            The state that will initially receive events from the StateMachine.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Initialize(`0)">
+            <summary>
+            Initializes the StateMachine's initial state.
+            </summary>
+            <param name="initialStateID">
+            The state that will initially receive events from the StateMachine.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.InitializeStateMachine(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Initializes the StateMachine's initial state.
+            </summary>
+            <param name="initialState">
+            The state that will initially receive events from the StateMachine.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.AddTransition(`0,`1,`0,Sanford.StateMachineToolkit.ActionHandler[])">
+            <summary>
+             Adds a new transition to the state machine.  The source and target states will be 
+             implicitly added to the state machine if necesseray. 
+            </summary>
+            <param name="source">The source state.</param>
+            <param name="eventID">The event that will trigger the transition.</param>
+            <param name="target">The target state.</param>
+            <param name="actions">Optional actions that will be performed during the transition.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.AddTransition(`0,`1,Sanford.StateMachineToolkit.GuardHandler,`0,Sanford.StateMachineToolkit.ActionHandler[])">
+            <summary>
+             Adds a new transition to the state machine.  The source and target states will be 
+             implicitly added to the state machine if necessary. 
+            </summary>
+            <param name="source">The source state.</param>
+            <param name="eventID">The event that will trigger the transition.</param>
+            <param name="guard">A transition guard.</param>
+            <param name="target">The target state.</param>
+            <param name="actions">Optional actions that will be performed during the transition.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.CreateState(`0)">
+            <summary>
+             Creates a new <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> object.
+            </summary>
+            <param name="stateID">The underlying state ID.</param>
+            <returns>The new <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> object.</returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.CreateState(`0,Sanford.StateMachineToolkit.EntryHandler,Sanford.StateMachineToolkit.ExitHandler)">
+            <summary>
+             Creates a new <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> object.
+            </summary>
+            <param name="stateID">The underlying state ID.</param>
+            <param name="entryHandler">An entry handler that will be executed when entering the state.</param>
+            <param name="exitHandler">An exit handler that will be executed when leaving the state.</param>
+            <returns>The new <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> object.</returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Send(`1,System.Object[])">
+            <summary>
+             Sends an event to the state machine, that might trigger a transition.
+            </summary>
+            <param name="eventID">The event.</param>
+            <param name="args">Optional event arguments.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.SendPriority(`1,System.Object[])">
+            <summary>
+             Sends an event to the state machine, that might trigger a transition.
+             This event will have precedence over other pending events that were sent using
+             the <see cref="M:Sanford.StateMachineToolkit.StateMachine`2.Send(`1,System.Object[])"/> method.
+            </summary>
+            <param name="eventID">The event.</param>
+            <param name="args">Optional event arguments.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.SetupSubstates(`0,Sanford.StateMachineToolkit.HistoryType,`0,`0[])">
+            <summary>
+             Setups substates for hierarchical state machine.
+            </summary>
+            <param name="superState">The super state.</param>
+            <param name="historyType">The history type.</param>
+            <param name="initialSubstate">The initial substate.</param>
+            <param name="additionalSubstates">Additional substates.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.AssertMachineIsValid">
+            <summary>
+            Asserts that the state machine was initialized.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">Thrown when the state machine was not initialized.</exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.OnBeginDispatch(Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext)">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.BeginDispatch"/> event.
+            </summary>
+            <param name="eventContext">The event context.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.OnBeginTransition(Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext)">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.BeginTransition"/> event.
+            </summary>
+            <param name="eventContext">The event context.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.OnTransitionCompleted(Sanford.StateMachineToolkit.TransitionCompletedEventArgs{`0,`1})">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.TransitionCompleted"/> event.
+            </summary>
+            <param name="args">The <see cref="T:Sanford.StateMachineToolkit.TransitionCompletedEventArgs`2"/> instance 
+            containing the event data.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.OnTransitionDeclined(Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext)">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.TransitionDeclined"/> event.
+            </summary>
+            <param name="eventContext">The event context.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.OnExceptionThrown(Sanford.StateMachineToolkit.TransitionErrorEventArgs{`0,`1})">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.ExceptionThrown"/> event.
+            </summary>
+            <param name="args">The <see cref="T:Sanford.StateMachineToolkit.TransitionCompletedEventArgs`2"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.RaiseSafeEvent``1(System.EventHandler{``0},``0,System.Boolean)">
+            <summary>
+            Raises an event, without throwing out exceptions. 
+            Optionally, exceptions could trigger the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.ExceptionThrown"/> event.
+            </summary>
+            <typeparam name="TArgs">The type of the event arguments.</typeparam>
+            <param name="eventHandler">The event handler.</param>
+            <param name="args">The event arguments.</param>
+            <param name="raiseEventOnException">if set to <c>true</c> exceptions will trigger the 
+            <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.ExceptionThrown"/> event.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Dispatch(`1,System.Object[])">
+            <summary>
+            Dispatches events to the current state.
+            </summary>
+            <param name="eventID">
+            The event ID.
+            </param>
+            <param name="args">
+            The data accompanying the event.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.HandleDispatchException(System.Exception)">
+            <summary>
+            Template method for handling dispatch exceptions.
+            </summary>
+            <param name="ex">The exception.</param>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachine`2.BeginDispatch">
+            <summary>
+            Occurs before a dispatch starts.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachine`2.BeginTransition">
+            <summary>
+            Occurs before a transition starts.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachine`2.TransitionCompleted">
+            <summary>
+            Occurs after a transition is completed.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachine`2.TransitionDeclined">
+            <summary>
+            Occurs when a transition is declined.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachine`2.ExceptionThrown">
+            <summary>
+            Occurs when an exception is thrown.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.CurrentStateID">
+            <summary>
+            Gets the ID of the current state.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.ActionResult">
+            <summary>
+            Gets or sets the results of the action performed during the last transition.
+            </summary>
+            <remarks>
+            This property should only be set during the execution of an action method.
+            </remarks>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.StateMachineType">
+            <summary>
+             Gets the state machine type: active or passive.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.IsInitialized">
+            <summary>
+            Gets a value indicating whether this state machine is initialized.
+            </summary>
+            <value>
+            	<c>true</c> if this state machine is initialized; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.States">
+            <summary>
+             The states of the state machine.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachine`2.Transition">
+            <summary>
+            The Transition class represents a transition from one <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> 
+            to another. It can have a delegate representing a <see cref="T:Sanford.StateMachineToolkit.GuardHandler"/> method which it 
+            will use to  determine whether or not it should fire. 
+            It can also have one or more delegates representing action methods that it will 
+            execute when it fires. And, it can have a <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.Transition.Target"/> <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> 
+            that is the target of the Transition..
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Transition.#ctor">
+            <summary>
+            Initializes a new instance of the Transition class.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Transition.#ctor(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Initializes a new instance of the Transition class with the 
+            specified target.
+            </summary>
+            <param name="target">
+            The target state of the transition.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Transition.#ctor(Sanford.StateMachineToolkit.GuardHandler)">
+            <summary>
+            Initializes a new instance of the Transition class with the 
+            specified guard.
+            </summary>
+            <param name="guard">
+            The guard to test to determine whether the transition should take 
+            place.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Transition.#ctor(Sanford.StateMachineToolkit.GuardHandler,Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Initializes a new instance of the Transition class with the 
+            specified guard and target.
+            </summary>
+            <param name="guard">
+            The guard to test to determine whether the transition should take 
+            place.
+            </param>
+            <param name="target">
+            The target state of the transition.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.Transition.Fire(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State,System.Object[])">
+            <summary>
+            Fires the transition.
+            </summary>
+            <param name="origin">
+            The State that originally received the event.
+            </param>
+            <param name="args">
+            The arguments accompanying the event.
+            </param>
+            <returns>
+            A TransitionResult object representing the results of the transition.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.Transition.Guard">
+            <summary>
+            Gets the guard to test to determine if the transition should take 
+            place.
+            </summary>
+            <remarks>
+            If no guard is necessary, this value may be null.
+            </remarks>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.Transition.Actions">
+            <summary>
+            Gets the collection of actions.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.Transition.Target">
+            <summary>
+            Gets the target of the transition.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.Transition.Source">
+            <summary>
+            Gets or sets the source of the transition.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachine`2.State">
+            <summary>
+            The State class represents a state a <see cref="T:Sanford.StateMachineToolkit.StateMachine`2"/> can be in during 
+            its lifecycle. 
+            A State can be a substate and/or superstate to other States.<para/>
+            When a State receives an event, it checks to see if it has any Transitions for that event. 
+            If it does, it iterates through all of the Transitions for that event until one of them fires. 
+            If no Transitions were found, the State passes the event up to its superstate, if it has one; 
+            the process is repeated at the superstate level. 
+            This process can continue indefinitely until either a Transition fires or the top of the 
+            state hierarchy is reached.<para/>
+            After processing an event, the State returns the results to the 
+            <see cref="M:Sanford.StateMachineToolkit.StateMachine`2.State.Dispatch(`1,System.Object[])"/> method where the State originally received the event. 
+            The results indicate whether or not a Transition fired, and if so, the resulting 
+            State of the <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.Transition"/>. 
+            It also indicates whether or not an exception occurred during the  Transition's action 
+            (if one was performed). State machines use this information to update their 
+            current State, if necessary.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.State.#ctor(`0)">
+            <summary>
+            Initializes a new instance of the State class with the specified
+            number of events it will handle.
+            </summary>
+            <param name="stateID">
+            The State's ID.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.State.#ctor(`0,Sanford.StateMachineToolkit.EntryHandler)">
+            <summary>
+            Initializes a new instance of the State class with the specified
+            number of events it will handle as well as its entry action.
+            </summary>
+            <param name="stateID">
+            The State's ID.
+            </param>
+            <param name="entryHandler">
+            The entry action.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.State.#ctor(`0,Sanford.StateMachineToolkit.ExitHandler)">
+            <summary>
+            Initializes a new instance of the State class with the specified
+            number of events it will handle as well as its exit action.
+            </summary>
+            <param name="stateID">
+            The State's ID.
+            </param>
+            <param name="exitHandler">
+            The exit action.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.State.#ctor(`0,Sanford.StateMachineToolkit.EntryHandler,Sanford.StateMachineToolkit.ExitHandler)">
+            <summary>
+            Initializes a new instance of the State class with the specified
+            number of events it will handle as well as its entry and exit 
+            actions.
+            </summary>
+            <param name="stateID">
+            The State's ID.
+            </param>
+            <param name="entryHandler">
+            The entry action.
+            </param>
+            <param name="exitHandler">
+            The exit action.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.State.Dispatch(`1,System.Object[])">
+            <summary>
+            Dispatches an event to the StateMachine.
+            </summary>
+            <param name="eventID"></param>
+            <param name="args">
+            The arguments accompanying the event.
+            </param>
+            <returns>
+            The results of the dispatch.
+            </returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.State.Entry">
+            <summary>
+            Enters the state.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.State.Exit">
+            <summary>
+            Exits the state.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachine`2.State.EntryHandler">
+            <summary>
+            Occurs when entering the state.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachine`2.State.ExitHandler">
+            <summary>
+            Occurs when leaving the state.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.State.ID">
+            <summary>
+            Gets the State's ID.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.State.Substates">
+            <summary>
+            Gets the collection of substates.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.State.Transitions">
+            <summary>
+            Gets the collection of transitions.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.State.Superstate">
+            <summary>
+            Gets or sets the superstate.
+            </summary>
+            <remarks>
+            If no superstate exists for this state, this property is null.
+            </remarks>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.State.InitialState">
+            <summary>
+            Gets or sets the initial state.
+            </summary>
+            <remarks>
+            If no initial state exists for this state, this property is null.
+            </remarks>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.State.HistoryType">
+            <summary>
+            Gets or sets the history type.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.State.Level">
+            <summary>
+            Gets the State's level in the State hierarchy.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachine`2.TransitionResult">
+            <summary>
+            Represents the result of a transition.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.TransitionResult.#ctor(System.Boolean,Sanford.StateMachineToolkit.StateMachine{`0,`1}.State,System.Exception)">
+            <summary>
+            Initializes a new instance of the TransitionResult class.
+            </summary>
+            <param name="hasFired">
+            Indicates whether or not the Transition fired.
+            </param>
+            <param name="newState">
+            The resulting state of the Transition.
+            </param>
+            <param name="error">
+            The resulting exception of the Transition if one was thrown.
+            </param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.TransitionResult.HasFired">
+            <summary>
+            Gets a value indicating whether or not the transition fired.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.TransitionResult.Error">
+            <summary>
+            Gets the exception that was a result of firing the Transition.
+            </summary>
+            <remarks>
+            This property will be null if the Transition did not fire or if it
+            did fire but no exception took place.
+            </remarks>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.TransitionResult.NewState">
+            <summary>
+            Gets the state that is a result of firing the Transition.
+            </summary>
+            <remarks>
+            This property will be null if the Transition did not fire.
+            </remarks>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachine`2.TransitionCollection">
+            <summary>
+            The TransitionCollection represents a collection of Transitions. 
+            Each <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> object has its own 
+            TransitionCollection for holding its Transitions.<para/>
+            When a Transition is added to a State's <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.State.Transitions"/>, 
+            it is registered with an event ID. This event ID is a value identifying an event a 
+            <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> can receive. When a <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> 
+            receives an event, it uses the event's ID to check to see if it has any Transitions for that 
+            event (as described above).
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.TransitionCollection.#ctor(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Initializes a new instance of the TransitionCollection class with 
+            the specified number of events.
+            </summary>
+            <param name="owner">
+            The state that owns the TransitionCollection.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.TransitionCollection.Add(`1,Sanford.StateMachineToolkit.StateMachine{`0,`1}.Transition)">
+            <summary>
+            Adds a Transition to the collection for the specified event ID.
+            </summary>
+            <param name="eventID">
+            The event ID associated with the Transition.
+            </param>
+            <param name="trans">
+            The Transition to add.
+            </param>
+            <remarks>
+            When a Transition is added to the collection, it is associated with
+            the specified event ID. When a State receives an event, it looks up
+            the event ID in its TransitionCollection to see if there are any 
+            Transitions for the specified event. 
+            </remarks>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.TransitionCollection.Add(`1,Sanford.StateMachineToolkit.StateMachine{`0,`1}.State,Sanford.StateMachineToolkit.ActionHandler[])">
+            <summary>
+            Adds a Transition to the collection for the specified event ID.
+            </summary>
+            <param name="eventID">
+            The event ID associated with the Transition.
+            </param>
+            <param name="targetState">
+            The target state of the transtion.
+            </param>
+            <param name="actions">
+            Optional array of actions, to be performed during the transition.
+            </param>
+            <remarks>
+            When a Transition is added to the collection, it is associated with
+            the specified event ID. When a State receives an event, it looks up
+            the event ID in its TransitionCollection to see if there are any 
+            Transitions for the specified event. 
+            </remarks>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.TransitionCollection.Add(`1,Sanford.StateMachineToolkit.GuardHandler,Sanford.StateMachineToolkit.StateMachine{`0,`1}.State,Sanford.StateMachineToolkit.ActionHandler[])">
+            <summary>
+            Adds a Transition to the collection for the specified event ID.
+            </summary>
+            <param name="eventID">
+            The event ID associated with the Transition.
+            </param>
+            <param name="guard">
+            The guard to test to determine whether the transition should take 
+            place.
+            </param>
+            <param name="targetState">
+            The target state of the transtion.
+            </param>
+            <param name="actions">
+            Optional array of actions, to be performed during the transition.
+            </param>
+            <remarks>
+            When a Transition is added to the collection, it is associated with
+            the specified event ID. When a State receives an event, it looks up
+            the event ID in its TransitionCollection to see if there are any 
+            Transitions for the specified event. 
+            </remarks>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.TransitionCollection.Remove(`1,Sanford.StateMachineToolkit.StateMachine{`0,`1}.Transition)">
+            <summary>
+            Removes the specified Transition at the specified event ID.
+            </summary>
+            <param name="eventID">
+            The event ID associated with the Transition.
+            </param>
+            <param name="trans">
+            The Transition to remove.
+            </param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.TransitionCollection.Item(`1)">
+            <summary>
+            Gets a collection of Transitions at the specified event ID.
+            </summary>
+            <remarks>
+            If there are no Transitions at the specified event ID, the value
+            of the collection will be null.
+            </remarks>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachine`2.SubstateCollection">
+            <summary>
+            The SubstateCollection class represents a collection of substates. 
+            Each <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> has a <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.State.Substates"/> 
+            property of the SubstateCollection type. 
+            Substates are added and removed to a <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> via this property.<para/>
+            Substates are not represented by their own class. The <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> class 
+            performs double duty, playing the role of substates and superstates when necessary. 
+            Whether or not a <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> is a substate depends on whether or not 
+            it has been added to another State's <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.State.Substates"/> collection. 
+            And whether or not a State is a superstate depends on whether or not any States have 
+            been added to its <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.State.Substates"/> collection.<para/>
+            There are some restrictions on which States can be added as substates to another <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/>. 
+            The most obvious one is that a <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> cannot be added to its own 
+            <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.State.Substates"/> collection; 
+            a <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> cannot be a substate to itself. 
+            Also, a <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> can only be the direct substate of one other 
+            <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/>; you cannot add a <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> to the 
+            <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.State.Substates"/> collection of more than one <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/>.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.SubstateCollection.#ctor(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Initializes a new instance of the SubstateCollection with the 
+            specified owner.
+            </summary>
+            <param name="owner">
+            The owner of the collection.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.SubstateCollection.Add(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Adds the specified State to the collection.
+            </summary>
+            <param name="substate">
+            The State to add to the collection.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.SubstateCollection.Remove(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Removes the specified State from the collection.
+            </summary>
+            <param name="substate">
+            The State to remove from the collection.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.SubstateCollection.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the collection.
+            </summary>
+            <returns>
+            A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+            </returns>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachine`2.StateMap">
+            <summary>
+             A readonly mapping from <typeparamref name="TState"/> ID to 
+             <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> object.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.StateMap.Item(`0)">
+            <summary>
+            Gets the <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/> 
+            object with the specified <typeparamref name="TState"/> ID.
+            </summary>
+            <value>The <typeparamref name="TState"/> ID.</value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachine`2.EventContext">
+            <summary>
+             A context with information about an event is being processed by the state machine.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachine`2.EventContext.#ctor(`0,`1,System.Object[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.EventContext"/> class.
+            </summary>
+            <param name="sourceState">The source state.</param>
+            <param name="currentEvent">The current event.</param>
+            <param name="args">The event arguments.</param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.EventContext.SourceState">
+            <summary>
+            Gets the source state.
+            </summary>
+            <value>The state of the source.</value>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.EventContext.Args">
+            <summary>
+            Gets the event arguments.
+            </summary>
+            <value>The args.</value>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachine`2.EventContext.CurrentEvent">
+            <summary>
+            Gets the current event.
+            </summary>
+            <value>The current event.</value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder">
+            <summary>
+            Generates code for state machine base classes.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder.Build">
+            <summary>
+            Builds the state machine.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder.Clear">
+            <summary>
+            Clears the builder of all states and transitions, and resets its 
+            properties to their default values. 
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder.Result">
+            <summary>
+            Gets the result of building the state machine.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder.States">
+            <summary>
+            Gets the collection of StateRows that represent the state machine's
+            top level states.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder.NamespaceName">
+            <summary>
+            Gets or sets the name of the namespace in which the state machine
+            resides.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder.StateMachineName">
+            <summary>
+            Gets or sets the name of the state machine.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder.InitialState">
+            <summary>
+            Gets or sets the initial state of the state machine.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilder.StateMachineType">
+            <summary>
+            Gets or sets the type of the state machine.
+            </summary>
+            <value>The type of the state machine.</value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.ConstructorBuilder">
+            <summary>
+            Builds the state machine's constructor.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.ConstructorBuilder.Build">
+            <summary>
+            Builds the constructors.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.ConstructorBuilder.Result">
+            <summary>
+            Gets the collection built constructors.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.ConstructorBuilder.InitialState">
+            <summary>
+            Gets or sets the state machine's initial state.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection">
+            <summary>
+            Summary description for ActionRowCollection.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.Add(Sanford.StateMachineToolkit.StateMachineBuilder.ActionRow)">
+            <summary>
+            Adds the specified row.
+            </summary>
+            <param name="row">The row.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.Add(System.String)">
+            <summary>
+            Adds the specified name.
+            </summary>
+            <param name="name">The name.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.OnClear">
+            <summary>
+            Performs additional custom processes when clearing the contents of the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.OnClearComplete">
+            <summary>
+            Performs additional custom processes after clearing the contents of the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.OnInsertComplete(System.Int32,System.Object)">
+            <summary>
+            Performs additional custom processes after inserting a new element into the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which to insert <paramref name="value"/>.</param>
+            <param name="value">The new value of the element at <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.OnRemoveComplete(System.Int32,System.Object)">
+            <summary>
+            Performs additional custom processes after removing an element from the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="value"/> can be found.</param>
+            <param name="value">The value of the element to remove from <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.OnSetComplete(System.Int32,System.Object,System.Object)">
+            <summary>
+            Performs additional custom processes after setting a value in the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="oldValue"/> can be found.</param>
+            <param name="oldValue">The value to replace with <paramref name="newValue"/>.</param>
+            <param name="newValue">The new value of the element at <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.AddNew">
+            <summary>
+            Adds a new item to the list.
+            </summary>
+            <returns>The item added to the list.</returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.AllowNew"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.AddIndex(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Adds the <see cref="T:System.ComponentModel.PropertyDescriptor"/> to the indexes used for searching.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to add to the indexes used for searching.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)">
+            <summary>
+            Sorts the list based on a <see cref="T:System.ComponentModel.PropertyDescriptor"/> and a <see cref="T:System.ComponentModel.ListSortDirection"/>.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to sort by.</param>
+            <param name="direction">One of the <see cref="T:System.ComponentModel.ListSortDirection"/> values.</param>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.Find(System.ComponentModel.PropertyDescriptor,System.Object)">
+            <summary>
+            Returns the index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor"/>.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to search on.</param>
+            <param name="key">The value of the <paramref name="property"/> parameter to search for.</param>
+            <returns>
+            The index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor"/>.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSearching"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.RemoveSort">
+            <summary>
+            Removes any sort applied using <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)"/>.
+            </summary>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.RemoveIndex(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Removes the <see cref="T:System.ComponentModel.PropertyDescriptor"/> from the indexes used for searching.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to remove from the indexes used for searching.</param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the <see cref="T:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRow"/> at the specified index.
+            </summary>
+            <value></value>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.ListChanged">
+            <summary>
+            Occurs when the list changes or an item in the list changes.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.AllowNew">
+            <summary>
+            Gets whether you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew"/>.
+            </summary>
+            <value></value>
+            <returns>true if you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew"/>; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.AllowEdit">
+            <summary>
+            Gets whether you can update items in the list.
+            </summary>
+            <value></value>
+            <returns>true if you can update the items in the list; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.AllowRemove">
+            <summary>
+            Gets whether you can remove items from the list, using <see cref="M:System.Collections.IList.Remove(System.Object)"/> or <see cref="M:System.Collections.IList.RemoveAt(System.Int32)"/>.
+            </summary>
+            <value></value>
+            <returns>true if you can remove items from the list; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.SortProperty">
+            <summary>
+            Gets the <see cref="T:System.ComponentModel.PropertyDescriptor"/> that is being used for sorting.
+            </summary>
+            <value></value>
+            <returns>
+            The <see cref="T:System.ComponentModel.PropertyDescriptor"/> that is being used for sorting.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.SupportsChangeNotification">
+            <summary>
+            Gets whether a <see cref="E:System.ComponentModel.IBindingList.ListChanged"/> event is raised when the list changes or an item in the list changes.
+            </summary>
+            <value></value>
+            <returns>true if a <see cref="E:System.ComponentModel.IBindingList.ListChanged"/> event is raised when the list changes or when an item changes; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.SupportsSorting">
+            <summary>
+            Gets whether the list supports sorting.
+            </summary>
+            <value></value>
+            <returns>true if the list supports sorting; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.SupportsSearching">
+            <summary>
+            Gets whether the list supports searching using the <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)"/> method.
+            </summary>
+            <value></value>
+            <returns>true if the list supports searching using the <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)"/> method; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.IsSorted">
+            <summary>
+            Gets whether the items in the list are sorted.
+            </summary>
+            <value></value>
+            <returns>true if <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)"/> has been called and <see cref="M:System.ComponentModel.IBindingList.RemoveSort"/> has not been called; otherwise, false.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRowCollection.SortDirection">
+            <summary>
+            Gets the direction of the sort.
+            </summary>
+            <value></value>
+            <returns>
+            One of the <see cref="T:System.ComponentModel.ListSortDirection"/> values.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.ActiveStateMachine">
+            <summary>
+            A base non-generic active state machine.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.ActiveStateMachine`2">
+            <summary>
+            The ActiveStateMachine class uses the Active Object design pattern. 
+            What this means is that an ActiveStateMachine object runs in its own thread. 
+            Internally, ActiveStateMachines use <see cref="T:Sanford.Threading.DelegateQueue"/> objects for handling 
+            and dispatching events. 
+            You derive your state machines from this class when you want them to be active objects.<para/>
+            The ActiveStateMachine class implements the <see cref="T:System.IDisposable"/> interface. 
+            Since it represents an  active object, it needs to be disposed of at some point to 
+            shut its thread down. 
+            The Dispose method was made virtual so that derived ActiveStateMachine classes can override it. 
+            Typically, a derived ActiveStateMachine will override the Dispose method, and when it is called, 
+            will send an event to itself using the <see cref="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.SendPriority(`1,System.Object[])"/> method telling it to dispose of itself. 
+            In other words, disposing of an ActiveStateMachine is treated like an event. 
+            How your state machine handles the disposing event depends on its current state. 
+            However, at some point, your state machine will need to call the ActiveStateMachine's 
+            <see cref="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.Dispose(System.Boolean)"/> base class method, passing it a true value. 
+            This lets the base class dispose of its <see cref="T:Sanford.Threading.DelegateQueue"/> object, thus shutting down the 
+            thread in which it is running.
+            </summary>
+            <typeparam name="TState">The state enumeration type.</typeparam>
+            <typeparam name="TEvent">The event enumeration type.</typeparam>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.ActiveStateMachine`2"/> class.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.Finalize">
+            <summary>
+            Releases unmanaged resources and performs other cleanup operations before the
+            <see cref="T:Sanford.StateMachineToolkit.ActiveStateMachine`2"/> is reclaimed by garbage collection.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources
+            </summary>
+            <param name="disposing"><c>true</c> to release both managed and unmanaged resources; 
+            <c>false</c> to release only unmanaged resources.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.Initialize(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Initializes the StateMachine's initial state.
+            </summary>
+            <param name="initialState">The state that will initially receive events from the StateMachine.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.AssertMachineIsValid">
+            <summary>
+            Asserts that the state machine was initialized and not disposed.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">Thrown when the state machine was not initialized.</exception>
+            <exception cref="T:System.ObjectDisposedException">Thrown when the state machine was already disposed.</exception>"
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.Send(`1,System.Object[])">
+            <summary>
+            Sends an event to the StateMachine.
+            </summary>
+            <param name="eventID">
+            The event ID.
+            </param>
+            <param name="args">
+            The data accompanying the event.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.SendSynchronously(`1,System.Object[])">
+            <summary>
+            Sends an event to the StateMachine, and blocks until it processing ends.
+            </summary>
+            <param name="eventID">
+            The event ID.
+            </param>
+            <param name="args">
+            The data accompanying the event.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.SendPriority(`1,System.Object[])">
+            <summary>
+            Sends an event to the state machine, that might trigger a transition.
+            This event will have precedence over other pending events that were sent using
+            the <see cref="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.Send(`1,System.Object[])"/> method.
+            </summary>
+            <param name="eventID">The event.</param>
+            <param name="args">Optional event arguments.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.HandleDispatchException(System.Exception)">
+            <summary>
+            Template method for handling dispatch exceptions.
+            </summary>
+            <param name="ex">The exception.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.OnBeginDispatch(Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext)">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.BeginDispatch"/> event.
+            </summary>
+            <param name="eventContext">The event context.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.OnBeginTransition(Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext)">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.BeginTransition"/> event.
+            </summary>
+            <param name="eventContext">The event context.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.OnTransitionDeclined(Sanford.StateMachineToolkit.StateMachine{`0,`1}.EventContext)">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.TransitionDeclined"/> event.
+            </summary>
+            <param name="eventContext">The event context.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.OnTransitionCompleted(Sanford.StateMachineToolkit.TransitionCompletedEventArgs{`0,`1})">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.TransitionCompleted"/> event.
+            </summary>
+            <param name="args">The <see cref="T:Sanford.StateMachineToolkit.TransitionCompletedEventArgs`2"/> instance
+            containing the event data.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.OnExceptionThrown(Sanford.StateMachineToolkit.TransitionErrorEventArgs{`0,`1})">
+            <summary>
+            Raises the <see cref="E:Sanford.StateMachineToolkit.StateMachine`2.ExceptionThrown"/> event.
+            </summary>
+            <param name="args">The <see cref="T:Sanford.StateMachineToolkit.TransitionErrorEventArgs`2"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActiveStateMachine`2.WaitForPendingEvents">
+            <summary>
+            Waits for pending events.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.ActiveStateMachine`2.StateMachineType">
+            <summary>
+            Gets the state machine type: active or passive.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.ActiveStateMachine`2.IsDisposed">
+            <summary>
+            Gets a value indicating whether this instance is disposed.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is disposed; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.PassiveStateMachine">
+            <summary>
+            A base non-generic passive state machine.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.PassiveStateMachine`2">
+            <summary>
+            Unlike the <see cref="T:Sanford.StateMachineToolkit.ActiveStateMachine`2"/> class, 
+            the PassiveStateMachine class does not run in its  own thread. Sometimes using an active 
+            object is overkill. In those cases, it is  appropriate to derive your state machine from 
+            the PassiveStateMachine class.<para/>
+            Because the PassiveStateMachine is, well, passive, it has to be prodded to 
+            fire its transitions. You do this by calling its <see cref="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.Execute"/> method. After sending a 
+            PassiveStateMachine derived class one or more events, you then call <see cref="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.Execute"/>. 
+            The state machine responds by dequeueing all of the events in its event queue, 
+            dispatching them one right after the other. 
+            </summary>
+            <typeparam name="TState">The state enumeration type.</typeparam>
+            <typeparam name="TEvent">The event enumeration type.</typeparam>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.Initialize(Sanford.StateMachineToolkit.StateMachine{`0,`1}.State)">
+            <summary>
+            Initializes the StateMachine's initial state.
+            </summary>
+            <param name="initialState">The state that will initially receive events from the StateMachine.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.Execute">
+            <summary>
+            Executes pending events.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.Send(`1,System.Object[])">
+            <summary>
+            Sends an event to the state machine, that might trigger a transition.
+            </summary>
+            <param name="eventID">The event.</param>
+            <param name="args">Optional event arguments.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.SendPriority(`1,System.Object[])">
+            <summary>
+            Sends an event to the state machine, that might trigger a transition.
+            This event will have precedence over other pending events that were sent using
+            the <see cref="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.Send(`1,System.Object[])"/> method.
+            </summary>
+            <param name="eventID">The event.</param>
+            <param name="args">Optional event arguments.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.HandleDispatchException(System.Exception)">
+            <summary>
+            Template method for handling dispatch exceptions.
+            </summary>
+            <param name="ex">The exception.</param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.PassiveStateMachine`2.StateMachineType">
+            <summary>
+            Gets the state machine type: active or passive.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.PassiveStateMachine`2.StateMachineEvent">
+            <summary>
+            Encapsulates an event that was sent to the state machine.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.StateMachineEvent.#ctor(`1,System.Object[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.PassiveStateMachine`2.StateMachineEvent"/> class.
+            </summary>
+            <param name="eventID">The event ID.</param>
+            <param name="args">The event arguments.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.PassiveStateMachine`2.StateMachineEvent.GetArgs">
+            <summary>
+            Gets the event arguments.
+            </summary>
+            <returns>The event arguments.</returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.PassiveStateMachine`2.StateMachineEvent.EventID">
+            <summary>
+            Gets the event ID.
+            </summary>
+            <value>The event ID.</value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.TransitionInitializeBuilder">
+            <summary>
+            Builds the method responsible for initializing the transitions.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.TransitionInitializeBuilder.#ctor(System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the TransitionInitializeBuilder class
+            with the specified state transition table.
+            </summary>
+            <param name="stateTransitions">
+            The state transitions. 
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.TransitionInitializeBuilder.Build">
+            <summary>
+            Builds the method.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.TransitionInitializeBuilder.Result">
+            <summary>
+            Gets the built method.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.ActionHandler">
+            <summary>
+            Represents the method that will perform an action during a state 
+            transition.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.GuardHandler">
+            <summary>
+            Represents the method that is evaluated to determine whether the state
+            transition should fire.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.EntryHandler">
+            <summary>
+            Represents the method that is called when a state is entered.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.ExitHandler">
+            <summary>
+            Represents the method that is called when a state is exited.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.HistoryType">
+            <summary>
+            Specifies constants defining the type of history a state uses.
+            </summary>
+            <remarks>
+            A state's history type determines which of its nested states it enters 
+            into when it is the target of a transition. If a state does not have 
+            any nested states, its history type has no effect.
+            </remarks>
+        </member>
+        <member name="F:Sanford.StateMachineToolkit.HistoryType.None">
+            <summary>
+            The state enters into its initial state which in turn enters into
+            its initial state and so on until the innermost nested state is 
+            reached.
+            </summary>
+        </member>
+        <member name="F:Sanford.StateMachineToolkit.HistoryType.Shallow">
+            <summary>
+            The state enters into its last active state which in turn enters 
+            into its initial state and so on until the innermost nested state
+            is reached.
+            </summary>
+        </member>
+        <member name="F:Sanford.StateMachineToolkit.HistoryType.Deep">
+            <summary>
+            The state enters into its last active state which in turns enters
+            into its last active state and so on until the innermost nested
+            state is reached.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.RelationshipInitializeBuilder">
+            <summary>
+            Builds the method responsible for initializing the substate/superstate 
+            relationships between states.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.RelationshipInitializeBuilder.#ctor(System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the RelationshipInitializeBuilder
+            with the specified relationship table.
+            </summary>
+            <param name="stateRelationships">
+            The relationships between substates and superstates.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.RelationshipInitializeBuilder.Build">
+            <summary>
+            Builds the method.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.RelationshipInitializeBuilder.Result">
+            <summary>
+            Gets the built method.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.InitialStateInitializeBuilder">
+            <summary>
+            Builds the method responsible for initializing states' initial state.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.InitialStateInitializeBuilder.#ctor(System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the InitialStateInitializeBuilder 
+            class.
+            </summary>
+            <param name="stateInitialStates">
+            The states and their initial states. 
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.InitialStateInitializeBuilder.Build">
+            <summary>
+            Builds the method.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.GuardInitializeBuilder">
+            <summary>
+            Builds the method responsible for initializing the guard delegates.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.GuardInitializeBuilder.#ctor(System.Collections.ICollection)">
+            <summary>
+            Initializes a new instance of the GuardInitializeBuilder class.
+            </summary>
+            <param name="guards">
+            The guards from which the GuardHandler delegates are initialized.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.GuardInitializeBuilder.Build">
+            <summary>
+            Builds the method.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.GuardInitializeBuilder.Result">
+            <summary>
+            Gets the built method.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.MethodBuilder">
+            <summary>
+            Builds the methods that make up the state machine.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.MethodBuilder.#ctor(System.Collections.ICollection,System.Collections.ICollection,System.Collections.ICollection,System.Collections.ICollection,System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the MethodBuilder class with all
+            of the tables necessary to build the state machine methods.
+            </summary>
+            <param name="states">
+            The state machine's states.
+            </param>
+            <param name="events">
+            The state machine's events.
+            </param>
+            <param name="guards">
+            The state machine's guards.
+            </param>
+            <param name="actions">
+            The state machine's actions.
+            </param>
+            <param name="stateTransitions">
+            The state transitions.
+            </param>
+            <param name="stateRelationships">
+            The substate/superstate relationships.
+            </param>
+            <param name="stateHistoryTypes">
+            The state history types.
+            </param>
+            <param name="stateInitialStates">
+            The states' initial states.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.MethodBuilder.Build">
+            <summary>
+            Builds the methods for the state machine.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.MethodBuilder.Result">
+            <summary>
+            Gets the collection of built methods.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.MethodBuilder.InitialState">
+            <summary>
+            Gets or sets the state machine's initial state.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow">
+            <summary>
+            Represents a row of data describing a state transition in a 
+            TransitionRowCollection.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow.BeginEdit">
+            <summary>
+            Begins an edit on a TransitionRow.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow.CancelEdit">
+            <summary>
+            Discards changes since the last BeginEdit call.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow.EndEdit">
+            <summary>
+            Pushes changes since the last BeginEdit or IBindingList.AddNew call 
+            into the underlying StateRow.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow.EditCancelled">
+            <summary>
+            Raised when an edit has been cancelled.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow.Event">
+            <summary>
+            Gets the event that triggered the transition.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow.Guard">
+            <summary>
+            Gets the guard that is evaluated to determine whether or not the 
+            transition will fire.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow.Target">
+            <summary>
+            Gets the target state of the transition.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow.Actions">
+            <summary>
+            Gets the actions.
+            </summary>
+            <value>The actions.</value>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineType">
+            <summary>
+            The type of the state machine.
+            </summary>
+        </member>
+        <member name="F:Sanford.StateMachineToolkit.StateMachineType.Passive">
+            <summary>
+            Passive state machine.
+            </summary>
+        </member>
+        <member name="F:Sanford.StateMachineToolkit.StateMachineType.Active">
+            <summary>
+            Active state machine.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.StateInitializeBuilder">
+            <summary>
+            Builds the method responsible for initializing the states.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.StateInitializeBuilder.#ctor(System.Collections.ICollection,System.Collections.ICollection)">
+            <summary>
+            Initializes a new instance of the StateInitializeBuilder class with
+            specified state and event tables.
+            </summary>
+            <param name="states">
+            The states to be initialized.
+            </param>
+            <param name="events">
+            The  events the state machine responds to.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.StateInitializeBuilder.Build">
+            <summary>
+            Builds the method.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.StateInitializeBuilder.Result">
+            <summary>
+            Gets the build method.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.ActionInitializeBuilder">
+            <summary>
+            Builds the method responsible for initializing the action delegates.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.ActionInitializeBuilder.#ctor(System.Collections.ICollection)">
+            <summary>
+            Initializes a new instance of the ActionInitializeBuilder with the
+            specified action table.
+            </summary>
+            <param name="actions">
+            The actions from which the ActionHandler delegates are initialized.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.ActionInitializeBuilder.Build">
+            <summary>
+            Builds the method.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.ActionInitializeBuilder.Result">
+            <summary>
+            Gets the built method.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilderException">
+            <summary>
+            The exception that is thrown when the StateMachineBuilder encounters
+            an error while building a state machine.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilderException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.StateMachineBuilder.StateMachineBuilderException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.StateEnumeratorBuilder">
+            <summary>
+            Builds the event identifiers.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection">
+            <summary>
+            Represents a collection of TransitionRows.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.Add(Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRow)">
+            <summary>
+            Adds a TransitionRow to the TransitionRowCollection.
+            </summary>
+            <param name="row">
+            The TransitionRow to add to the TransitionRowCollection.
+            </param>
+            <returns>
+            The position into which the TransitionRow was inserted into the 
+            TransitionRowCollection.
+            </returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.Add(System.String,System.String,System.String)">
+            <summary>
+            Creates a TransitionRow with the specified event, guard,
+            and target and adds it to the TransitionRowCollection.
+            </summary>
+            <param name="event">
+            The event that raised the transition.
+            </param>
+            <param name="guard">
+            The guard to evaluate whether or not the transition should fire.
+            </param>
+            <param name="target">
+            The target state of the transition.
+            </param>
+            <returns>
+            The position into which the TransitionRow was inserted into the 
+            TransitionRowCollection.
+            </returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.OnClear">
+            <summary>
+            Performs additional custom processes when clearing the contents of the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.OnClearComplete">
+            <summary>
+            Performs additional custom processes after clearing the contents of the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.OnInsertComplete(System.Int32,System.Object)">
+            <summary>
+            Performs additional custom processes after inserting a new element into the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which to insert <paramref name="value"/>.</param>
+            <param name="value">The new value of the element at <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.OnRemoveComplete(System.Int32,System.Object)">
+            <summary>
+            Performs additional custom processes after removing an element from the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="value"/> can be found.</param>
+            <param name="value">The value of the element to remove from <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.OnSetComplete(System.Int32,System.Object,System.Object)">
+            <summary>
+            Performs additional custom processes after setting a value in the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="oldValue"/> can be found.</param>
+            <param name="oldValue">The value to replace with <paramref name="newValue"/>.</param>
+            <param name="newValue">The new value of the element at <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.AddNew">
+            <summary>
+            Adds a new item to the list.
+            </summary>
+            <returns>The item added to the list.</returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.AllowNew"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.AddIndex(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Adds the <see cref="T:System.ComponentModel.PropertyDescriptor"/> to the indexes used for searching.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to add to the indexes used for searching.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)">
+            <summary>
+            Sorts the list based on a <see cref="T:System.ComponentModel.PropertyDescriptor"/> and a <see cref="T:System.ComponentModel.ListSortDirection"/>.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to sort by.</param>
+            <param name="direction">One of the <see cref="T:System.ComponentModel.ListSortDirection"/> values.</param>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.Find(System.ComponentModel.PropertyDescriptor,System.Object)">
+            <summary>
+            Returns the index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor"/>.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to search on.</param>
+            <param name="key">The value of the <paramref name="property"/> parameter to search for.</param>
+            <returns>
+            The index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor"/>.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSearching"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.RemoveSort">
+            <summary>
+            Removes any sort applied using <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)"/>.
+            </summary>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.RemoveIndex(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Removes the <see cref="T:System.ComponentModel.PropertyDescriptor"/> from the indexes used for searching.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to remove from the indexes used for searching.</param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the TransitionRow at the specified index.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.ListChanged">
+            <summary>
+            Occurs when the list changes or an item in the list changes.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.AllowNew">
+            <summary>
+            Gets whether you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew"/>.
+            </summary>
+            <value></value>
+            <returns>true if you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew"/>; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.AllowEdit">
+            <summary>
+            Gets whether you can update items in the list.
+            </summary>
+            <value></value>
+            <returns>true if you can update the items in the list; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.AllowRemove">
+            <summary>
+            Gets whether you can remove items from the list, using <see cref="M:System.Collections.IList.Remove(System.Object)"/> or <see cref="M:System.Collections.IList.RemoveAt(System.Int32)"/>.
+            </summary>
+            <value></value>
+            <returns>true if you can remove items from the list; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.SortProperty">
+            <summary>
+            Gets the <see cref="T:System.ComponentModel.PropertyDescriptor"/> that is being used for sorting.
+            </summary>
+            <value></value>
+            <returns>
+            The <see cref="T:System.ComponentModel.PropertyDescriptor"/> that is being used for sorting.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.SupportsChangeNotification">
+            <summary>
+            Gets whether a <see cref="E:System.ComponentModel.IBindingList.ListChanged"/> event is raised when the list changes or an item in the list changes.
+            </summary>
+            <value></value>
+            <returns>true if a <see cref="E:System.ComponentModel.IBindingList.ListChanged"/> event is raised when the list changes or when an item changes; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.SupportsSorting">
+            <summary>
+            Gets whether the list supports sorting.
+            </summary>
+            <value></value>
+            <returns>true if the list supports sorting; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.SupportsSearching">
+            <summary>
+            Gets whether the list supports searching using the <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)"/> method.
+            </summary>
+            <value></value>
+            <returns>true if the list supports searching using the <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)"/> method; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.IsSorted">
+            <summary>
+            Gets whether the items in the list are sorted.
+            </summary>
+            <value></value>
+            <returns>true if <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)"/> has been called and <see cref="M:System.ComponentModel.IBindingList.RemoveSort"/> has not been called; otherwise, false.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.TransitionRowCollection.SortDirection">
+            <summary>
+            Gets the direction of the sort.
+            </summary>
+            <value></value>
+            <returns>
+            One of the <see cref="T:System.ComponentModel.ListSortDirection"/> values.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection">
+            <summary>
+            Represents a collection of StateRows.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.Add(Sanford.StateMachineToolkit.StateMachineBuilder.StateRow)">
+            <summary>
+            Adds a StateRow to the StateRowCollection.
+            </summary>
+            <param name="row">
+            The StateRow to add to the StateRowCollection.
+            </param>
+            <returns>
+            The position into which the StateRow was inserted into the 
+            StareRowCollection.
+            </returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.Add(System.String)">
+            <summary>
+            Creates a StateRow based on the specified name and adds it to the
+            StateRowCollection.
+            </summary>
+            <param name="name">
+            The state name.
+            </param>
+            <returns>
+            The position into which the StateRow was inserted into the 
+            StareRowCollection.
+            </returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.Add(System.String,System.String)">
+            <summary>
+            Creates a StateRow based on the specified name and initial state 
+            and adds it to the StateRowCollection.
+            </summary>
+            <param name="name">
+            The state name.
+            </param>
+            <param name="initialState">
+            The state's initial state.
+            </param>
+            <returns>
+            The position into which the StateRow was inserted into the 
+            StareRowCollection.
+            </returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.Add(System.String,System.String,Sanford.StateMachineToolkit.HistoryType)">
+            <summary>
+            Creates a StateRow based on the specified name, initial state, and
+            history type and adds it to the StateRowCollection.
+            </summary>
+            <param name="name">
+            The state name.
+            </param>
+            <param name="initialState">
+            The state's initial state.
+            </param>
+            <param name="historyType">
+            The state's history type.
+            </param>
+            <returns>
+            The position into which the StateRow was inserted into the 
+            StareRowCollection.
+            </returns>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.OnClear">
+            <summary>
+            Performs additional custom processes when clearing the contents of the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.OnClearComplete">
+            <summary>
+            Performs additional custom processes after clearing the contents of the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.OnInsertComplete(System.Int32,System.Object)">
+            <summary>
+            Performs additional custom processes after inserting a new element into the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which to insert <paramref name="value"/>.</param>
+            <param name="value">The new value of the element at <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.OnRemoveComplete(System.Int32,System.Object)">
+            <summary>
+            Performs additional custom processes after removing an element from the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="value"/> can be found.</param>
+            <param name="value">The value of the element to remove from <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.OnSetComplete(System.Int32,System.Object,System.Object)">
+            <summary>
+            Performs additional custom processes after setting a value in the <see cref="T:System.Collections.CollectionBase"/> instance.
+            </summary>
+            <param name="index">The zero-based index at which <paramref name="oldValue"/> can be found.</param>
+            <param name="oldValue">The value to replace with <paramref name="newValue"/>.</param>
+            <param name="newValue">The new value of the element at <paramref name="index"/>.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.AddNew">
+            <summary>
+            Adds a new item to the list.
+            </summary>
+            <returns>The item added to the list.</returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.AllowNew"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.AddIndex(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Adds the <see cref="T:System.ComponentModel.PropertyDescriptor"/> to the indexes used for searching.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to add to the indexes used for searching.</param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)">
+            <summary>
+            Sorts the list based on a <see cref="T:System.ComponentModel.PropertyDescriptor"/> and a <see cref="T:System.ComponentModel.ListSortDirection"/>.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to sort by.</param>
+            <param name="direction">One of the <see cref="T:System.ComponentModel.ListSortDirection"/> values.</param>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.Find(System.ComponentModel.PropertyDescriptor,System.Object)">
+            <summary>
+            Returns the index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor"/>.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to search on.</param>
+            <param name="key">The value of the <paramref name="property"/> parameter to search for.</param>
+            <returns>
+            The index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor"/>.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSearching"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.RemoveSort">
+            <summary>
+            Removes any sort applied using <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)"/>.
+            </summary>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.RemoveIndex(System.ComponentModel.PropertyDescriptor)">
+            <summary>
+            Removes the <see cref="T:System.ComponentModel.PropertyDescriptor"/> from the indexes used for searching.
+            </summary>
+            <param name="property">The <see cref="T:System.ComponentModel.PropertyDescriptor"/> to remove from the indexes used for searching.</param>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.Item(System.Int32)">
+            <summary>
+            Gets or sets the StateRow at the specified index.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.ListChanged">
+            <summary>
+            Occurs when the list changes or an item in the list changes.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.AllowNew">
+            <summary>
+            Gets whether you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew"/>.
+            </summary>
+            <value></value>
+            <returns>true if you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew"/>; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.AllowEdit">
+            <summary>
+            Gets whether you can update items in the list.
+            </summary>
+            <value></value>
+            <returns>true if you can update the items in the list; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.AllowRemove">
+            <summary>
+            Gets whether you can remove items from the list, using <see cref="M:System.Collections.IList.Remove(System.Object)"/> or <see cref="M:System.Collections.IList.RemoveAt(System.Int32)"/>.
+            </summary>
+            <value></value>
+            <returns>true if you can remove items from the list; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.SortProperty">
+            <summary>
+            Gets the <see cref="T:System.ComponentModel.PropertyDescriptor"/> that is being used for sorting.
+            </summary>
+            <value></value>
+            <returns>
+            The <see cref="T:System.ComponentModel.PropertyDescriptor"/> that is being used for sorting.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.SupportsChangeNotification">
+            <summary>
+            Gets whether a <see cref="E:System.ComponentModel.IBindingList.ListChanged"/> event is raised when the list changes or an item in the list changes.
+            </summary>
+            <value></value>
+            <returns>true if a <see cref="E:System.ComponentModel.IBindingList.ListChanged"/> event is raised when the list changes or when an item changes; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.SupportsSorting">
+            <summary>
+            Gets whether the list supports sorting.
+            </summary>
+            <value></value>
+            <returns>true if the list supports sorting; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.SupportsSearching">
+            <summary>
+            Gets whether the list supports searching using the <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)"/> method.
+            </summary>
+            <value></value>
+            <returns>true if the list supports searching using the <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)"/> method; otherwise, false.
+            </returns>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.IsSorted">
+            <summary>
+            Gets whether the items in the list are sorted.
+            </summary>
+            <value></value>
+            <returns>true if <see cref="M:System.ComponentModel.IBindingList.ApplySort(System.ComponentModel.PropertyDescriptor,System.ComponentModel.ListSortDirection)"/> has been called and <see cref="M:System.ComponentModel.IBindingList.RemoveSort"/> has not been called; otherwise, false.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRowCollection.SortDirection">
+            <summary>
+            Gets the direction of the sort.
+            </summary>
+            <value></value>
+            <returns>
+            One of the <see cref="T:System.ComponentModel.ListSortDirection"/> values.
+            </returns>
+            <exception cref="T:System.NotSupportedException">
+            	<see cref="P:System.ComponentModel.IBindingList.SupportsSorting"/> is false.
+            </exception>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow">
+            <summary>
+            Represents a row of data describing a state in a StateRowCollection.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.BeginEdit">
+            <summary>
+            Begins an edit on a StateRow.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.CancelEdit">
+            <summary>
+            Discards changes since the last BeginEdit call.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.EndEdit">
+            <summary>
+            Pushes changes since the last BeginEdit or IBindingList.AddNew call 
+            into the underlying StateRow.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.EditCancelled">
+            <summary>
+            Raised when an edit has been cancelled.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.Name">
+            <summary>
+            Gets or sets the state's name.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.InitialState">
+            <summary>
+            Gets or sets the state's initial state.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.HistoryType">
+            <summary>
+            Gets or sets the state's initial state.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.Substates">
+            <summary>
+            Gets the state's substates.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.StateRow.Transitions">
+            <summary>
+            Gets the states transitions.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRow">
+            <summary>
+            Summary description for ActionRow.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRow.EndEdit">
+            <summary>
+            Pushes changes since the last <see cref="M:System.ComponentModel.IEditableObject.BeginEdit"/> or <see cref="M:System.ComponentModel.IBindingList.AddNew"/> call into the underlying object.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRow.CancelEdit">
+            <summary>
+            Discards changes since the last <see cref="M:System.ComponentModel.IEditableObject.BeginEdit"/> call.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRow.BeginEdit">
+            <summary>
+            Begins an edit on an object.
+            </summary>
+        </member>
+        <member name="E:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRow.EditCancelled">
+            <summary>
+            Raised when an edit has been cancelled.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.StateMachineBuilder.ActionRow.Name">
+            <summary>
+            Gets or sets the action's name.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.FieldBuilder">
+            <summary>
+            Builds the fields belonging to the state machine.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.FieldBuilder.#ctor(System.Collections.ICollection,System.Collections.ICollection,System.Collections.ICollection,System.Collections.ICollection)">
+            <summary>
+            Initializes a new instance of the FieldBuilder class with the 
+            specified state, guard, and action tables.
+            </summary>
+            <param name="states">
+            The states from which to declare the State object fields.
+            </param>
+            <param name="events">
+            The events from which to declare the event ID fields.
+            </param>
+            <param name="guards">
+            The guards from which to declare the GuardHandler delegate fields.
+            </param>
+            <param name="actions">
+            The actions from which to declare the ActionHandler delegate fields.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.FieldBuilder.Build">
+            <summary>
+            Builds the fields.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.FieldBuilder.Result">
+            <summary>
+            Gets the collection of built fields.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.CodeGeneration.InitializeMethodBuilder">
+            <summary>
+            Builds all of the methods responsible for initializing the state 
+            machine members.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.InitializeMethodBuilder.#ctor(System.Collections.ICollection,System.Collections.ICollection,System.Collections.ICollection,System.Collections.ICollection,System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary)">
+            <summary>
+            Initializes a new instance of the InitializeMethodBuilder class
+            with the tables necessary for building the methods.
+            </summary>
+            <param name="states">
+            The state machine's states.
+            </param>
+            <param name="events">
+            The state machine's events.
+            </param>
+            <param name="guards">
+            The state machine's guards.
+            </param>
+            <param name="actions">
+            The state machine's actions.
+            </param>
+            <param name="stateTransitions">
+            The state transitions.
+            </param>
+            <param name="stateRelationships">
+            The substate/superstate relationships.
+            </param>
+            <param name="stateHistoryTypes">
+            The state history types.
+            </param>
+            <param name="stateInitialStates">
+            The states' initial states.
+            </param>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.CodeGeneration.InitializeMethodBuilder.Build">
+            <summary>
+            Builds the methods.
+            </summary>
+        </member>
+        <member name="P:Sanford.StateMachineToolkit.CodeGeneration.InitializeMethodBuilder.Result">
+            <summary>
+            Gets the collection of built methods.
+            </summary>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.GuardException">
+            <summary>
+            Represents errors that occur during <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.Transition"/>'s
+            <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.Transition.Guard"/> execution.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.GuardException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.GuardException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="ex">The ex.</param>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.EntryException">
+            <summary>
+            Represents errors that occur during <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/>'s 
+            <see cref="M:Sanford.StateMachineToolkit.StateMachine`2.State.Entry"/> execution.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.EntryException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.EntryException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="ex">The ex.</param>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.ActionException">
+            <summary>
+            Represents errors that occur during <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.Transition"/>'s 
+            <see cref="P:Sanford.StateMachineToolkit.StateMachine`2.Transition.Actions"/> execution.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ActionException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.ActionException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="ex">The ex.</param>
+        </member>
+        <member name="T:Sanford.StateMachineToolkit.ExitException">
+            <summary>
+            Represents errors that occur during <see cref="T:Sanford.StateMachineToolkit.StateMachine`2.State"/>'s 
+            <see cref="M:Sanford.StateMachineToolkit.StateMachine`2.State.Exit"/> execution.
+            </summary>
+        </member>
+        <member name="M:Sanford.StateMachineToolkit.ExitException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Sanford.StateMachineToolkit.ExitException"/> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="ex">The ex.</param>
+        </member>
+    </members>
+</doc>
