@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Miscellaneous;
 using EngineA;
+using DataFile;
 
 [ExecuteInEditMode]
 	public class GUIMenu : MonoBehaviour
@@ -63,5 +64,9 @@ using EngineA;
 	private void OnLoadCampaign(string scen_fname){
 		Engine.engine_set_status(STATUS.STATUS_NONE);
 		Engine.engine_init(scen_fname);
+		Engine.engine_run();
+		Config.Show_info_scen= Engine.engine_begin_turn(Engine.cur_player, DB.setup.type == SETUP.SETUP_LOAD_GAME);
+		Application.LoadLevel("ScenInfo");
+		
 	}
 }
