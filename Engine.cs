@@ -88,8 +88,9 @@ namespace EngineA
         public static bool term_game = false;
 #if TODO_RR
         public static Bitmap Sdl_screen;
-        public static EngineStateMachine stateMachine;
 #endif
+        public static EngineStateMachine stateMachine;
+
 
         public static PHASE phase;
         static Way_Point[] way;             /* way points for movement */
@@ -194,7 +195,6 @@ namespace EngineA
         End the Scenario and display final message.
         ====================================================================
         */
-#if TODO_RR
         public static void engine_finish_scenario()
         {
             /* finalize ai turn if any */
@@ -215,7 +215,7 @@ namespace EngineA
             engine_set_status(STATUS.STATUS_NONE);
             phase = PHASE.PHASE_NONE;
         }
-#endif
+
         /*
         ====================================================================
         Return the first human player.
@@ -406,8 +406,7 @@ Draw wallpaper and background.
         Show turn info (done before turn)
         ====================================================================
         */
-#if TODO_RR
-        static void engine_show_turn_info()
+        static string engine_show_turn_info()
         {
             StringBuilder str = new StringBuilder();
             if (cur_player.ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN)
@@ -420,11 +419,10 @@ Draw wallpaper and background.
                     if (cur_player.ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN)
                     {
                         str.Append("\nDeploy your troops");
-                        form.ShowMessageAndWait(str.ToString());
-                        return;
+                        return str.ToString();
                     }
                     /* don't show screen for computer-controlled players */
-                    return;
+                    return "";
                 }
 
                 if (Scenario.turn + 1 < Scenario.scen_info.turn_limit)
@@ -437,10 +435,10 @@ Draw wallpaper and background.
                 else
                     str.Append("\nLast Turn");
 
-                form.ShowMessageAndWait(str.ToString());
+                return str.ToString();
             }
+			return "";
         }
-#endif
         /*
         ====================================================================
         Backup data that will be restored when unit move was undone.
@@ -448,7 +446,6 @@ Draw wallpaper and background.
         If x != -1 the flag at x,y will be saved.
         ====================================================================
         */
-#if TODO_RR
         public static void engine_backup_move(Unit unit, int x, int y)
         {
             if (!move_backup.used)
@@ -501,7 +498,7 @@ Draw wallpaper and background.
             if (modify_fog) map.map_set_fog(MAP_MASK.F_SPOT);
             move_backup.used = false;
         }
-#endif
+		
         public static void engine_clear_backup()
         {
             move_backup.used = false;
@@ -513,7 +510,6 @@ Draw wallpaper and background.
         Remove unit from map and unit list and clear it's influence.
         ====================================================================
         */
-#if TODO_RR
         static void engine_remove_unit(Unit unit)
         {
             if (unit.killed >= 2) return;
@@ -525,7 +521,6 @@ Draw wallpaper and background.
             /* from unit list */
             unit.killed = 2;
         }
-#endif
 
         /*
         ====================================================================
@@ -720,9 +715,7 @@ Draw wallpaper and background.
             merge_unit_count = 0;
             if (df_units != null)
                 df_units.Clear();
-#if TODO_RR
-            Action.actions_clear();
-#endif
+            AI_Enemy.Action.actions_clear();
 #if TODO
             scroll_block = 0;
 #endif
@@ -737,7 +730,7 @@ Draw wallpaper and background.
         ====================================================================
         */
 
-        public static void engine_begin_turn(Player forced_player, bool skip_unit_prep)
+        public static string engine_begin_turn(Player forced_player, bool skip_unit_prep)
         {
             char[] text = new char[400];
             int new_turn = 0;
@@ -780,7 +773,7 @@ Draw wallpaper and background.
                     engine_select_player(null, skip_unit_prep);
                     engine_set_status(STATUS.STATUS_NONE);
                     phase = PHASE.PHASE_NONE;
-                    return;
+                    return "";
                 }
                 else
                 {
@@ -812,10 +805,8 @@ Draw wallpaper and background.
             /* init ai turn if any */
             if (cur_player != null && cur_player.ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU)
                 cur_player.ai_init();
-#if TODO_RR
             /* turn info */
-            engine_show_turn_info();
-#endif
+            string scen_info = engine_show_turn_info();
             engine_set_status(deploy_turn ? STATUS.STATUS_DEPLOY : STATUS.STATUS_NONE);
             phase = PHASE.PHASE_NONE;
             /* update screen */
@@ -852,6 +843,7 @@ Draw wallpaper and background.
             {
                 while (!cur_player.ai_run()) ;
             }
+			return scen_info;
 
         }
 
@@ -925,7 +917,6 @@ Draw wallpaper and background.
         Get map/screen position from cursor/map position.
         ====================================================================
         */
-#if TODO_RR
         public static bool engine_get_screen_pos(int mx, int my, out int sx, out int sy)
         {
             sx = sy = -1;
@@ -933,26 +924,26 @@ Draw wallpaper and background.
             /* this is the starting position if x-pos of first tile on screen is not odd */
             /* if it is odd we must add the y_offset to the starting position */
             if (Misc.ODD(map_x))
-                y += Engine.terrain.hex_y_offset;
+                y += Config.hex_y_offset;
             /* reduce to visible map tiles */
             mx -= map_x;
             my -= map_y;
             /* check range */
             if (mx < 0 || my < 0) return false;
             /* compute pos */
-            x += mx * Engine.terrain.hex_x_offset;
-            y += my * Engine.terrain.hex_h;
+            x += mx * Config.hex_x_offset;
+            y += my * Config.hex_h;
             /* if x_pos of first tile is even we must add y_offset to the odd tiles in screen */
             if (Misc.EVEN(map_x))
             {
                 if (Misc.ODD(mx))
-                    y += Engine.terrain.hex_y_offset;
+                    y += Config.hex_y_offset;
             }
             else
             {
                 /* we must substract y_offset from even tiles */
                 if (Misc.ODD(mx))
-                    y -= Engine.terrain.hex_y_offset;
+                    y -= Config.hex_y_offset;
             }
             /* check range */
             //if (x >= sdl.screen.w || y >= sdl.screen.h) return false;
@@ -961,7 +952,6 @@ Draw wallpaper and background.
             sy = y;
             return true;
         }
-#endif
 
         public enum REGION
         {
@@ -1007,7 +997,6 @@ Draw wallpaper and background.
         screencopy is possible (but only if use_sc is True)
         ====================================================================
         */
-#if TODO_RR
         static bool engine_focus(int x, int y, bool use_sc)
         {
             int new_x, new_y;
@@ -1024,13 +1013,12 @@ Draw wallpaper and background.
             }
             return false;
         }
-#endif
+		
         /*
         ====================================================================
         Move to this position and set 'draw_map' if actually moved.
         ====================================================================
         */
-#if TODO_RR
         static void engine_goto_xy(int x, int y)
         {
             int x_diff, y_diff;
@@ -1068,7 +1056,7 @@ Draw wallpaper and background.
                 draw_map = true;
             }
         }
-#endif
+
         /*
         ====================================================================
         Update full map.
@@ -1526,11 +1514,9 @@ Draw wallpaper and background.
                 player.ai_finalize = ai_finalize;
             }
 #else
-#if TODO_RR
-                    player.ai_init = new AiInit(AI.ai_init);
-                    player.ai_run = new AiRun(AI.ai_run);
-                    player.ai_finalize = new AiFinalize(AI.ai_finalize);
-#endif
+					player.ai_init = new AiInit(AI.ai_init);
+					player.ai_run = new AiRun(AI.ai_run);
+					player.ai_finalize = new AiFinalize(AI.ai_finalize);
 #endif
                 }
             }
@@ -1581,9 +1567,7 @@ Draw wallpaper and background.
 
             /* clear status */
             status = STATUS.STATUS_NONE;
-	#if TODO_RR
             stateMachine = new EngineStateMachine();
-	#endif
             /* weather */
             Scenario.cur_weather = Scenario.scen_get_weather();
 		
@@ -1601,10 +1585,9 @@ Draw wallpaper and background.
         /// <summary>
         /// Run the engine (starts with the title screen)
         /// </summary>
-        public static void engine_run(bool fog)
+        public static void engine_run()
         {
             bool reinit = true;
-			Config.fog_of_war = fog;
             if (setup.type == SETUP.SETUP_UNKNOWN)
                 setup.type = SETUP.SETUP_RUN_TITLE;
 #if TODO
@@ -1806,7 +1789,7 @@ Draw wallpaper and background.
             UNIT_FLEES,
             UNIT_SURRENDERS
         };
-#if TODO_RR
+
         static void engine_handle_suppr(Unit unit, out UNIT_END_COMBAT type, out int x, out int y)
         {
             int i, nx, ny;
@@ -1832,14 +1815,13 @@ Draw wallpaper and background.
                 type = UNIT_END_COMBAT.UNIT_SURRENDERS;
             }
         }
-#endif
+
         /*
         ====================================================================
         Check if unit stays on top of an enemy flag and capture
         it. Return True if the flag was captured.
         ====================================================================
         */
-#if TODO_RR
         public static bool engine_capture_flag(Unit unit)
         {
             if ((unit.sel_prop.flags & UnitFlags.FLYING) != UnitFlags.FLYING)
@@ -1856,7 +1838,7 @@ Draw wallpaper and background.
                         }
             return false;
         }
-#endif
+
         /* functions needed for movement and combat phase */
 #if TODO_RR
         private static void SendTimerEvent()
@@ -1869,7 +1851,6 @@ Draw wallpaper and background.
         }
 
 #endif
-#if TODO_RR
         public static void InitMove()
         {
             Console.WriteLine("InitMove State : {0}", stateMachine.CurrentStateID);
@@ -1881,14 +1862,14 @@ Draw wallpaper and background.
             if (map.mask[dest_x, dest_y].in_range == 0)
             {
                 Console.WriteLine("{0},{1} out of reach for '{2}'\n", dest_x, dest_y, move_unit.name);
-                Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
                 //stateMachine.Send(EngineActionsTypes.ACTION_END_MOVE);
                 return;
             }
             if (map.mask[dest_x, dest_y].blocked)
             {
                 Console.WriteLine("{0},{1} is blocked ('{2}' wants to move there)\n", dest_x, dest_y, move_unit.name);
-                Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
                 //stateMachine.Send(EngineActionsTypes.ACTION_END_MOVE);
                 return;
             }
@@ -1897,7 +1878,7 @@ Draw wallpaper and background.
             {
                 Console.WriteLine("There is no way for unit '{0}' to move to {1},{2}\n",
                          move_unit.name, dest_x, dest_y);
-                Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
                 //stateMachine.Send(EngineActionsTypes.ACTION_END_MOVE);
                 return;
             }
@@ -1943,8 +1924,8 @@ Draw wallpaper and background.
             if (!blind_cpu_turn)
             {
                 engine_get_screen_pos(move_unit.x, move_unit.y, out start_x, out start_y);
-                start_x += ((terrain.hex_w - move_unit.sel_prop.icon_w) >> 1);
-                start_y += ((terrain.hex_h - move_unit.sel_prop.icon_h) >> 1);
+                start_x += ((Config.hex_w - move_unit.sel_prop.icon_w) >> 1);
+                start_y += ((Config.hex_h - move_unit.sel_prop.icon_h) >> 1);
 #if TODO
                 image_move(move_image, start_x, start_y);
 #endif
@@ -1952,7 +1933,7 @@ Draw wallpaper and background.
             }
             /* animate */
             phase = PHASE.PHASE_START_SINGLE_MOVE;
-            Action.action_queue(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
+            AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
             //stateMachine.Send(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
             //remove stateMachine.scheduler.Start();
 
@@ -1964,8 +1945,7 @@ Draw wallpaper and background.
             /* since it moves it is no longer assumed to be a guard */
             move_unit.is_guarding = false;
         }
-#endif
-#if TODO_RR
+
         public static void SingleMove()
         {
             Console.WriteLine("SingleMove State : {0}", stateMachine.CurrentStateID);
@@ -2009,8 +1989,8 @@ Draw wallpaper and background.
                     if (engine_focus(way[way_pos].x, way[way_pos].y, true))
                     {
                         engine_get_screen_pos(way[way_pos].x, way[way_pos].y, out start_x, out start_y);
-                        start_x += ((terrain.hex_w - move_unit.sel_prop.icon_w) >> 1);
-                        start_y += ((terrain.hex_h - move_unit.sel_prop.icon_h) >> 1);
+                        start_x += ((Config.hex_w - move_unit.sel_prop.icon_w) >> 1);
+                        start_y += ((Config.hex_h - move_unit.sel_prop.icon_h) >> 1);
 #if TODO
                         image_move(move_image, start_x, start_y);
 #endif
@@ -2040,7 +2020,7 @@ Draw wallpaper and background.
             if (way_pos == way_length - 1)
             {
                 phase = PHASE.PHASE_CHECK_LAST_MOVE;
-                Action.action_queue(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
                 //stateMachine.Send(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
             }
             else
@@ -2050,11 +2030,11 @@ Draw wallpaper and background.
                     map.MAP_CHECK_VIS(way[way_pos + 1].x, way[way_pos + 1].y))
                 {
                     engine_get_screen_pos(way[way_pos].x, way[way_pos].y, out start_x, out start_y);
-                    start_x += ((terrain.hex_w - move_unit.sel_prop.icon_w) >> 1);
-                    start_y += ((terrain.hex_h - move_unit.sel_prop.icon_h) >> 1);
+                    start_x += ((Config.hex_w - move_unit.sel_prop.icon_w) >> 1);
+                    start_y += ((Config.hex_h - move_unit.sel_prop.icon_h) >> 1);
                     engine_get_screen_pos(way[way_pos + 1].x, way[way_pos + 1].y, out end_x, out end_y);
-                    end_x += ((terrain.hex_w - move_unit.sel_prop.icon_w) >> 1);
-                    end_y += ((terrain.hex_h - move_unit.sel_prop.icon_h) >> 1);
+                    end_x += ((Config.hex_w - move_unit.sel_prop.icon_w) >> 1);
+                    end_y += ((Config.hex_h - move_unit.sel_prop.icon_h) >> 1);
                     unit_vector.x = start_x; unit_vector.y = start_y;
                     move_vector.x = end_x - start_x; move_vector.y = end_y - start_y;
                     float len = (float)Math.Sqrt(move_vector.x * move_vector.x + move_vector.y * move_vector.y);
@@ -2065,14 +2045,16 @@ Draw wallpaper and background.
                     set_delay(&move_time, ((int)(len / move_vel)) / config.anim_speed);
 #endif
                     draw_map = true;
+#if TODO_RR
                     form.Draw();
+#endif
                 }
 #if TODO
                 else
                     set_delay(&move_time, 0);
 #endif
                 phase = PHASE.PHASE_RUN_SINGLE_MOVE;
-                Action.action_queue(EngineActionsTypes.ACTION_RUN_SINGLE_MOVE);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_RUN_SINGLE_MOVE);
                 //stateMachine.Send(EngineActionsTypes.ACTION_RUN_SINGLE_MOVE);
                 //remove stateMachine.scheduler.Add(1, Config.schedulerTimeOut, new EngineStateMachine.SendTimerDelegate(SendTimerEvent));
 
@@ -2082,8 +2064,8 @@ Draw wallpaper and background.
             }
 
         }
-#endif
-#if TODO_RR
+
+
         public static void RunMove()
         {
             Console.WriteLine("State : {0}", stateMachine.CurrentStateID);
@@ -2092,12 +2074,12 @@ Draw wallpaper and background.
             way_pos++;
             /* next movement */
             phase = PHASE.PHASE_START_SINGLE_MOVE;
-            Action.action_queue(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
+            AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
             //stateMachine.Send(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
             //remove stateMachine.scheduler.Add(1, Config.schedulerTimeOut, new EngineStateMachine.SendTimerDelegate(SendTimerEvent));
         }
-#endif
-#if TODO_RR
+
+
         public static void CheckLastMove()
         {
             /* insert unit */
@@ -2127,11 +2109,10 @@ Draw wallpaper and background.
             map.map_set_vis_infl_mask();
             /* next phase */
             phase = PHASE.PHASE_END_MOVE;
-            Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
+            AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
             //stateMachine.Send(EngineActionsTypes.ACTION_END_MOVE);
         }
-#endif
-#if TODO_RR
+
         public static void EndMove()
         {
             /* fade out sound */
@@ -2167,7 +2148,9 @@ Draw wallpaper and background.
                                 image_hide( gui.cursors, 1 );
 #endif
                         draw_map = true;
+#if TODO_RR
                         form.Draw();
+#endif
                     }
                 }
                 return;
@@ -2178,7 +2161,7 @@ Draw wallpaper and background.
             /* status */
             engine_set_status(STATUS.STATUS_NONE);
             phase = PHASE.PHASE_NONE;
-            Action.action_queue(EngineActionsTypes.ACTION_NONE);
+            AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_NONE);
             //stateMachine.Send(EngineActionsTypes.ACTION_NONE);
 
             /* allow new human/cpu input */
@@ -2193,14 +2176,15 @@ Draw wallpaper and background.
 #endif
                 }
                 draw_map = true;
+#if TODO_RR
                 form.Draw();
+#endif
             }
         }
-#endif
-#if TODO_RR
+
         public static void ActionAttack(object[] args)
         {
-            Action action = (Action)args[0];
+            AI_Enemy.Action action = (AI_Enemy.Action)args[0];
             if (!action.unit.CheckAttack( action.target, Unit.UNIT_ATTACK.UNIT_ACTIVE_ATTACK))
             {
                 Console.WriteLine("'{0}' ({1},{2}) can not attack '{3}' ({4},{5})",
@@ -2220,7 +2204,7 @@ Draw wallpaper and background.
             {
                 Engine.status = STATUS.STATUS_ATTACK;
                 Engine.phase = PHASE.PHASE_INIT_ATK;
-                Action.action_queue(EngineActionsTypes.ACTION_INIT_ATTACK);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_INIT_ATTACK);
                 //stateMachine.Send(EngineActionsTypes.ACTION_INIT_ATTACK);
                 Engine.engine_clear_danger_mask();
 #if TODO
@@ -2229,8 +2213,7 @@ Draw wallpaper and background.
 #endif
             }
         }
-#endif
-#if TODO_RR
+
         public static void InitAttack()
         {
             //remove stateMachine.scheduler.Start();
@@ -2250,7 +2233,7 @@ Draw wallpaper and background.
 #endif
                 }
                 phase = PHASE.PHASE_SHOW_ATK_CROSS;
-                Action.action_queue(EngineActionsTypes.ACTION_COMBAT);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_COMBAT);
                 //stateMachine.Send(EngineActionsTypes.ACTION_COMBAT);
 #if TODO 
                 label_hide(gui.label2, 1);
@@ -2259,15 +2242,14 @@ Draw wallpaper and background.
             else
             {
                 phase = PHASE.PHASE_COMBAT;
-                Action.action_queue(EngineActionsTypes.ACTION_COMBAT);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_COMBAT);
                 //stateMachine.Send(EngineActionsTypes.ACTION_COMBAT);
             }
             /* both units in a fight are no longer just guarding */
             cur_atk.is_guarding = false;
             cur_def.is_guarding = false;
         }
-#endif
-#if TODO_RR
+
         public static void ShowAttackCross()
         {
             /* backup old strength to see who needs and explosion */
@@ -2320,11 +2302,10 @@ Draw wallpaper and background.
                 else
                     phase = PHASE.PHASE_PREP_EXPLOSIONS;
             }
-            Action.action_queue(EngineActionsTypes.ACTION_CHECK_RESULT);
+            AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_CHECK_RESULT);
             //stateMachine.Send(EngineActionsTypes.ACTION_CHECK_RESULT);
         }
-#endif
-#if TODO_RR
+
         public static void CheckResult()
         {
             bool broken_up = false;
@@ -2497,12 +2478,11 @@ Draw wallpaper and background.
             }
             finally
             {
-                Action.action_queue(EngineActionsTypes.ACTION_END_COMBAT);
+                AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_END_COMBAT);
                 //stateMachine.Send(EngineActionsTypes.ACTION_END_COMBAT);
             }
         }
-#endif
-#if TODO_RR
+
         public static void EndCombat()
         {
 #if WITH_SOUND                
@@ -2535,11 +2515,11 @@ Draw wallpaper and background.
                 }
                 draw_map = true;
             }
-            Action.action_queue(EngineActionsTypes.ACTION_NONE);
+            AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_NONE);
             //stateMachine.Send(EngineActionsTypes.ACTION_NONE);
             //remove stateMachine.scheduler.Stop();
         }
-#endif
+		
         /*
         ====================================================================
         Show Scenario info window.
