@@ -1004,7 +1004,7 @@ namespace EngineA
 			tile = map [map_x, map_y];
 			if (tile.terrain.name.ToLower () == "mountain") {
 				int numT = TextureTable.elegirImgTex (tile.strat_image_offset);
-				path = Config.pathTexTerrain + tile.terrain.name.ToLower () + numT;
+				path = Config.PathTexTerrain + tile.terrain.name.ToLower () + numT;
 				offset = 0;
 				if (numT == 1) {
 					offset = tile.strat_image_offset * Config.hex_w - Config.hex_w;
@@ -1013,7 +1013,7 @@ namespace EngineA
 				}
 			
 			} else {
-				path = Config.pathTexTerrain + tile.terrain.name.ToLower ();
+				path = Config.PathTexTerrain + tile.terrain.name.ToLower ();
 				offset = (tile.strat_image_offset * Config.hex_w) - Config.hex_w;			
 			}
 			SDL_Surface terraintex = SDL_Surface.LoadSurface (path, false);
@@ -1222,7 +1222,7 @@ namespace EngineA
 			/* update the visible units list */
 			map_get_vis_units ();
 		}
-#if TODO_RR
+
 		public void map_update_spot_mask (Unit unit, out bool enemy_spotted)
 		{
 			int x, y;
@@ -1245,7 +1245,6 @@ namespace EngineA
 						}
 			}
 		}
-		#endif
 
 		/*
         ====================================================================
@@ -1351,7 +1350,7 @@ namespace EngineA
 						mask [next_x, next_y].infl++;
 			}
 		}
-#if TODO_RR
+
 		public void map_remove_unit_infl (Unit unit)
 		{
 			int next_x, next_y;
@@ -1367,7 +1366,7 @@ namespace EngineA
 						mask [next_x, next_y].infl--;
 			}
 		}
-
+#if TODO_RR
 		public void map_remove_vis_unit_infl (Unit unit)
 		{
 			int next_x, next_y;
