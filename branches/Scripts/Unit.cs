@@ -821,18 +821,17 @@ namespace EngineA
             AR_RUGGED_DEFENSE = (1 << 6),   /* target made rugged defense */
             AR_EVADED = (1 << 7),   /* unit evaded */
         }
-#if TODO_RR
+
         public FIGHT_TYPES NormalAttack(Unit target, UNIT_ATTACK type)
         {
             return this.Attack(target, type, true, false);
         }
-#endif
-#if TODO_RR
+
         public FIGHT_TYPES SurpriseAttack(Unit target)
         {
             return this.Attack(target, UNIT_ATTACK.UNIT_ACTIVE_ATTACK, true, true);
         }
-#endif
+
         /*
         ====================================================================
         Go through a complete battle unit vs. target including known(!)
@@ -842,7 +841,6 @@ namespace EngineA
         takes place (defending unit's hex) is provided.
         ====================================================================
         */
-
         public static void GetExpectedLosses(Unit unit, Unit target, out int unit_damage, out int target_damage)
         {
             int damage, suppr;
