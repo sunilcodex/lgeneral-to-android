@@ -703,7 +703,7 @@ namespace EngineA
                 return 0;
             return casualties[unitclass, player];
         }
-
+#endif
         public static int scen_inc_casualties(int player, int unitclass)
         {
             if (casualties == null || player < 0 || player >= scen_info.player_count
@@ -711,13 +711,12 @@ namespace EngineA
                 return 0;
             return casualties[unitclass, player]++;
         }
-#endif
+
         /*
         ====================================================================
         Add casualties for unit. Regard unit and transport classes.
         ====================================================================
         */
-#if TODO_RR
         public static int scen_inc_casualties_for_unit(Unit unit)
         {
             int player = Player.player_get_index(unit.player);
@@ -727,6 +726,6 @@ namespace EngineA
             return cnt;
 
         }
-#endif
+
     }
 }
