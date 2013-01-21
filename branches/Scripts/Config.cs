@@ -23,11 +23,7 @@ namespace Miscellaneous
         /* game options */
         public static bool supply = true; /* units must supply */
         public static bool weather = true; /* does weather have influence? */
-#if DEBUG
         public static bool fog_of_war = false; /* guess what? */
-#else
-        public static bool fog_of_war = true; /* guess what? */
-#endif
         public static bool show_cpu_turn = true;
         public static bool deploy = true; /* allow deployment */
 
@@ -40,7 +36,18 @@ namespace Miscellaneous
 		public static int hex_h = 50;
 		public static int hex_x_offset = 45;
 		public static int hex_y_offset = 25;
-		public static string pathTexTerrain = "Textures/terrain/";
+		
+		private static string pathTexTerrain = "Textures/terrain/";
+		public static string PathTexTerrain{
+			get{return pathTexTerrain;}
+			set{pathTexTerrain = value;}
+		}
+		private static string show_info_scen;
+		public static string Show_info_scen{
+			get{return show_info_scen;}
+			set{show_info_scen = value;}
+		}
+		
 #if TODO_RR
         public static void check_config_dir_name()
         {
