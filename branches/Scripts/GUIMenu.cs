@@ -15,7 +15,7 @@ using DataFile;
 	
 	void OnGUI ()
 	{
-		GUI.Window (0, new Rect ((Screen.width / 2) - 200, (Screen.height / 2)-175, 400, 350), MenuWindow, "");
+		GUI.Window (0, new Rect ((Screen.width / 2) - 200, (Screen.height / 2)-175, 400, 350), WindowMenu, "");
 	}
 	
 	void Start () {
@@ -29,7 +29,7 @@ using DataFile;
 			
 	}
 	
-	void MenuWindow (int windowID)
+	void WindowMenu (int windowID)
 	{
 		GUI.Label(new Rect(70,40,80,25),"Imagen",myStyle2);
 		GUI.Label(new Rect(200,40,100,25),"LGeneral",myStyle);
@@ -66,7 +66,7 @@ using DataFile;
 		Engine.engine_init(scen_fname);
 		Engine.engine_run();
 		Config.Show_info_scen= Engine.engine_begin_turn(Engine.cur_player, DB.setup.type == SETUP.SETUP_LOAD_GAME);
-		Application.LoadLevel("ScenInfo");
+		Application.LoadLevel("GUIScenInfo");
 		
 	}
 }
