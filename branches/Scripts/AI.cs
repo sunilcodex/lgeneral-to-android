@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -320,7 +320,7 @@ Internal stuff
         action is received).
         ====================================================================
         */
-#if TODO_RR
+
         public static bool ai_run()
         {
             bool result = false;
@@ -485,13 +485,12 @@ Internal stuff
             }
             return result;
         }
-#endif
+
         /*
         ====================================================================
         Undo the steps (e.g. memory allocation) made in ai_init()
         ====================================================================
         */
-#if TODO_RR
         public static void ai_finalize()
         {
             Console.WriteLine("ai_finalize()");
@@ -511,7 +510,6 @@ Internal stuff
             ai_status = AI_STATUS.AI_STATUS_INIT;
             finalized = true;
         }
-#endif
 
         struct AI_Pos
         {
