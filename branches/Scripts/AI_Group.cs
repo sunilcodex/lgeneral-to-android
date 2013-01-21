@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -427,7 +427,6 @@ namespace AI_Enemy
         ai_evaluate_hex). If there is none AI_SUPPLY is stored.
         ====================================================================
         */
-#if TODO_RR
         static void ai_handle_unit(Unit unit, AI_Group group)
         {
             int x, y, nx, ny, i, action = 0;
@@ -528,7 +527,6 @@ namespace AI_Enemy
 #endif
             }
         }
-#endif
         /*
         ====================================================================
         PUBLICS
@@ -662,7 +660,6 @@ namespace AI_Enemy
         unit actions. If group is completely handled, it returns False.
         ====================================================================
         */
-#if TODO_RR
         public static bool ai_group_handle_next_unit(AI_Group group)
         {
 
@@ -708,6 +705,5 @@ namespace AI_Enemy
                                           extend */
             return true;
         }
-#endif
     }
 }
