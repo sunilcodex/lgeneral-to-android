@@ -4,12 +4,13 @@
  * Fecha: 09/01/2009
  * Hora: 16:01
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | Codificación | Editar Encabezados Estándar
+ * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÃ³n | Editar Encabezados EstÃ¡ndar
  */
 
 using System;
 using System.Collections.Generic;
 using EngineA;
+using Miscellaneous;
 
 namespace AI_Enemy
 {
@@ -103,7 +104,6 @@ namespace AI_Enemy
                 actions = null;
             }
         }
-#if TODO_RR
         /*
         ====================================================================
         Queue an action.
@@ -119,7 +119,6 @@ namespace AI_Enemy
             actions.Enqueue(CreateAction(actionType));
             CheckScheduler();
         }
-#endif
 
         /*
         ====================================================================
@@ -134,13 +133,13 @@ namespace AI_Enemy
             else
                 return null;
         }
-#if TODO_RR
+
         public static void actions_clear()
         {
             actions.Clear();
             CheckScheduler();
         }
-#endif
+
         /*
         ====================================================================
         Returns topmost action in queue or 0 if none available.
@@ -186,12 +185,13 @@ namespace AI_Enemy
             Action action = CreateAction(EngineActionsTypes.ACTION_NONE);
             action_queue(action);
         }
-
+#endif
         public static void action_queue_end_turn()
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_END_TURN);
             action_queue(action);
         }
+
         public static void action_queue_move(Unit unit, int x, int y)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_MOVE);
@@ -200,6 +200,7 @@ namespace AI_Enemy
             action.y = y;
             action_queue(action);
         }
+
         public static void action_queue_attack(Unit unit, Unit target)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_ATTACK);
@@ -207,12 +208,14 @@ namespace AI_Enemy
             action.target = target;
             action_queue(action);
         }
+
         public static void action_queue_supply(Unit unit)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_SUPPLY);
             action.unit = unit;
             action_queue(action);
         }
+#if TODO_RR
         public static void action_queue_embark_sea(Unit unit, int x, int y)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_EMBARK_SEA);
@@ -220,6 +223,7 @@ namespace AI_Enemy
             action.x = x; action.y = y;
             action_queue(action);
         }
+#endif
         public static void action_queue_debark_sea(Unit unit, int x, int y)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_DEBARK_SEA);
@@ -227,6 +231,7 @@ namespace AI_Enemy
             action.x = x; action.y = y;
             action_queue(action);
         }
+#if TODO_RR
         public static void action_queue_embark_air(Unit unit, int x, int y)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_EMBARK_AIR);
@@ -242,6 +247,7 @@ namespace AI_Enemy
             action.id = normal_landing;
             action_queue(action);
         }
+#endif
         public static void action_queue_merge(Unit unit, Unit partner)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_MERGE);
@@ -249,6 +255,7 @@ namespace AI_Enemy
             action.target = partner;
             action_queue(action);
         }
+#if TODO_RR
         public static void action_queue_split(Unit unit, int str, int x, int y, Unit partner)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_SPLIT);
@@ -264,6 +271,7 @@ namespace AI_Enemy
             action.unit = unit;
             action_queue(action);
         }
+#endif
         public static void action_queue_deploy(Unit unit, int x, int y)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_DEPLOY);
@@ -272,6 +280,7 @@ namespace AI_Enemy
             action.y = y;
             action_queue(action);
         }
+#if TODO_RR
         public static void action_queue_draw_map()
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_DRAW_MAP);
@@ -324,7 +333,6 @@ namespace AI_Enemy
 #endif
 
         /* functions needed for movement and combat phase */
-#if TODO_RR
         private static void ProcessQueue()
         {
             Action action = actions_dequeue();
@@ -348,8 +356,7 @@ namespace AI_Enemy
                  */
            }
         }
-#endif
-#if TODO_RR
+
         public static void CheckScheduler()
         {
             if (actions.Count > 0)
@@ -369,6 +376,5 @@ namespace AI_Enemy
                 }
 
         }
-#endif
     }
 }
