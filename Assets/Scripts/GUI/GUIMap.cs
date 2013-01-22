@@ -45,39 +45,7 @@ public class GUIMap : MonoBehaviour
 			}
 		}
 	}
-#if TODO_RR
-	private void AddTextureTerrain (GameObject hex, Map_Tile tile)
-	{
-		int offset;
-		string path;
-		if (tile.terrain.name.ToLower () == "mountain") {
-			print ("entra");
-			int numT = TextureTable.elegirImgTex (tile.strat_image_offset);
-			path = pathTexTerrain + tile.terrain.name.ToLower () + numT;
-			offset = 0;
-			if (numT == 1) {
-				offset = tile.strat_image_offset * Config.hex_w - Config.hex_w;
-			} else {
-				offset = (tile.strat_image_offset - 39) * Config.hex_w - Config.hex_w;
-			}
-			
-		} else {
-			path = pathTexTerrain + tile.terrain.name.ToLower ();
-			offset = (tile.strat_image_offset * Config.hex_w) - Config.hex_w;			
-		}
-		SDL_Surface terraintex = SDL_Surface.LoadSurface (path, false);
-		SDL_Surface hextex = new SDL_Surface ();
-		SDL_Surface.copy_image (hextex, Config.hex_w, Config.hex_h, terraintex, offset, 0);
-		//Add texture flag
-		if (tile.nation != null) {
-			Nation.nation_draw_flag(tile.nation,hextex);
-		} 
-		hex.renderer.material.mainTexture = hextex.bitmap;
 
-		
-	}
-
-#endif
 	
 	private void onLoadScen(){
 		Engine.engine_set_status(STATUS.STATUS_NONE);
