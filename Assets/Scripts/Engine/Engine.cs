@@ -960,10 +960,45 @@ Draw wallpaper and background.
             REGION_NONE
         };
 
-        public static bool engine_get_map_pos(float sx, float sy, out int mx, out int my, out REGION region)
+        public static bool engine_get_map_pos(float sx, float sy, out int mx, 
+											  out int my, out REGION region, float yClicked)
         {
             mx = my = -1;
 			region = REGION.REGION_NONE;
+
+			if (map.isLoaded){
+				for (int i=0; i<map.map_h; i++) {
+					for (int j=0; j<map.map_w; j++) {
+						if ((j * Config.hex_x_offset==sx) && (-Config.hex_h * i==sy)){
+								mx = j;
+								my = i;
+								if (-Config.hex_h * i>yClicked){
+									region = REGION.REGION_GROUND;
+								}
+								else{
+									region = REGION.REGION_AIR;
+								}
+								return true;
+						}
+						else if ((j * Config.hex_x_offset==sx) && (-(Config.hex_h * i) - Config.hex_y_offset==sy)){
+							mx = j;
+							my = i;
+							if (-(Config.hex_h * i) - Config.hex_y_offset>yClicked){
+								region = REGION.REGION_GROUND;
+							}
+							else{
+								region = REGION.REGION_AIR;
+							}
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+			else{
+				return false;
+			}
+#if TODO_RR
             int x = 0, y = 0;
             if (map.isLoaded){
 				int auxWidth = Engine.map.map_w-1;
@@ -989,7 +1024,7 @@ Draw wallpaper and background.
 			else{
 				return false;
 			}
-            
+#endif
         }
         /*
         ====================================================================
@@ -1296,10 +1331,7 @@ Draw wallpaper and background.
         public static Unit engine_get_select_unit(int x, int y, REGION region)
         {
             if (x < 0 || y < 0 || x >= Engine.map.map_w || y >= Engine.map.map_h) return null;
-#if TODO_RR
             if (!Engine.map.mask[x, y].spot) return null;
-#endif
-			
             if (region == REGION.REGION_AIR)
             {
                 if (map.map[x, y].a_unit != null && map.map[x, y].a_unit.player == cur_player)
