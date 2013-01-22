@@ -1078,7 +1078,7 @@ namespace EngineApp
 				/* unit info icons */
 				if (unit != null && Config.show_bar) {
 					/* strength */
-					if (unit.player.ctrl==PLAYERCONTROL.PLAYER_CTRL_HUMAN){ //TODO_RR if ((cur_player != null) && Player.player_is_ally (cur_player, unit.player)){
+					if ((cur_player != null) && Player.player_is_ally (cur_player, unit.player)){
 							string name = Unit.DeleteOrdinal (unit.name);
 							SDL_Surface sdl_str = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.str_img_name,false);
 							int offset = DB.UnitLib.unit_info_icons.str_h*(unit.str+15);
@@ -1104,8 +1104,7 @@ namespace EngineApp
 						
 					}
 					/* for current player only */
-
-					if (unit.player.ctrl==PLAYERCONTROL.PLAYER_CTRL_HUMAN){ //TODO_RR if (unit.player == cur_player) {
+					if (unit.player == cur_player) {
 						string name = Unit.DeleteOrdinal(unit.name);
 						Unit_Lib_Entry entry = DB.UnitLib.unit_lib_find_by_name(name);
 						/* attack */
