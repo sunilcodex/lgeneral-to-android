@@ -6,13 +6,32 @@ using Miscellaneous;
 public class Movement : MonoBehaviour
 {
 	
-	private bool mapLoaded = false;
+	private Ray ray;
+	private RaycastHit hit;
+	private RaycastHit hitSelected;
 	private int width;
 	private int height;
 	
-	private void onClick ()
+	private void OnClick ()
 	{
-		if (Input.GetMouseButtonDown (0)) {
+		if (Input.GetMouseButtonDown (0)) {//TODO_RR if (Input.GetTouch(0).phase == TouchPhase.Began)){
+			int mapx, mapy;
+            Engine.REGION region;
+			Vector3 clickedPosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
+			if (Engine.engine_get_map_pos (hitSelected.transform.position.x, 
+										   hitSelected.transform.position.z, out mapx, 
+										   out mapy, out region, clickedPosition.z)){
+				if (Engine.cur_unit != null)
+                {
+					print ("Seleccionado");
+				}
+				else{
+					Unit unit = Engine.engine_get_select_unit(mapx, mapy, region);
+					print (unit.name);
+				}
+				
+			}
+#if TODO_RR
 			Vector3 clickedPosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 			int x;
 			int y;	
@@ -60,27 +79,36 @@ public class Movement : MonoBehaviour
 				
 				
 			}	
+#endif
+		}
+	}
+	
+	private void OnMove(){
+		ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hit, 100))
+		{
+			if (hitSelected.transform == null){
+				hit.transform.gameObject.renderer.material.color = new Color(0,1,0,0.5F);
+				hitSelected = hit;
+			}
+			else{
+				hitSelected.transform.gameObject.renderer.material.color = new Color(1,1,1,0.5F);
+				hit.transform.gameObject.renderer.material.color = new Color(0,1,0,0.5F);
+				hitSelected = hit;
+			}
+					
 		}
 	}
 	// Use this for initialization
 	void Start ()
 	{
-		mapLoaded = Engine.map.isLoaded;
-		/*if (mapLoaded){
-			Engine.cur_player = Player.players_get_first();
-		}*/
+		
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-			
-#if TODO_RR
-			//falta el codigo de pasar a tactil
-#endif
-		if (mapLoaded) {
-			onClick ();
-		}
-			
+		OnMove();
+		OnClick();
 	}
 }
