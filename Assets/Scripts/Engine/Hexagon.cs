@@ -92,6 +92,8 @@ public class Hexagon : MonoBehaviour
                 mesh.RecalculateNormals ();
                 mesh.RecalculateBounds ();
                 mesh.Optimize ();
+				MeshCollider meshCollider = GetComponent<MeshCollider> ();
+				meshCollider.sharedMesh = mesh;
         }
 
         // Use this for initialization
