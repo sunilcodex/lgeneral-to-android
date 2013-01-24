@@ -23,63 +23,69 @@ public class Movement : MonoBehaviour
 										   out mapy, out region, clickedPosition.z)){
 				if (Engine.cur_unit != null)
                 {
-					print ("Seleccionado");
+					/* handle current unit */
+                    if (!(Engine.cur_unit.x == mapx && Engine.cur_unit.y == mapy &&
+                            Engine.engine_get_prim_unit(mapx, mapy, region) == Engine.cur_unit))
+					{
+						Unit unit = Engine.engine_get_target(mapx, mapy, region);
+						if (unit != null)
+                        {
+                        	//TODO_RR Action.action_queue_attack(Engine.cur_unit, unit);
+							print ("Attack");
+                        }
+						else{
+							if (Engine.map.mask[mapx, mapy].in_range != 0 && !Engine.map.mask[mapx, mapy].blocked)
+                            {
+                            	//TODO_RR Action.action_queue_move(Engine.cur_unit, mapx, mapy);
+								print ("Move");
+                            }
+							else{
+								if (Engine.map.mask[mapx, mapy].sea_embark)
+                                {
+									print ("Embarcar...");
+								}
+								else
+                                {
+									unit = Engine.engine_get_select_unit(mapx, mapy, region);
+									if (unit != null && Engine.cur_unit != unit)
+                                    {
+										if (Engine.cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN)
+                                        {
+											if (Engine.engine_capture_flag(Engine.cur_unit))
+                                            { 
+												 /* CHECK IF SCENARIO IS FINISHED */
+                                      			if (Scenario.scen_check_result(false))
+                                                {
+                                                	Engine.engine_finish_scenario();
+                                                    return;
+                                                }              
+                                            }
+										}
+										Engine.engine_select_unit(unit);
+										Engine.engine_clear_backup();
+										Engine.engine_update_info(mapx, mapy, region);
+										Engine.draw_map = true;
+									}
+								}
+							}
+						}
+					}
 				}
 				else{
 					Unit unit = Engine.engine_get_select_unit(mapx, mapy, region);
-					print (unit.name);
+					if (unit != null && Engine.cur_unit != unit)
+                    {
+						/* select unit */
+                        Engine.engine_select_unit(unit);
+						Engine.engine_update_info(mapx, mapy, region);
+						Engine.draw_map = true;
+#if WITH_SOUND
+						wav_play( terrain_icons.wav_select );
+#endif
+					}
 				}
 				
 			}
-#if TODO_RR
-			Vector3 clickedPosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
-			int x;
-			int y;	
-			Engine.REGION region;
-			if (Engine.engine_get_map_pos (clickedPosition.x, clickedPosition.z, out x, out y, out region)) {
-				if (Engine.cur_unit != null) {
-					Unit unit = Engine.engine_get_target (x, y, region);
-					if (unit != null) {
-#if TODO_RR
-						meter accion de atacar
-#endif
-						print ("ataca!!");
-					} else if (Engine.map.mask [x, y].in_range != 0 && !Engine.map.mask [x, y].blocked) {
-#if TODO_RR
-						falta el codigo de mover la unidad
-#endif
-						print ("me tengo que mover");
-					} else if (Engine.map.mask [x, y].sea_embark) {
-						if (Engine.cur_unit.embark == UnitEmbarkTypes.EMBARK_NONE)
-							print ("me tengo que embarcar");
-						else
-							print ("tengo que desembarcarme");
-#if TODO_RR
-						Engine.engine_backup_move (Engine.cur_unit, x, y);
-
-					falta repintar todo el mapa con la seleccion que hemos hecho
-#endif
-					}
-					
-#if TODO_RR
-					falta poner codigo y repintarla
-#endif
-				} else {
-					
-					Unit unit = Engine.engine_get_select_unit (x, y, region);
-					if (unit != null && Engine.cur_unit != unit) {
-						Engine.engine_select_unit (unit);
-						Engine.engine_update_info (x, y, region);
-						print (x + " " + y + " " + region);
-					}
-#if TODO_RR
-					falta repintar todo el mapa con la seleccion que hemos hecho
-#endif
-				}
-				
-				
-			}	
-#endif
 		}
 	}
 	
@@ -93,7 +99,7 @@ public class Movement : MonoBehaviour
 			}
 			else{
 				hitSelected.transform.gameObject.renderer.material.color = new Color(1,1,1,0.5F);
-				hit.transform.gameObject.renderer.material.color = new Color(0,1,0,0.5F);
+				hit.transform.gameObject.renderer.material.color = Color.yellow;//new Color(0,1,0,0.5F);
 				hitSelected = hit;
 			}
 					
