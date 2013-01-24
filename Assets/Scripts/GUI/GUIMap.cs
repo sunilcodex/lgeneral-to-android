@@ -76,6 +76,13 @@ public class GUIMap : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-	
+		if (Engine.draw_map){
+			print (Engine.status);
+			print ("Hay que repintar");
+#if TODO_RR
+			añadir las nieblas y repintar
+#endif
+		 	Engine.draw_map = false;
+		}
 	}
 }
