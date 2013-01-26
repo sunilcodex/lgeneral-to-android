@@ -995,7 +995,6 @@ namespace EngineApp
 
 		public SDL_Surface map_draw_terrain (int map_x, int map_y)
 		{
-			int cur_weather = 0;
 			int offset;
 			string path;
 			Map_Tile tile;
@@ -1023,6 +1022,10 @@ namespace EngineApp
 			if (tile.nation != null) {
 				hextex = Nation.nation_draw_flag (tile.nation, hextex);
 			} 
+			/* terrain */
+			if (mask [map_x, map_y].fog) {
+				hextex.BitmapMaterial.color = Color.grey;
+			}
 			return hextex;
 #if TODO_RR			
 			/* terrain */
