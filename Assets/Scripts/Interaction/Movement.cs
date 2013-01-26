@@ -90,18 +90,40 @@ public class Movement : MonoBehaviour
 	}
 	
 	private void OnMove(){
+		Color hover = Color.yellow;
+		Color fogHover = new Color(0.3f,0.3f,0.3f,1);
+		int x;
+		int y;
 		ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, 100))
 		{
 			if (hitSelected.transform == null){
-				hit.transform.gameObject.renderer.material.color = new Color(0,1,0,0.5F);
-				hitSelected = hit;
-			}
-			else{
-				hitSelected.transform.gameObject.renderer.material.color = new Color(1,1,1,0.5F);
-				hit.transform.gameObject.renderer.material.color = Color.yellow;//new Color(0,1,0,0.5F);
-				hitSelected = hit;
-			}
+				Engine.engine_get_screen_pos(hit.transform.position.x,hit.transform.position.z,out x,out y);
+				if (Engine.map.mask[x,y].fog){
+					hit.transform.gameObject.renderer.material.color = fogHover;
+				}
+				else{
+					hit.transform.gameObject.renderer.material.color = hover;
+				}
+                hitSelected = hit;
+            }
+            else{
+				Engine.engine_get_screen_pos(hitSelected.transform.position.x,hitSelected.transform.position.z,out x,out y);
+				if (Engine.map.mask[x,y].fog){
+					hitSelected.transform.gameObject.renderer.material.color = Color.grey;
+				}
+				else{
+					hitSelected.transform.gameObject.renderer.material.color = new Color(1,1,1,0.5F);
+				}
+                Engine.engine_get_screen_pos(hit.transform.position.x,hit.transform.position.z,out x,out y);
+				if (Engine.map.mask[x,y].fog){
+					hit.transform.gameObject.renderer.material.color = fogHover;
+				}
+				else{
+					hit.transform.gameObject.renderer.material.color = hover;
+				}
+            	hitSelected = hit;
+            }
 					
 		}
 	}
