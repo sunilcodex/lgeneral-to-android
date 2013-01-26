@@ -917,39 +917,28 @@ Draw wallpaper and background.
         Get map/screen position from cursor/map position.
         ====================================================================
         */
-        public static bool engine_get_screen_pos(int mx, int my, out int sx, out int sy)
+        public static bool engine_get_screen_pos(float mx, float my, out int sx, out int sy)
         {
             sx = sy = -1;
             int x = map_sx, y = map_sy;
-            /* this is the starting position if x-pos of first tile on screen is not odd */
-            /* if it is odd we must add the y_offset to the starting position */
-            if (Misc.ODD(map_x))
-                y += Config.hex_y_offset;
-            /* reduce to visible map tiles */
-            mx -= map_x;
-            my -= map_y;
-            /* check range */
-            if (mx < 0 || my < 0) return false;
-            /* compute pos */
-            x += mx * Config.hex_x_offset;
-            y += my * Config.hex_h;
-            /* if x_pos of first tile is even we must add y_offset to the odd tiles in screen */
-            if (Misc.EVEN(map_x))
-            {
-                if (Misc.ODD(mx))
-                    y += Config.hex_y_offset;
-            }
-            else
-            {
-                /* we must substract y_offset from even tiles */
-                if (Misc.ODD(mx))
-                    y -= Config.hex_y_offset;
-            }
-            /* check range */
-            //if (x >= sdl.screen.w || y >= sdl.screen.h) return false;
-            /* assign */
+            if (map.isLoaded){
+				for (int i=0; i<map.map_h; i++) {
+					for (int j=0; j<map.map_w; j++) {
+						if ((j * Config.hex_x_offset==mx) && (-Config.hex_h * i==my)){
+								x = j;
+								y = i;
+						}
+						else if ((j * Config.hex_x_offset==mx) && (-(Config.hex_h * i) - Config.hex_y_offset==my)){
+							x = j;
+							y = i;
+						}
+					}
+				}
+			}
             sx = x;
             sy = y;
+			if (sx<0 || sy<0 || sx>=map.map_w || sy>=map.map_h)
+				return false;
             return true;
         }
 
@@ -2671,6 +2660,8 @@ Draw wallpaper and background.
             form.ShowMessageAndWait(str.ToString());
         }
 #endif
+		
+		
     }
 }
 
