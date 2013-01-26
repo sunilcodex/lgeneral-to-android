@@ -4,7 +4,7 @@
  * Fecha: 12/01/2009
  * Hora: 13:49
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÛn | Editar Encabezados Est·ndar
+ * Para cambiar esta plantilla use Herramientas | Opciones | Codificaci√≥n | Editar Encabezados Est√°ndar
  */
 using UnityEngine;
 using System;
@@ -151,7 +151,9 @@ namespace EngineApp
 				}
 				nueva.Apply();
 				dest = new SDL_Surface();
-				dest.bitmap = nueva;
+				dest.Bitmap = nueva;
+				dest.BitmapMaterial = new Material(Shader.Find("Diffuse"));
+				dest.BitmapMaterial.mainTexture = nueva;
 				dest.w = src.w;
 				dest.h = src.h;	
 				
@@ -197,7 +199,14 @@ namespace EngineApp
 				Texture2D tex = new Texture2D (w, h,TextureFormat.RGB24,false);
 				tex.SetPixels (pixels);
 				tex.Apply ();
-				dest.bitmap = tex;
+				dest.Bitmap = tex;
+				if (dest.BitmapMaterial!=null){
+					dest.BitmapMaterial.mainTexture = tex;
+				}
+				else{
+					dest.BitmapMaterial = new Material(Shader.Find("Diffuse"));
+					dest.BitmapMaterial.mainTexture = tex;	
+				}
 				dest.w = w;
 				dest.h = h;
 			}
@@ -241,7 +250,14 @@ namespace EngineApp
 					}
 				}
 				nueva.Apply();
-				dest.bitmap = nueva;
+				dest.Bitmap = nueva;
+				if (dest.BitmapMaterial!=null){
+					dest.BitmapMaterial.mainTexture = nueva;
+				}
+				else{
+					dest.BitmapMaterial = new Material(Shader.Find("Diffuse"));
+					dest.BitmapMaterial.mainTexture = nueva;	
+				}
 				dest.w = src.w;
 				dest.h = src.h;
 				dest.name = src.name;
@@ -257,9 +273,16 @@ namespace EngineApp
 			try{
 				if (src==null || dest==null)
 					throw new Exception("the source or destination image is null");
-				Color[] c = src.bitmap.GetPixels(xsrc,ysrc,wsrc,hsrc);
-				dest.bitmap.SetPixels(xdest,ydest,wsrc, hsrc,c);
-				dest.bitmap.Apply();
+				Color[] c = src.Bitmap.GetPixels(xsrc,ysrc,wsrc,hsrc);
+				dest.Bitmap.SetPixels(xdest,ydest,wsrc, hsrc,c);
+				dest.Bitmap.Apply();
+				if (dest.BitmapMaterial!=null){
+					dest.BitmapMaterial.mainTexture = dest.Bitmap;
+				}
+				else{
+					dest.BitmapMaterial = new Material(Shader.Find("Diffuse"));
+					dest.BitmapMaterial.mainTexture = dest.Bitmap;	
+				}
 			}
 			catch(Exception e){
 				Debug.LogError("Problems with the copy: "+ e.Message);
@@ -271,13 +294,20 @@ namespace EngineApp
 			try{
 				for (int i=0; i<src.w;i++){
 					for (int j=0; j<src.h;j++){
-						Color c = src.bitmap.GetPixel(i,j);
+						Color c = src.Bitmap.GetPixel(i,j);
 						if (c!=key){
-							dest.bitmap.SetPixel(xdest+i,ydest+j,c);
+							dest.Bitmap.SetPixel(xdest+i,ydest+j,c);
 						}
 					}
 				}
-				dest.bitmap.Apply();
+				dest.Bitmap.Apply();
+				if (dest.BitmapMaterial!=null){
+					dest.BitmapMaterial.mainTexture = dest.Bitmap;
+				}
+				else{
+					dest.BitmapMaterial = new Material(Shader.Find("Diffuse"));
+					dest.BitmapMaterial.mainTexture = dest.Bitmap;	
+				}
 			}
 			catch(Exception e){
 				Debug.LogError(e.Message);
@@ -287,13 +317,13 @@ namespace EngineApp
 		
 		public static void putPixelBlack(SDL_Surface surf){
 			try{
-				surf.bitmap.SetPixel(0,0,Color.black);
-				surf.bitmap.SetPixel(surf.bitmap.width,surf.bitmap.height-1,Color.black);
-				surf.bitmap.SetPixel(surf.bitmap.width,surf.bitmap.height-2,Color.black);
-				surf.bitmap.SetPixel(surf.bitmap.width-1,surf.bitmap.height-1,Color.black);
-				surf.bitmap.SetPixel(surf.bitmap.width-1,surf.bitmap.height-2,Color.black);
-				surf.bitmap.SetPixel(0,surf.bitmap.height-1,Color.black);
-				surf.bitmap.Apply();
+				surf.Bitmap.SetPixel(0,0,Color.black);
+				surf.Bitmap.SetPixel(surf.Bitmap.width,surf.Bitmap.height-1,Color.black);
+				surf.Bitmap.SetPixel(surf.Bitmap.width,surf.Bitmap.height-2,Color.black);
+				surf.Bitmap.SetPixel(surf.Bitmap.width-1,surf.Bitmap.height-1,Color.black);
+				surf.Bitmap.SetPixel(surf.Bitmap.width-1,surf.Bitmap.height-2,Color.black);
+				surf.Bitmap.SetPixel(0,surf.Bitmap.height-1,Color.black);
+				surf.Bitmap.Apply();
 			}
 			catch(Exception e){
 				Debug.LogError(e.Message);
@@ -322,10 +352,10 @@ namespace EngineApp
 						c[i].a = 1;
 					}
 				}
-				dest.bitmap.SetPixels(c);
-				dest.bitmap.Apply();
-				dest.bitmapMaterial=new Material(Shader.Find("Transparent/Cutout/Diffuse"));
-				dest.bitmapMaterial.mainTexture = dest.bitmap;
+				dest.Bitmap.SetPixels(c);
+				dest.Bitmap.Apply();
+				dest.BitmapMaterial=new Material(Shader.Find("Transparent/Cutout/Diffuse"));
+				dest.BitmapMaterial.mainTexture = dest.Bitmap;
 			}
             catch(Exception e){
 				Debug.LogError(e.Message);
