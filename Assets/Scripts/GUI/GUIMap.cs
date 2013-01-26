@@ -40,7 +40,7 @@ public class GUIMap : MonoBehaviour
 				if (map.map [j, i].g_unit!=null || map.map [j, i].a_unit!=null){
 					hexTex = map.map_draw_units(hexTex,j,i,false);
 				}
-				hex.renderer.material.mainTexture = hexTex.Bitmap;
+				hex.renderer.material = hexTex.BitmapMaterial;
 				
 			}
 		}
