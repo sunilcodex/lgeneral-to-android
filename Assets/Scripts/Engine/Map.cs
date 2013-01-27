@@ -1027,16 +1027,7 @@ namespace EngineApp
 				hextex.BitmapMaterial.color = Color.grey;
 			}
 			return hextex;
-#if TODO_RR			
-			/* terrain */
-			if (mask [map_x, map_y].fog) {
-				SDL_Surface sdl = SDL_Surface.LoadSurface(tile.terrain.images_fogged [cur_weather]);
-				surf.surf.DrawImage (sdl.bitmap, x, y, new Rectangle (tile.image_offset, 0, hex_w, hex_h), GraphicsUnit.Pixel);
-			} else {
-				SDL_Surface sdl = tile.terrain.images [cur_weather];
-				surf.surf.DrawImage (sdl.bitmap, x, y, new Rectangle (tile.image_offset, 0, hex_w, hex_h), GraphicsUnit.Pixel);
-			}
-			
+#if TODO_RR					
 			/* grid */
 			if (Config.grid) {
 				SDL_Surface.copy_image (surf, x, y, hex_w, hex_h, Engine.terrain.terrainIcons.grid, 0, 0);
@@ -1057,7 +1048,7 @@ namespace EngineApp
 		/// <param name="y"></param>
 		/// <param name="ground"></param>
 		/// <param name="select"></param>
-		public SDL_Surface map_draw_units (SDL_Surface hexTex, int map_x, int map_y,bool ground)
+		public SDL_Surface map_draw_units (SDL_Surface hexTex, int map_x, int map_y,bool ground, bool selected)
 		{
 			Player cur_player = Engine.cur_player;
 			Unit unit = null;
@@ -1135,18 +1126,10 @@ namespace EngineApp
 				}
 				
 			}
-#if TODO_RR
-					}
-				}
-			}
 			/* selection frame */
-			if (select) {
-				SDL_Surface.copy_image (surf.surf,
-                                        x, y, hex_w, hex_h,
-                                        Engine.terrain.terrainIcons.select, 0, 0);
-
+			if (selected) {
+				hexTex.BitmapMaterial.color = Color.green;
 			}
-#endif
 			return hexTex;
 		}
 
