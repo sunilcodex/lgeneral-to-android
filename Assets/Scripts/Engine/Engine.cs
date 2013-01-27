@@ -140,6 +140,9 @@ namespace EngineApp
         public static Player cur_player = null;  /* current player pointer */
         static int fleeing_unit = 0;    /* if this is true the unit's move is not backuped */
         static bool air_mode;        /* air units are primary */
+		public static bool Air_mode{
+			get{return air_mode;}
+		}
         public static bool end_scen = false;        /* True if Scenario is finished or aborted */
         static List<Unit> left_deploy_units; /* list with unit pointers to avail_units of all
                                 units that arent placed yet */
