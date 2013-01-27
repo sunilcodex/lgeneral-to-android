@@ -112,6 +112,9 @@ public class Movement : MonoBehaviour
 				if (Engine.map.mask[x,y].fog){
 					hitSelected.transform.gameObject.renderer.material.color = Color.grey;
 				}
+				else if (Engine.cur_unit!=null && Engine.cur_unit.x==x && Engine.cur_unit.y==y){
+					hitSelected.transform.gameObject.renderer.material.color = Color.green;
+				}
 				else{
 					hitSelected.transform.gameObject.renderer.material.color = new Color(1,1,1,0.5F);
 				}
