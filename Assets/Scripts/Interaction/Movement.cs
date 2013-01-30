@@ -11,6 +11,7 @@ public class Movement : MonoBehaviour
 	private RaycastHit hitSelected;
 	private int width;
 	private int height;
+
 	
 	private void OnClick ()
 	{
@@ -92,12 +93,53 @@ public class Movement : MonoBehaviour
 	private void OnMove(){
 		Color hover = Color.yellow;
 		Color fogHover = new Color(0.3f,0.3f,0.3f,1);
-		int x;
-		int y;
-		ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		int x,y;
+		int xS,yS;
+		ray = Camera.main.ScreenPointToRay(Input.mousePosition); //ray = Camera.main.ScreenPointToRay(touch.position);
         if (Physics.Raycast(ray, out hit, 100))
 		{
-			if (hitSelected.transform == null){
+			Engine.engine_get_screen_pos(hit.transform.position.x,hit.transform.position.z,out x,out y);
+			if (!Engine.map.mask[x,y].fog){
+				hit.transform.renderer.material.color = hover;
+				if (hitSelected.transform!=null){
+					Engine.engine_get_screen_pos(hitSelected.transform.position.x,hitSelected.transform.position.z,out xS,out yS);
+					if (Engine.cur_unit!=null && Engine.cur_unit.x==xS && Engine.cur_unit.y==yS){
+						hitSelected.transform.renderer.material.color = Color.green;
+					}
+					else if (xS==x && yS==y){
+						hitSelected.transform.renderer.material.color = hover;
+					}
+					else if (!Engine.map.mask[xS,yS].fog){
+						hitSelected.transform.renderer.material.color = Color.white;
+					}
+					else{
+						hitSelected.transform.renderer.material.color = new Color(0.7f,0.7f,0.7f,1);;
+					}
+					
+				}
+				hitSelected = hit;
+			}
+			else{
+				hit.transform.renderer.material.color = fogHover;
+				if (hitSelected.transform!=null){
+					Engine.engine_get_screen_pos(hitSelected.transform.position.x,hitSelected.transform.position.z,out xS,out yS);
+					if (Engine.cur_unit!=null && Engine.cur_unit.x==xS && Engine.cur_unit.y==yS){
+						hitSelected.transform.renderer.material.color = Color.green;
+					}
+					else if (xS==x && yS==y){
+						hitSelected.transform.renderer.material.color = fogHover;
+					}
+					else if (!Engine.map.mask[xS,yS].fog){
+						hitSelected.transform.renderer.material.color = Color.white;
+					}
+					else{
+						hitSelected.transform.renderer.material.color = new Color(0.7f,0.7f,0.7f,1);;
+					}
+				}
+				hitSelected = hit;
+			}
+			//hitSelected = hit;
+			/*if (hitSelected.transform == null){
 				Engine.engine_get_screen_pos(hit.transform.position.x,hit.transform.position.z,out x,out y);
 				if (Engine.map.mask[x,y].fog){
 					hit.transform.gameObject.renderer.material.color = fogHover;
@@ -126,8 +168,7 @@ public class Movement : MonoBehaviour
 					hit.transform.gameObject.renderer.material.color = hover;
 				}
             	hitSelected = hit;
-            }
-					
+            }*/
 		}
 	}
 	// Use this for initialization
