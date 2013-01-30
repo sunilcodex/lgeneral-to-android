@@ -1024,10 +1024,11 @@ namespace EngineApp
 			} 
 			/* terrain */
 			if (mask [map_x, map_y].fog) {
-				hextex.BitmapMaterial.color = Color.grey;
+				hextex.BitmapMaterial.color = new Color(0.7f,0.7f,0.7f,1);
 			}
+			
 			return hextex;
-#if TODO_RR					
+#if TODO_RR		
 			/* grid */
 			if (Config.grid) {
 				SDL_Surface.copy_image (surf, x, y, hex_w, hex_h, Engine.terrain.terrainIcons.grid, 0, 0);
@@ -1102,12 +1103,12 @@ namespace EngineApp
 						string name = Unit.DeleteOrdinal(unit.name);
 						Unit_Lib_Entry entry = DB.UnitLib.unit_lib_find_by_name(name);
 						/* attack */
-						if (entry.atk_count>0){ //TODO_RR if (unit.cur_atk_count > 0) {
+						if (unit.cur_atk_count>0){ //TODO_RR if (unit.cur_atk_count > 0) {
 							SDL_Surface atk = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.atk_img_name,false);
 							SDL_Surface.copy_image_without_key(hexTex,atk,15,3,Color.black);
 						}
 						/* move */
-						if (entry.mov>0){ //TODO_RR if (unit.cur_mov > 0) {
+						if (unit.cur_mov>0){ //TODO_RR if (unit.cur_mov > 0) {
 							SDL_Surface mov = SDL_Surface.LoadSurface(DB.UnitLib.unit_info_icons.mov_img_name,false);
 							SDL_Surface.copy_image_without_key(hexTex,mov,37,3,Color.black);		
 						}
