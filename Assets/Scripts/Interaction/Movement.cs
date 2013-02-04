@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 using EngineApp;
 using Miscellaneous;
+using AI_Enemy;
+using DataFile;
 
 public class Movement : MonoBehaviour
 {
@@ -11,7 +13,12 @@ public class Movement : MonoBehaviour
 	private RaycastHit hitSelected;
 	private int width;
 	private int height;
-
+	private static int widthInfo = 250;
+	private int windowType = 0;
+	public static int WidthInfo{
+		get{return widthInfo;}
+	}
+	private int x,y;
 	
 	private void OnClick ()
 	{
@@ -37,13 +44,19 @@ public class Movement : MonoBehaviour
 						else{
 							if (Engine.map.mask[mapx, mapy].in_range != 0 && !Engine.map.mask[mapx, mapy].blocked)
                             {
-                            	//TODO_RR Action.action_queue_move(Engine.cur_unit, mapx, mapy);
+                            	//Action.action_queue_move(Engine.cur_unit, mapx, mapy);
 								print ("Move");
                             }
 							else{
 								if (Engine.map.mask[mapx, mapy].sea_embark)
                                 {
-									print ("Embarcar...");
+									if (Engine.cur_unit.embark == UnitEmbarkTypes.EMBARK_NONE)
+										Action.action_queue_embark_sea(Engine.cur_unit, mapx, mapy);
+									else
+                                        Action.action_queue_debark_sea(Engine.cur_unit, mapx, mapy);
+                                    Engine.engine_backup_move(Engine.cur_unit, mapx, mapy);
+									Engine.draw_map = true;
+									
 								}
 								else
                                 {
@@ -93,7 +106,6 @@ public class Movement : MonoBehaviour
 	private void OnMove(){
 		Color hover = Color.yellow;
 		Color fogHover = new Color(0.3f,0.3f,0.3f,1);
-		int x,y;
 		int xS,yS;
 		ray = Camera.main.ScreenPointToRay(Input.mousePosition); //ray = Camera.main.ScreenPointToRay(touch.position);
         if (Physics.Raycast(ray, out hit, 100))
@@ -174,7 +186,6 @@ public class Movement : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		
 	}
 	
 	// Update is called once per frame
@@ -183,4 +194,185 @@ public class Movement : MonoBehaviour
 		OnMove();
 		OnClick();
 	}
+	
+	void OnGUI(){
+		if (Engine.map.isLoaded){
+			GUI.Window (windowType, new Rect (Screen.width-widthInfo, 0, widthInfo, Screen.height), ConfigWindow, "");
+		}
+	}
+	
+	void ConfigWindow(int windowID){
+		switch(windowID){
+			case 0:
+				GeneralConfig();
+				break;
+			case 1:
+				SupplyUnitsGUI();
+				break;
+			case 2:
+				DeployUnitsGUI();
+				break;
+			case 3:
+				VictCondGUI();
+				break;
+			case 4:
+				EndTurnGUI();
+				break;
+			case 5:
+				ShowCUnitInfoGUI();
+				break;
+		}		
+		
+	}
+	
+	private bool isVisibleUnit(int x, int y){
+		foreach(Unit unit in Scenario.vis_units){
+			if (unit.x==x && unit.y==y)
+				return true;
+		}
+		return false;
+	}
+	
+	private void GeneralConfig(){
+		/*string movement = "Movement: ";
+		string spotting = "Spotting: ";
+		string range = "Range: ";
+		string initiative = "Initiative: ";
+		string softat = "Soft At.: ";*/
+		string turns = "Turn " +Scenario.turn +" of " + Scenario.scen_info.turn_limit;
+		string prestige = "Prestige: "+ Player.players_get_first().prestige;
+		string weather = "Weather:  " +
+                    ((Scenario.turn < Scenario.scen_info.turn_limit) ?
+                     Engine.terrain.weatherTypes[Scenario.scen_get_weather()].name:"");
+		string forecast = "Forecast: " +
+                    ((Scenario.turn + 1 < Scenario.scen_info.turn_limit) ?
+                     Engine.terrain.weatherTypes[Scenario.scen_get_forecast()].name : "");
+		GUI.Label(new Rect(83,25,75,25),turns);
+		GUI.Label(new Rect(83,50,100,25),prestige);
+		GUI.Label(new Rect(83,75,100,25),weather);
+		GUI.Label(new Rect(83,100,100,25),forecast);
+		if (GUI.Button(new Rect(15,125,90,25),"Supply Units")){
+			windowType=1;
+		}
+		if (GUI.Button(new Rect(145,125,90,25),"Deploy Units")){
+			windowType=2;
+		}
+		if(GUI.Button(new Rect(15,155,90,25),"Vict. Cond")){
+			windowType = 3;
+		}
+		if (GUI.Button(new Rect(145,155,90,25),"End Turn")){
+			windowType = 4;
+		}
+		string current_info =""; 
+		//Unit_Lib_Entry unit_info = null;
+		if (Engine.cur_unit!=null){
+			current_info = Engine.cur_unit.name+"\nFuel:"+
+						   Engine.cur_unit.cur_fuel+" Ammo:"+
+						   Engine.cur_unit.cur_ammo+" Ent:"+Engine.cur_unit.entr;
+			/*string name = Unit.DeleteOrdinal(Engine.cur_unit.name);
+			unit_info = DB.UnitLib.unit_lib_find_by_name(name);
+			movement+=unit_info.mov+"("+DB.UnitLib.mov_types[unit_info.mov_type].name+")";
+			spotting+=unit_info.spt;
+			range+=unit_info.rng;
+			initiative+=unit_info.ini;
+			softat+=unit_info.atks[0];*/
+		}
+		if (GUI.Button (new Rect(62.5f,185,125,25),"Show C. Unit Info")){
+			windowType = 5;
+		}
+		GUI.Box (new Rect(37.5f,215,175,40),current_info);
+		string hover_info ="";
+		string terrain_info="";
+		if (hitSelected.transform!=null){
+			terrain_info = Engine.map.map[x,y].name+"("+x+","+y+")";
+			if (Engine.map.map[x,y].a_unit!=null && isVisibleUnit(x,y)){
+				hover_info = Engine.map.map[x,y].a_unit.name+"\nFuel:"+
+						   	 Engine.map.map[x,y].a_unit.cur_fuel+" Ammo:"+
+						   	 Engine.map.map[x,y].a_unit.cur_ammo+" Ent:"+Engine.map.map[x,y].a_unit.entr;
+				/*Unit_Lib_Entry unit_info_hover = DB.UnitLib.unit_lib_find_by_name(Unit.DeleteOrdinal(Engine.map.map[x,y].a_unit.name));
+				movement = getMovOfUnitHover(unit_info_hover,movement);
+				spotting = getSpotOfUnitHover(unit_info_hover, spotting);
+				range = getRangeOfUnitHover(unit_info_hover, range);
+				initiative = getIniOfUnitHover(unit_info_hover, initiative);*/
+				
+			}
+			if (Engine.map.map[x,y].g_unit!=null && isVisibleUnit(x,y)){
+				hover_info = Engine.map.map[x,y].g_unit.name+"\nFuel:"+
+						   	 Engine.map.map[x,y].g_unit.cur_fuel+" Ammo:"+
+						   	 Engine.map.map[x,y].g_unit.cur_ammo+" Ent:"+Engine.map.map[x,y].g_unit.entr;
+				/*Unit_Lib_Entry unit_info_hover = DB.UnitLib.unit_lib_find_by_name(Unit.DeleteOrdinal(Engine.map.map[x,y].g_unit.name));
+				movement = getMovOfUnitHover(unit_info_hover,movement);
+				spotting = getSpotOfUnitHover(unit_info_hover, spotting);
+				range = getRangeOfUnitHover(unit_info_hover, range);
+				initiative = getIniOfUnitHover(unit_info_hover, initiative);*/
+			}
+		}
+		GUI.Box (new Rect(37.5f,260,175,40),hover_info);
+		GUI.Label (new Rect(83,300,200,20),terrain_info);
+		GUI.Label(new Rect(15,320,200,20),"Expected losses");
+		/*GUI.Label(new Rect(25,290,235,20),movement);
+		GUI.Label(new Rect(25,310,235,20),spotting);
+		GUI.Label(new Rect(25,330,235,20),range);
+		GUI.Label(new Rect(25,350,235,20),initiative);
+		GUI.Label(new Rect(25,370,235,20),softat);*/
+	}
+	
+	private void SupplyUnitsGUI(){
+		if (GUILayout.Button("OK"))
+			windowType = 0;
+	}
+	
+	private void DeployUnitsGUI(){
+		if (GUILayout.Button("OK"))
+			windowType = 0;
+	}
+	
+	private void VictCondGUI(){
+		if (GUILayout.Button("OK"))
+			windowType = 0;
+	}
+	
+	private void EndTurnGUI(){
+		if (GUILayout.Button("OK"))
+			windowType = 0;
+	}
+	
+	private void ShowCUnitInfoGUI(){
+		if (GUILayout.Button("OK"))
+			windowType = 0;
+	}
+	/*private string getMovOfUnitHover(Unit_Lib_Entry unit_info_hover, string movement){
+		if (movement.Equals("Movement: ")){
+			return movement+="\t\t\t\t"+unit_info_hover.mov+"("+DB.UnitLib.mov_types[unit_info_hover.mov_type].name+")";
+		}
+		else{
+			return movement+="\t"+unit_info_hover.mov+"("+DB.UnitLib.mov_types[unit_info_hover.mov_type].name+")";
+		}
+	}
+	private string getSpotOfUnitHover(Unit_Lib_Entry unit_info_hover, string spotting){
+		if (spotting.Equals("Spotting: ")){
+			return spotting+="\t\t\t\t\t"+unit_info_hover.spt;
+		}
+		else{
+			return spotting+="\t\t\t\t\t\t"+unit_info_hover.spt;
+		}
+	}
+	
+	private string getRangeOfUnitHover(Unit_Lib_Entry unit_info_hover, string spotting){
+		if (spotting.Equals("Range: ")){
+			return spotting+="\t\t\t\t\t\t"+unit_info_hover.rng;
+		}
+		else{
+			return spotting+="\t\t\t\t\t\t"+unit_info_hover.rng;
+		}
+	}
+	
+	private string getIniOfUnitHover(Unit_Lib_Entry unit_info_hover, string spotting){
+		if (spotting.Equals("Initiative: ")){
+			return spotting+="\t\t\t\t\t"+unit_info_hover.rng;
+		}
+		else{
+			return spotting+="\t\t\t\t\t"+unit_info_hover.rng;
+		}
+	}*/
 }
