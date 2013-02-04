@@ -1467,7 +1467,7 @@ Draw wallpaper and background.
             end_scen = false;
 			/* build action queue */
 			AI_Enemy.Action.actions_create();
-            /* Scenario&campaign or title*/
+             /* Scenario&campaign or title*/
             if (setup.type == SETUP.SETUP_RUN_TITLE)
             {
                 status = STATUS.STATUS_TITLE;
@@ -2549,8 +2549,7 @@ Draw wallpaper and background.
         Show Scenario info window.
         ====================================================================
         */
-#if TODO_RR
-        public static void GuiShowScenInfo()
+        public static string GuiShowScenInfo()
         {
             StringBuilder str = new StringBuilder();
             /* title */
@@ -2587,17 +2586,9 @@ Draw wallpaper and background.
                     str.Append("Next Player:     " + Player.players_test_next().name + "\n");
                 }
             }
-            /* weather */
-            str.Append("Weather:  " +
-                    ((Scenario.turn < Scenario.scen_info.turn_limit) ?
-                     terrain.weatherTypes[Scenario.scen_get_weather()].name : "n/a") + "\n");
-            str.Append("Forecast: " +
-                    ((Scenario.turn + 1 < Scenario.scen_info.turn_limit) ?
-                     terrain.weatherTypes[Scenario.scen_get_forecast()].name : "n/a") + "\n");
-            /* show */
-            form.ShowMessageAndWait(str.ToString());
+            return str.ToString();
         }
-#endif
+		
         /*
         ====================================================================
         Show explicit victory conditions and use Scenario info window for
