@@ -11,7 +11,7 @@ public class GUIMap : MonoBehaviour
         
 	public GameObject hexPrefab;
 	public string scen_name;
-	private GameObject[,] mapped;
+	private static GameObject[,] mapped;
         
 	private void MakeMap (Map map)
 	{
@@ -23,12 +23,12 @@ public class GUIMap : MonoBehaviour
 				if (Misc.IsEven (j)) {
 					//hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * 1.5f, 0, -Mathf.Sqrt (3) * i), Quaternion.identity);
 					hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * Config.hex_x_offset, 0, 
-                                                                                                        -Config.hex_h * i), Quaternion.identity);
+                                                   -Config.hex_h * i), Quaternion.identity);
 				} else {
 					//hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * 1.5f, 0,           
 					//-(Mathf.Sqrt (3) * i) - (Mathf.Sqrt (3) / 2)), Quaternion.identity);
 					hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * Config.hex_x_offset, 0,
-                                                                                                        -(Config.hex_h * i) - Config.hex_y_offset), Quaternion.identity);
+                                                   -(Config.hex_h * i) - Config.hex_y_offset), Quaternion.identity);
 				}
 				mapped[j,i] = hex;
 				//put hex as child of map
@@ -47,11 +47,7 @@ public class GUIMap : MonoBehaviour
 		Engine.status = STATUS.STATUS_NONE;
 	}
     
-	void Repaint(Map map, bool use_frame){
-		if (Engine.draw_map) {
-			print (Engine.status);
-			print ("Hay que repintar");
-			//Comprobar las nieblas
+	public static void Repaint(Map map, bool use_frame){
 			for (int i=0; i<map.map_h; i++) {
                 for (int j=0; j<map.map_w; j++) {
 					SDL_Surface hexTex;
@@ -67,18 +63,8 @@ public class GUIMap : MonoBehaviour
 						}
 					}
 					mapped[j,i].renderer.material = hexTex.BitmapMaterial;
-					//mapped[j,i].renderer.material.color = Color.blue;
-					/*if (!Engine.map.mask[j,i].fog){
-						print (i+","+j);
-					}*/
 				}
 			}
-					
-#if TODO_RR
-       añadir las nieblas y repintar
-#endif
-			Engine.draw_map = false;
-		}
 	}
 	private void onLoadScen ()
 	{
@@ -110,7 +96,5 @@ public class GUIMap : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		bool use_frame = (Engine.cur_ctrl != PLAYERCONTROL.PLAYER_CTRL_CPU);
-		Repaint (Engine.map,use_frame);
 	}
 }
