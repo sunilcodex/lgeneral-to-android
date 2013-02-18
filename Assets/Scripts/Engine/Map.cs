@@ -1869,7 +1869,7 @@ namespace EngineApp
 				int offset = (sdl.h - ulib.offset_img - ulib.icon_h);
 				SDL_Surface.copy_image (dest, ulib.icon_w, ulib.icon_h, sdl, 0, offset);
 				SDL_Surface.putPixelBlack (dest);
-				if (unit.player.ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU) {
+				if (unit.orient == UnitLookingDirection.UNIT_ORIENT_LEFT) {
 					SDL_Surface aux = new SDL_Surface ();
 					SDL_Surface.copy_image180 (aux, dest);
 					dest = aux;
@@ -1902,7 +1902,7 @@ namespace EngineApp
 				offset = sdl2.h - offset;
 				SDL_Surface.copy_image (dest, ulib.icon_w, ulib.icon_h, sdl2, 0, offset);
 				SDL_Surface.putPixelBlack (dest);
-				if (unit.player.ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU) {
+				if (unit.orient == UnitLookingDirection.UNIT_ORIENT_LEFT) {
 					SDL_Surface aux = new SDL_Surface ();
 					SDL_Surface.copy_image180 (aux, dest);
 					dest = aux;
