@@ -5,6 +5,7 @@ using Miscellaneous;
 using AI_Enemy;
 using DataFile;
 using System.Text;
+using System.Threading;
 
 public class Movement : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class Movement : MonoBehaviour
 	}
 
 	private int x, y;
-	
+	private bool first = true;
 	private void OnClick ()
 	{
 		if (Input.GetMouseButtonDown (0) && Engine.map.isLoaded) {//TODO_RR if (Input.GetTouch(0).phase == TouchPhase.Began)){
@@ -42,7 +43,12 @@ public class Movement : MonoBehaviour
 							print ("Attack");
 						} else {
 							if (Engine.map.mask [mapx, mapy].in_range != 0 && !Engine.map.mask [mapx, mapy].blocked) {
-								Action.action_queue_move (Engine.cur_unit, mapx, mapy);
+								/*if (first){
+									Draw ();
+									Thread.Sleep(20);
+									first = false;
+								}*/
+									Action.action_queue_move (Engine.cur_unit, mapx, mapy);						
 							} else {
 								if (Engine.map.mask [mapx, mapy].sea_embark) {
 									if (Engine.cur_unit.embark == UnitEmbarkTypes.EMBARK_NONE)
@@ -142,41 +148,10 @@ public class Movement : MonoBehaviour
 				}
 				hitSelected = hit;
 			}
-			//hitSelected = hit;
-			/*if (hitSelected.transform == null){
-				Engine.engine_get_screen_pos(hit.transform.position.x,hit.transform.position.z,out x,out y);
-				if (Engine.map.mask[x,y].fog){
-					hit.transform.gameObject.renderer.material.color = fogHover;
-				}
-				else{
-					hit.transform.gameObject.renderer.material.color = hover;
-				}
-                hitSelected = hit;
-            }
-            else{
-				Engine.engine_get_screen_pos(hitSelected.transform.position.x,hitSelected.transform.position.z,out x,out y);
-				if (Engine.map.mask[x,y].fog){
-					hitSelected.transform.gameObject.renderer.material.color = Color.grey;
-				}
-				else if (Engine.cur_unit!=null && Engine.cur_unit.x==x && Engine.cur_unit.y==y){
-					hitSelected.transform.gameObject.renderer.material.color = Color.green;
-				}
-				else{
-					hitSelected.transform.gameObject.renderer.material.color = new Color(1,1,1,0.5F);
-				}
-                Engine.engine_get_screen_pos(hit.transform.position.x,hit.transform.position.z,out x,out y);
-				if (Engine.map.mask[x,y].fog){
-					hit.transform.gameObject.renderer.material.color = fogHover;
-				}
-				else{
-					hit.transform.gameObject.renderer.material.color = hover;
-				}
-            	hitSelected = hit;
-            }*/
 		}
 	}
 	
-	public void Draw ()
+	public static void Draw ()
 	{
 		if (Engine.map.isLoaded) {
 			Engine.status = STATUS.STATUS_NONE;
@@ -184,10 +159,6 @@ public class Movement : MonoBehaviour
 			GUIMap.Repaint(Engine.map,use_frame);
 		}
 		Engine.draw_map = false;
-	}
-	// Use this for initialization
-	void Start ()
-	{
 	}
 	
 	// Update is called once per frame
@@ -220,7 +191,8 @@ public class Movement : MonoBehaviour
 			EndTurnGUI ();
 			break;
 		case 4:
-			ShowCUnitInfoGUI ();
+			if (Engine.cur_unit!=null)
+				ShowCUnitInfoGUI ();
 			break;
 		}		
 		
@@ -347,8 +319,34 @@ public class Movement : MonoBehaviour
 	
 	private void EndTurnGUI ()
 	{
-		if (GUILayout.Button ("OK"))
+		GUILayout.Label("Do you really want to end your turn?");
+		GUILayout.Label("End Your Turn #" + Scenario.turn, GUILayout.ExpandWidth(true));
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button ("YES")){
+			Engine.engine_end_turn();
+			if (!Engine.end_scen)
+            	Engine.engine_begin_turn(null, false);
+			if (Engine.draw_map)
+            {
+                    Draw();
+            }
+			while (Engine.cur_player.ctrl != PLAYERCONTROL.PLAYER_CTRL_HUMAN)
+            {
+            	Engine.engine_end_turn();
+                if (!Engine.end_scen)
+                	Engine.engine_begin_turn(null, false);
+                if (Engine.draw_map)
+                {
+                        Draw();
+                }
+            }
+			Scenario.turn+=1;
 			windowType = 0;
+		}
+		if (GUILayout.Button ("NO")){
+			windowType = 0;
+		}	
+		GUILayout.EndHorizontal();
 	}
 	
 	private void ShowCUnitInfoGUI ()
