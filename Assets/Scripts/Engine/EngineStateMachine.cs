@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using Sanford.StateMachineToolkit;
 using Sanford.Threading;
@@ -60,7 +60,8 @@ namespace EngineApp
         PHASE_START_SINGLE_MOVE,    /* initiate movement to next way point from current position */
         PHASE_RUN_SINGLE_MOVE,      /* run single movement and call START_SINGLE_MOVEMENT when done */
         PHASE_CHECK_LAST_MOVE,      /* check last single move for suprise contact, flag capture, Scenario end */
-        PHASE_END_MOVE              /* finalize movement */
+        PHASE_END_MOVE,              /* finalize movement */
+		PHASE_PRE_MOVE
     };
 
     public class EngineStateMachine : PassiveStateMachine<StateID, EngineActionsTypes>, IDisposable
@@ -75,7 +76,8 @@ namespace EngineApp
         {
             scheduler.PollingInterval = Config.schedulerTimeOut / 2;
             States[StateID.STATUS_INGAME].EntryHandler += StartNewScenarioGame;
-
+			
+			States[StateID.PHASE_PRE_MOVE].EntryHandler+=Engine.PreMove;
             States[StateID.PHASE_INIT_MOVE].EntryHandler += Engine.InitMove;
             States[StateID.PHASE_START_SINGLE_MOVE].EntryHandler += Engine.SingleMove;
             States[StateID.PHASE_RUN_SINGLE_MOVE].EntryHandler += Engine.RunMove;
@@ -102,7 +104,9 @@ namespace EngineApp
             AddTransition(StateID.STATUS_INGAME, EngineActionsTypes.Dispose, StateID.Disposed);
 
             /* MOVEMENT */
-            AddTransition(StateID.STATUS_NONE, EngineActionsTypes.ACTION_MOVE, StateID.PHASE_INIT_MOVE, ActionMove);
+            AddTransition(StateID.STATUS_NONE, EngineActionsTypes.ACTION_MOVE, StateID.PHASE_PRE_MOVE, ActionMove);
+			AddTransition(StateID.PHASE_PRE_MOVE,EngineActionsTypes.ACTION_MOVE,StateID.PHASE_INIT_MOVE);
+			//TODO_RR AddTransition(StateID.STATUS_NONE, EngineActionsTypes.ACTION_MOVE, StateID.PHASE_INIT_MOVE, ActionMove);
             AddTransition(StateID.PHASE_INIT_MOVE, EngineActionsTypes.ACTION_END_MOVE, StateID.STATUS_NONE);
             AddTransition(StateID.PHASE_INIT_MOVE, EngineActionsTypes.ACTION_START_SINGLE_MOVE, StateID.PHASE_START_SINGLE_MOVE);
             AddTransition(StateID.PHASE_START_SINGLE_MOVE, EngineActionsTypes.ACTION_RUN_SINGLE_MOVE, StateID.PHASE_RUN_SINGLE_MOVE);
@@ -169,7 +173,8 @@ namespace EngineApp
             Engine.engine_clear_danger_mask();
             //if (Engine.cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN)
             //    image_hide(gui.cursors, 1);
-            Engine.draw_map = true;
+            //Engine.Draw_from_state_machine = true;
+			//Engine.draw_map = true;
         }
 
 
