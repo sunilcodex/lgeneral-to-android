@@ -15,6 +15,7 @@ using DataFile;
 using Miscellaneous;
 using UnityEngine;
 using AI_Enemy;
+using System.Threading;
 
 namespace EngineApp
 {
@@ -76,7 +77,12 @@ namespace EngineApp
     /// </summary>
     public sealed class Engine
     {
-
+		private static bool draw_from_state_machine = false;
+		public static bool Draw_from_state_machine{
+			get{return draw_from_state_machine;}
+			set{draw_from_state_machine = value;}
+		}
+		
         public static Setup setup = DB.setup;
         public static STATUS status = DB.status;                    /* statuses defined in engine_tools.h */
 		public static Scenario scen = DB.scen;
@@ -182,11 +188,8 @@ namespace EngineApp
         static int[,] hex_mask;             /* used to determine hex from pointer pos */
         static int map_x, map_y;              /* current position in map */
         static int map_sw, map_sh;            /* number of tiles drawn to screen */
-        static int map_sx, map_sy;            /* position where to draw first tile */
         public static bool draw_map = false;              /* if this flag is true engine_update() calls engine_draw_map() */
         static bool blind_cpu_turn = false;        /* if this is true all movements are hidden */
-
-
         public class MapPoint
         {
             public int x, y;
@@ -266,8 +269,6 @@ namespace EngineApp
             if (newstat == STATUS.STATUS_NONE && setup.type == SETUP.SETUP_RUN_TITLE)
             {
                 status = STATUS.STATUS_TITLE;
-                /* re-show main menu */
-                if (!term_game) engine_show_game_menu(10, 10);
             }
             else
                 status = newstat;
@@ -856,7 +857,6 @@ Draw wallpaper and background.
         autosave happens, aircrafts crash, units get supplied.
         ====================================================================
         */
-#if TODO_RR
         public static void engine_end_turn()
         {
             /* finalize ai turn if any */
@@ -870,7 +870,8 @@ Draw wallpaper and background.
             }
             /* autosave game for a human */
             if (!deploy_turn && cur_player != null && cur_player.ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN)
-                Slots.slot_save(10 /* Autosave */, "Autosave");
+                //TODO_RR Slots.slot_save(10 /* Autosave */, "Autosave");
+				Debug.Log ("AUTOSAVE");
             /* fuel up and kill crashed aircrafts*/
             foreach (Unit unit in Scenario.units)
             {
@@ -914,7 +915,7 @@ Draw wallpaper and background.
                 }
             }
         }
-#endif
+		
         /*
         ====================================================================
         Get map/screen position from cursor/map position.
@@ -1077,193 +1078,9 @@ Draw wallpaper and background.
 
         /*
         ====================================================================
-        Update full map.
-        ====================================================================
-        */
-#if TODO_RR
-        public static void engine_draw_map(SDL_Surface sdl)
-        {
-            int x, y, abs_y;
-            int start_map_x, start_map_y, end_map_x, end_map_y;
-            int buffer_height, buffer_width, buffer_offset;
-            bool use_frame = (cur_ctrl != PLAYERCONTROL.PLAYER_CTRL_CPU);
-
-            DrawStage stage = DrawStage.DrawTerrain;
-            DrawStage top_stage = (has_danger_zone ? DrawStage.DrawDangerZone : DrawStage.DrawUnits);
-
-            /* reset_timer(); */
-
-            draw_map = false;
-            /* reset engine's map size (number of tiles on screen) */
-            map_sw = 0;
-            for (int i = map_sx; i < sdl.w; i += terrain.hex_x_offset)
-                map_sw++;
-            map_sh = 0;
-            for (int j = map_sy; j < sdl.h; j += terrain.hex_h)
-                map_sh++;
-
-            if (status == STATUS.STATUS_STRAT_MAP)
-            {
-                sc_type = DISPLAY.SC_NONE;
-                strat_map.strat_map_draw();
-                return;
-            }
-
-            if (status == STATUS.STATUS_TITLE)
-            {
-                sc_type = DISPLAY.SC_NONE;
-                engine_draw_bkgnd();
-                return;
-            }
-            /* screen copy? */
-            start_map_x = map_x;
-            start_map_y = map_y;
-            end_map_x = map_x + map_sw;
-            end_map_y = map_y + map_sh;
-#if TODO
-            if (sc_type == DISPLAY.SC_VERT)
-            {
-                /* clear flag */
-                sc_type = DISPLAY.SC_NONE;
-                /* set buffer offset and height */
-                buffer_offset = Math.Abs(sc_diff) * hex_h;
-                buffer_height = sdl.screen.h - buffer_offset;
-                /* going down */
-                if (sc_diff > 0)
-                {
-                    /* copy screen to buffer */
-                    DEST(sc_buffer, 0, 0, sdl.screen.w, buffer_height);
-                    SOURCE(sdl.screen, 0, buffer_offset);
-                    blit_surf();
-                    /* copy buffer to new pos */
-                    DEST(sdl.screen, 0, 0, sdl.screen.w, buffer_height);
-                    SOURCE(sc_buffer, 0, 0);
-                    blit_surf();
-                    /* set loop range to redraw lower lines */
-                    start_map_y += map_sh - sc_diff - 2;
-                }
-                /* going up */
-                else
-                {
-                    /* copy screen to buffer */
-                    DEST(sc_buffer, 0, 0, sdl.screen.w, buffer_height);
-                    SOURCE(sdl.screen, 0, 0);
-                    blit_surf();
-                    /* copy buffer to new pos */
-                    DEST(sdl.screen, 0, buffer_offset, sdl.screen.w, buffer_height);
-                    SOURCE(sc_buffer, 0, 0);
-                    blit_surf();
-                    /* set loop range to redraw upper lines */
-                    end_map_y = map_y + abs(sc_diff) + 1;
-                }
-            }
-            else
-                if (sc_type == SC_HORI)
-                {
-                    /* clear flag */
-                    sc_type = SC_NONE;
-                    /* set buffer offset and width */
-                    buffer_offset = abs(sc_diff) * hex_x_offset;
-                    buffer_width = sdl.screen.w - buffer_offset;
-                    buffer_height = sdl.screen.h;
-                    /* going right */
-                    if (sc_diff > 0)
-                    {
-                        /* copy screen to buffer */
-                        DEST(sc_buffer, 0, 0, buffer_width, buffer_height);
-                        SOURCE(sdl.screen, buffer_offset, 0);
-                        blit_surf();
-                        /* copy buffer to new pos */
-                        DEST(sdl.screen, 0, 0, buffer_width, buffer_height);
-                        SOURCE(sc_buffer, 0, 0);
-                        blit_surf();
-                        /* set loop range to redraw right lines */
-                        start_map_x += map_sw - sc_diff - 2;
-                    }
-                    /* going left */
-                    else
-                    {
-                        /* copy screen to buffer */
-                        DEST(sc_buffer, 0, 0, buffer_width, buffer_height);
-                        SOURCE(sdl.screen, 0, 0);
-                        blit_surf();
-                        /* copy buffer to new pos */
-                        DEST(sdl.screen, buffer_offset, 0, buffer_width, buffer_height);
-                        SOURCE(sc_buffer, 0, 0);
-                        blit_surf();
-                        /* set loop range to redraw right lines */
-                        end_map_x = map_x + abs(sc_diff) + 1;
-                    }
-                }
-#endif
-            for (; stage <= top_stage; stage++)
-            {
-                /* start position for drawing */
-                x = map_sx + (start_map_x - map_x) * terrain.hex_x_offset;
-                y = map_sy + (start_map_y - map_y) * terrain.hex_h;
-                /* end_map_xy must not exceed map's size */
-                if (end_map_x >= map.map_w) end_map_x = map.map_w;
-                if (end_map_y >= map.map_h) end_map_y = map.map_h;
-                /* loop to draw map tile */
-                for (int j = start_map_y; j < end_map_y; j++)
-                {
-                    for (int i = start_map_x; i < end_map_x; i++)
-                    {
-                        /* update each map tile */
-                        if (i % 2 != 0) // it's odd
-                            abs_y = y + terrain.hex_y_offset;
-                        else
-                            abs_y = y;
-                        switch (stage)
-                        {
-                            case DrawStage.DrawTerrain:
-                                map.map_draw_terrain(sdl, i, j, x, abs_y);
-                                break;
-                            case DrawStage.DrawUnits:
-
-                                if (cur_unit != null && cur_unit.x == i && cur_unit.y == j && status != STATUS.STATUS_MOVE && Engine.map.mask[i, j].spot)
-                                    map.map_draw_units(sdl, i, j, x, abs_y, !air_mode, use_frame);
-                                else
-                                    map.map_draw_units(sdl, i, j, x, abs_y, !air_mode, false);
-
-                                break;
-                            case DrawStage.DrawDangerZone:
-                                if (map.mask[i, j].danger)
-                                    map.map_apply_danger_to_tile(sdl, i, j, x, abs_y);
-                                break;
-                        }
-                        x += terrain.hex_x_offset;
-                    }
-                    y += terrain.hex_h;
-                    x = map_sx + (start_map_x - map_x) * terrain.hex_x_offset;
-                }
-            }
-            if (showCross != null)
-            {
-                /* start position for drawing */
-                x = map_sx + showCross.x * terrain.hex_x_offset;
-                y = map_sy + showCross.y * terrain.hex_h;
-                /* update each map tile */
-                if (showCross.x % 2 != 0) // it's odd
-                    abs_y = y + terrain.hex_y_offset;
-                else
-                    abs_y = y;
-
-                SDL_Surface.copy_image(sdl,
-                      x,
-                      abs_y,
-                      terrain.terrainIcons.cross.w, terrain.terrainIcons.cross.h,
-                      terrain.terrainIcons.cross, 0, 0);
-            }
-            /* printf( "time needed: %i ms\n", get_time() ); */
-        }
-#endif
-        /*
-        ====================================================================
         Get primary unit on tile.
         ====================================================================
         */
-
         public static Unit engine_get_prim_unit(int x, int y, REGION region)
         {
             if (x < 0 || y < 0 || x >= map.map_w || y >= map.map_h) return null;
@@ -1472,6 +1289,7 @@ Draw wallpaper and background.
             else{
 					setup.fname = scen_name;
                     if (!Scenario.scen_load(setup.fname)) return 0;
+					else {map_sw = map.map_w; map_sh=map.map_h;}
                     if (setup.type == SETUP.SETUP_INIT_SCEN)
                     {
                         /* player control */
@@ -1556,8 +1374,6 @@ Draw wallpaper and background.
 #endif
             /* map geometry */
             map_x = map_y = 0;
-            map_sx = -Config.hex_x_offset;
-            map_sy = -Config.hex_h;
 #if TODO
             for (int i = map_sx, map_sw = 0; i < sdl.screen.w; i += terrain.hex_x_offset)
                 map_sw++;
@@ -1732,10 +1548,11 @@ Draw wallpaper and background.
 #endif
         }
 #endif
+#if TODO_RR
         public static void engine_show_game_menu(int cx, int cy)
         {
-			throw new NotImplementedException();
         }
+#endif
 
         public static void engine_update(int ms)
         {
@@ -1930,7 +1747,8 @@ Draw wallpaper and background.
 #if TODO
                 image_move(move_image, start_x, start_y);
 #endif
-                draw_map = true;
+				Debug.Log ("Tengo que poner el draw_map a true");
+				draw_from_state_machine = true;
             }
 			/* animate */
             phase = PHASE.PHASE_START_SINGLE_MOVE;
@@ -1947,18 +1765,21 @@ Draw wallpaper and background.
             move_unit.is_guarding = false;
         }
 
+		public static void PreMove(){
+			 draw_from_state_machine = true;
+			 Thread.Sleep(20);
+			 phase = PHASE.PHASE_INIT_MOVE;
+             AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_MOVE);
+		}
+		
         public static void SingleMove()
         {
 			Debug.Log ("Estamos en SingleMove");
-#if TODO_RR
-            Console.WriteLine("SingleMove State : {0}", stateMachine.CurrentStateID);
-
-            bool enemy_spotted;
+			bool enemy_spotted;
             int i;
-            int start_x, start_y, end_x, end_y;
 
             map.map_remove_unit(move_unit);
-            /* get next start way point */
+			/* get next start way point */
             if (blind_cpu_turn)
             {
                 way_pos = way_length - 1;
@@ -1984,120 +1805,65 @@ Draw wallpaper and background.
                     }
                     way_pos = i;
                 }
-            /* focus current way point */
-            if (way_pos < way_length - 1)
-                if (!blind_cpu_turn && (map.MAP_CHECK_VIS(way[way_pos].x, way[way_pos].y) ||
-                    map.MAP_CHECK_VIS(way[way_pos + 1].x, way[way_pos + 1].y)))
-                {
-                    if (engine_focus(way[way_pos].x, way[way_pos].y, true))
-                    {
-                        engine_get_screen_pos(way[way_pos].x, way[way_pos].y, out start_x, out start_y);
-                        start_x += ((Config.hex_w - move_unit.sel_prop.icon_w) >> 1);
-                        start_y += ((Config.hex_h - move_unit.sel_prop.icon_h) >> 1);
-#if TODO
-                        image_move(move_image, start_x, start_y);
-#endif
-                    }
-
-                }
-            /* units looking direction */
+			/* units looking direction */
             move_unit.AdjustOrient(way[way_pos].x, way[way_pos].y);
 #if TODO
             if (!blind_cpu_turn)
                 image_set_region(move_image, move_unit.icon_offset, 0,
                                   move_unit.sel_prop.icon_w, move_unit.sel_prop.icon_h);
 #endif
-            /* units position */
+			 /* units position */
             move_unit.x = way[way_pos].x; move_unit.y = way[way_pos].y;
             map.map_insert_unit(move_unit);
             /* update spotting */
             map.map_update_spot_mask(move_unit, out enemy_spotted);
             if (modify_fog)
                 map.map_set_fog(MAP_MASK.F_SPOT);
-            if (enemy_spotted)
+			if (enemy_spotted)
             {
                 /* if you spotted an enemy it's not allowed to undo the turn */
                 engine_clear_backup();
             }
-            /* determine next step */
-            if (way_pos == way_length - 1)
+			if (way_pos == way_length - 1)
             {
                 phase = PHASE.PHASE_CHECK_LAST_MOVE;
                 AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
                 //stateMachine.Send(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
             }
-            else
-            {
-                /* animate? */
+			else{
+				/* animate? */
                 if (map.MAP_CHECK_VIS(way[way_pos].x, way[way_pos].y) ||
                     map.MAP_CHECK_VIS(way[way_pos + 1].x, way[way_pos + 1].y))
                 {
-                    engine_get_screen_pos(way[way_pos].x, way[way_pos].y, out start_x, out start_y);
-                    start_x += ((Config.hex_w - move_unit.sel_prop.icon_w) >> 1);
-                    start_y += ((Config.hex_h - move_unit.sel_prop.icon_h) >> 1);
-                    engine_get_screen_pos(way[way_pos + 1].x, way[way_pos + 1].y, out end_x, out end_y);
-                    end_x += ((Config.hex_w - move_unit.sel_prop.icon_w) >> 1);
-                    end_y += ((Config.hex_h - move_unit.sel_prop.icon_h) >> 1);
-                    unit_vector.x = start_x; unit_vector.y = start_y;
-                    move_vector.x = end_x - start_x; move_vector.y = end_y - start_y;
-                    float len = (float)Math.Sqrt(move_vector.x * move_vector.x + move_vector.y * move_vector.y);
-                    move_vector.x /= len;
-                    move_vector.y /= len;
-#if TODO
-                    image_move(move_image, (int)unit_vector.x, (int)unit_vector.y);
-                    set_delay(&move_time, ((int)(len / move_vel)) / config.anim_speed);
-#endif
-                    draw_map = true;
-#if TODO_RR
-                    form.Draw();
-#endif
-                }
-#if TODO
-                else
-                    set_delay(&move_time, 0);
-#endif
-                phase = PHASE.PHASE_RUN_SINGLE_MOVE;
+					//draw_map_state_machine = true;
+					//GUIMap.Repaint(map,true);
+					//PruebaState.Start();
+					draw_from_state_machine = true;
+					Debug.Log ("Tengo que repintar");
+				}
+				phase = PHASE.PHASE_RUN_SINGLE_MOVE;
                 AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_RUN_SINGLE_MOVE);
-                //stateMachine.Send(EngineActionsTypes.ACTION_RUN_SINGLE_MOVE);
-                //remove stateMachine.scheduler.Add(1, Config.schedulerTimeOut, new EngineStateMachine.SendTimerDelegate(SendTimerEvent));
-
-#if TODO
-                image_hide(move_image, 0);
-#endif
-            }
-#endif
+			}
         }
 
 
         public static void RunMove()
         {
-#if TODO_RR
-            Console.WriteLine("State : {0}", stateMachine.CurrentStateID);
-
-            /* next way point */
+			Debug.Log ("Estamos en Run Move");
+			/* next way point */
             way_pos++;
             /* next movement */
             phase = PHASE.PHASE_START_SINGLE_MOVE;
-            AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
-            //stateMachine.Send(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
-            //remove stateMachine.scheduler.Add(1, Config.schedulerTimeOut, new EngineStateMachine.SendTimerDelegate(SendTimerEvent));
-#endif
+			AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_START_SINGLE_MOVE);
         }
 
 
         public static void CheckLastMove()
         {
-#if TODO_RR
-            /* insert unit */
-            //map.map_insert_unit(move_unit);
-            /* capture flag if there is one */
-            /* NOTE: only do it for AI. For the human player, it will
-             * be done on deselecting the current unit to resemble
-             * original Panzer General behaviour
-             */
-            if (cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU)
+			Debug.Log ("Estamos en Check Move");
+			if (cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU)
             {
-                if (engine_capture_flag(move_unit))
+				if (engine_capture_flag(move_unit))
                 {
                     /* CHECK IF SCENARIO IS FINISHED */
                     if (Scenario.scen_check_result(false))
@@ -2106,24 +1872,20 @@ Draw wallpaper and background.
                         return;
                     }
                 }
-            }
-            /* add influence */
-            if (!Player.player_is_ally(move_unit.player, cur_player))
+			}
+			if (!Player.player_is_ally(move_unit.player, cur_player))
                 map.map_add_unit_infl(move_unit);
-            /* update the visible units list */
-            map.map_get_vis_units();
+			map.map_get_vis_units();
             map.map_set_vis_infl_mask();
             /* next phase */
             phase = PHASE.PHASE_END_MOVE;
             AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_END_MOVE);
-            //stateMachine.Send(EngineActionsTypes.ACTION_END_MOVE);
-#endif
         }
 
         public static void EndMove()
         {
-#if TODO_RR
-            /* fade out sound */
+			Debug.Log ("Estamos en EndMove");
+			 /* fade out sound */
 #if WITH_SOUND         
                     audio_fade_out( 0, 500 ); /* move sound channel */
 #endif
@@ -2139,6 +1901,7 @@ Draw wallpaper and background.
                     if ( !blind_cpu_turn )
                        image_delete( &move_image );
 #endif
+			           
             /* run surprise contact */
             if (surp_unit != null)
             {
@@ -2155,10 +1918,8 @@ Draw wallpaper and background.
 #if TODO
                                 image_hide( gui.cursors, 1 );
 #endif
-                        draw_map = true;
-#if TODO_RR
-                        form.Draw();
-#endif
+						Debug.Log ("Repintar en End Move");
+						draw_from_state_machine = true;
                     }
                 }
                 return;
@@ -2183,12 +1944,9 @@ Draw wallpaper and background.
                             old_mx = old_my = -1;
 #endif
                 }
-                draw_map = true;
-#if TODO_RR
-                form.Draw();
-#endif
+				Debug.Log ("Repintar en End Move");
+				draw_from_state_machine= true;
             }
-#endif
         }
 
         public static void ActionAttack(object[] args)
