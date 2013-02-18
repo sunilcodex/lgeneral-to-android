@@ -66,15 +66,6 @@ public class GUIMap : MonoBehaviour
 				}
 			}
 	}
-	private void onLoadScen ()
-	{
-		Engine.engine_set_status (STATUS.STATUS_NONE);
-		Engine.engine_init (scen_name);
-		Engine.engine_run ();
-		Engine.engine_begin_turn (Engine.cur_player, DB.setup.type == SETUP.SETUP_LOAD_GAME);
-		//Scenario.scen_load (scen_name);
-		MakeMap (Engine.map);
-	}
         
 	void Awake ()
 	{
@@ -96,5 +87,20 @@ public class GUIMap : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
+		if (Engine.Draw_from_state_machine){
+			Engine.status = STATUS.STATUS_NONE;
+			bool use_frame = (Engine.cur_ctrl != PLAYERCONTROL.PLAYER_CTRL_CPU);
+			Repaint(Engine.map,use_frame);
+			Engine.Draw_from_state_machine = false;
+		}
+		/*if (Engine.Draw_map_state_machine){
+			if (Engine.map.isLoaded) {
+				Engine.status = STATUS.STATUS_NONE;
+				bool use_frame = (Engine.cur_ctrl != PLAYERCONTROL.PLAYER_CTRL_CPU);
+				GUIMap.Repaint(Engine.map,use_frame);
+			}
+			Engine.draw_map = false;
+			Engine.Draw_map_state_machine = false;
+		}*/
 	}
 }
