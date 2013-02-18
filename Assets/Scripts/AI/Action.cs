@@ -4,13 +4,14 @@
  * Fecha: 09/01/2009
  * Hora: 16:01
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | Codificación | Editar Encabezados Estándar
+ * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÃ³n | Editar Encabezados EstÃ¡ndar
  */
 
 using System;
 using System.Collections.Generic;
 using EngineApp;
 using Miscellaneous;
+using UnityEngine;
 
 namespace AI_Enemy
 {
@@ -215,7 +216,7 @@ namespace AI_Enemy
             action.unit = unit;
             action_queue(action);
         }
-#if TODO_RR
+
         public static void action_queue_embark_sea(Unit unit, int x, int y)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_EMBARK_SEA);
@@ -223,7 +224,7 @@ namespace AI_Enemy
             action.x = x; action.y = y;
             action_queue(action);
         }
-#endif
+
         public static void action_queue_debark_sea(Unit unit, int x, int y)
         {
             Action action = CreateAction(EngineActionsTypes.ACTION_DEBARK_SEA);
@@ -336,13 +337,14 @@ namespace AI_Enemy
         private static void ProcessQueue()
         {
             Action action = actions_dequeue();
-
             if (action == null)
             {
                 CheckScheduler();
             }
             else
             {
+				Debug.Log("Fase->"+Engine.phase);
+                Debug.Log("Accion->" + action.type);
                 Engine.stateMachine.operation.Post(delegate
                 {
                     Engine.stateMachine.Send(action.type, action);
@@ -359,6 +361,7 @@ namespace AI_Enemy
 
         public static void CheckScheduler()
         {
+			
             if (actions.Count > 0)
             {
                 if (!Engine.stateMachine.scheduler.IsRunning)
