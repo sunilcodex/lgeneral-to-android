@@ -5,7 +5,7 @@ namespace Miscellaneous
 {
     public class Config
     {
-        public static int schedulerTimeOut = 20;
+        public static int schedulerTimeOut = 220;
 
         /* directory to save config and saved games */
         public static string dir_name = ".";
