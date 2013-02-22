@@ -1105,7 +1105,6 @@ Draw wallpaper and background.
         Check if there is a target for current unit on x,y.
         ====================================================================
         */
-
         public static Unit engine_get_target(int x, int y, REGION region)
         {
             Unit unit;
@@ -1682,7 +1681,6 @@ Draw wallpaper and background.
 
         public static void InitMove()
         {
-			Debug.Log ("Estamos en InitMove");
 			map.map_get_unit_move_mask(move_unit);
 			/* check if tile is in reach */
 			if (map.mask[dest_x, dest_y].in_range == 0)
@@ -1747,7 +1745,6 @@ Draw wallpaper and background.
 #if TODO
                 image_move(move_image, start_x, start_y);
 #endif
-				Debug.Log ("Tengo que poner el draw_map a true");
 				draw_from_state_machine = true;
             }
 			/* animate */
@@ -1767,14 +1764,12 @@ Draw wallpaper and background.
 
 		public static void PreMove(){
 			 draw_from_state_machine = true;
-			 Thread.Sleep(20);
 			 phase = PHASE.PHASE_INIT_MOVE;
              AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_MOVE);
 		}
 		
         public static void SingleMove()
         {
-			Debug.Log ("Estamos en SingleMove");
 			bool enemy_spotted;
             int i;
 
@@ -1839,7 +1834,6 @@ Draw wallpaper and background.
 					//GUIMap.Repaint(map,true);
 					//PruebaState.Start();
 					draw_from_state_machine = true;
-					Debug.Log ("Tengo que repintar");
 				}
 				phase = PHASE.PHASE_RUN_SINGLE_MOVE;
                 AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_RUN_SINGLE_MOVE);
@@ -1849,7 +1843,6 @@ Draw wallpaper and background.
 
         public static void RunMove()
         {
-			Debug.Log ("Estamos en Run Move");
 			/* next way point */
             way_pos++;
             /* next movement */
@@ -1860,7 +1853,6 @@ Draw wallpaper and background.
 
         public static void CheckLastMove()
         {
-			Debug.Log ("Estamos en Check Move");
 			if (cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU)
             {
 				if (engine_capture_flag(move_unit))
@@ -1884,7 +1876,6 @@ Draw wallpaper and background.
 
         public static void EndMove()
         {
-			Debug.Log ("Estamos en EndMove");
 			 /* fade out sound */
 #if WITH_SOUND         
                     audio_fade_out( 0, 500 ); /* move sound channel */
@@ -1918,7 +1909,6 @@ Draw wallpaper and background.
 #if TODO
                                 image_hide( gui.cursors, 1 );
 #endif
-						Debug.Log ("Repintar en End Move");
 						draw_from_state_machine = true;
                     }
                 }
@@ -1944,7 +1934,6 @@ Draw wallpaper and background.
                             old_mx = old_my = -1;
 #endif
                 }
-				Debug.Log ("Repintar en End Move");
 				draw_from_state_machine= true;
             }
         }
@@ -2280,7 +2269,7 @@ Draw wallpaper and background.
                     gui_set_cursor(CURSOR_STD);
 #endif
                 }
-                draw_map = true;
+                draw_from_state_machine = true;
             }
             AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_NONE);
             //stateMachine.Send(EngineActionsTypes.ACTION_NONE);
