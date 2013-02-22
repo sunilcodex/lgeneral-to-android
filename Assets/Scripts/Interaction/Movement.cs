@@ -17,13 +17,14 @@ public class Movement : MonoBehaviour
 	private int height;
 	private static int widthInfo = 250;
 	private int windowType = 0;
+	private Unit unitAtk;
 
 	public static int WidthInfo {
 		get{ return widthInfo;}
 	}
 
 	private int x, y;
-	private bool first = true;
+	
 	private void OnClick ()
 	{
 		if (Input.GetMouseButtonDown (0) && Engine.map.isLoaded) {//TODO_RR if (Input.GetTouch(0).phase == TouchPhase.Began)){
@@ -39,16 +40,10 @@ public class Movement : MonoBehaviour
                             Engine.engine_get_prim_unit (mapx, mapy, region) == Engine.cur_unit)) {
 						Unit unit = Engine.engine_get_target (mapx, mapy, region);
 						if (unit != null) {
-							//TODO_RR Action.action_queue_attack(Engine.cur_unit, unit);
-							print ("Attack");
+							Action.action_queue_attack (Engine.cur_unit, unit);
 						} else {
 							if (Engine.map.mask [mapx, mapy].in_range != 0 && !Engine.map.mask [mapx, mapy].blocked) {
-								/*if (first){
-									Draw ();
-									Thread.Sleep(20);
-									first = false;
-								}*/
-									Action.action_queue_move (Engine.cur_unit, mapx, mapy);						
+								Action.action_queue_move (Engine.cur_unit, mapx, mapy);						
 							} else {
 								if (Engine.map.mask [mapx, mapy].sea_embark) {
 									if (Engine.cur_unit.embark == UnitEmbarkTypes.EMBARK_NONE)
@@ -101,7 +96,34 @@ public class Movement : MonoBehaviour
 	
 	private void OnMove ()
 	{
-		Color hover = Color.yellow;
+		Engine.REGION aux_region;
+		int mapx, mapy;
+		ray = Camera.main.ScreenPointToRay (Input.mousePosition); //ray = Camera.main.ScreenPointToRay(touch.position);
+		if (Physics.Raycast (ray, out hit, 100)) {
+			Engine.engine_get_map_pos (hit.transform.position.x,
+									  hit.transform.position.z, out mapx, out mapy,
+									  out aux_region, Input.mousePosition.z);
+			if (mapx == x && mapy == y)
+				return;
+			x = mapx;
+			y = mapy;
+			hitSelected = hit;
+			unitAtk = Engine.engine_get_target (x, y, aux_region);
+			if (unitAtk != null) {
+				if (Engine.showCross == null || (Engine.showCross.x != x || Engine.showCross.y != y)) {
+					Engine.showCross = new Engine.MapPoint ();
+					Engine.showCross.x = x;
+					Engine.showCross.y = y;
+					Draw ();
+				}
+			} else {
+				if (Engine.showCross != null) {
+					Engine.showCross = null;
+					Draw ();
+				}
+			}
+		}
+		/*Color hover = Color.yellow;
 		Color fogHover = new Color (0.3f, 0.3f, 0.3f, 1);
 		int xS, yS;
 		Engine.REGION aux_region;
@@ -148,7 +170,7 @@ public class Movement : MonoBehaviour
 				}
 				hitSelected = hit;
 			}
-		}
+		}*/
 	}
 	
 	public static void Draw ()
@@ -156,7 +178,7 @@ public class Movement : MonoBehaviour
 		if (Engine.map.isLoaded) {
 			Engine.status = STATUS.STATUS_NONE;
 			bool use_frame = (Engine.cur_ctrl != PLAYERCONTROL.PLAYER_CTRL_CPU);
-			GUIMap.Repaint(Engine.map,use_frame);
+			GUIMap.Repaint (Engine.map, use_frame);
 		}
 		Engine.draw_map = false;
 	}
@@ -165,7 +187,8 @@ public class Movement : MonoBehaviour
 	void Update ()
 	{
 		OnMove ();
-		OnClick ();
+		if (hitSelected.transform!=null)
+			OnClick ();
 	}
 	
 	void OnGUI ()
@@ -191,7 +214,7 @@ public class Movement : MonoBehaviour
 			EndTurnGUI ();
 			break;
 		case 4:
-			if (Engine.cur_unit!=null)
+			if (Engine.cur_unit != null)
 				ShowCUnitInfoGUI ();
 			break;
 		}		
@@ -284,7 +307,15 @@ public class Movement : MonoBehaviour
 		}
 		GUI.Box (new Rect (37.5f, 260, 175, 40), hover_info);
 		GUI.Label (new Rect (83, 300, 200, 20), terrain_info);
-		GUI.Label (new Rect (15, 320, 200, 20), "Expected losses");
+		if (unitAtk != null) {
+			int unit_damage, target_damage;
+			Unit attacker = Engine.cur_unit.unit_backup ();
+			Unit defender = unitAtk.unit_backup ();
+			Unit.GetExpectedLosses (attacker, defender, out unit_damage, out target_damage);
+			GUI.Label (new Rect (50, 320, 200, 20), "Expected losses: " + unit_damage + " vs " + target_damage);
+
+		}
+			
 		/*GUI.Label(new Rect(25,290,235,20),movement);
 		GUI.Label(new Rect(25,310,235,20),spotting);
 		GUI.Label(new Rect(25,330,235,20),range);
@@ -319,34 +350,31 @@ public class Movement : MonoBehaviour
 	
 	private void EndTurnGUI ()
 	{
-		GUILayout.Label("Do you really want to end your turn?");
-		GUILayout.Label("End Your Turn #" + Scenario.turn, GUILayout.ExpandWidth(true));
-		GUILayout.BeginHorizontal();
-		if (GUILayout.Button ("YES")){
-			Engine.engine_end_turn();
+		GUILayout.Label ("Do you really want to end your turn?");
+		GUILayout.Label ("End Your Turn #" + Scenario.turn, GUILayout.ExpandWidth (true));
+		GUILayout.BeginHorizontal ();
+		if (GUILayout.Button ("YES")) {
+			Engine.engine_end_turn ();
 			if (!Engine.end_scen)
-            	Engine.engine_begin_turn(null, false);
-			if (Engine.draw_map)
-            {
-                    Draw();
-            }
-			while (Engine.cur_player.ctrl != PLAYERCONTROL.PLAYER_CTRL_HUMAN)
-            {
-            	Engine.engine_end_turn();
-                if (!Engine.end_scen)
-                	Engine.engine_begin_turn(null, false);
-                if (Engine.draw_map)
-                {
-                        Draw();
-                }
-            }
-			Scenario.turn+=1;
+				Engine.engine_begin_turn (null, false);
+			if (Engine.draw_map) {
+				Draw ();
+			}
+			while (Engine.cur_player.ctrl != PLAYERCONTROL.PLAYER_CTRL_HUMAN) {
+				Engine.engine_end_turn ();
+				if (!Engine.end_scen)
+					Engine.engine_begin_turn (null, false);
+				if (Engine.draw_map) {
+					Draw ();
+				}
+			}
+			Scenario.turn += 1;
 			windowType = 0;
 		}
-		if (GUILayout.Button ("NO")){
+		if (GUILayout.Button ("NO")) {
 			windowType = 0;
 		}	
-		GUILayout.EndHorizontal();
+		GUILayout.EndHorizontal ();
 	}
 	
 	private void ShowCUnitInfoGUI ()
