@@ -173,8 +173,8 @@ namespace EngineApp
             Engine.engine_clear_danger_mask();
             //if (Engine.cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN)
             //    image_hide(gui.cursors, 1);
-            //Engine.Draw_from_state_machine = true;
-			//Engine.draw_map = true;
+            //TODO_RR Engine.Draw_from_state_machine = true;
+			//TODO_RR Engine.draw_map = true;
         }
 
 
