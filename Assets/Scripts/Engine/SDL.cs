@@ -8,6 +8,7 @@
  */
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 //TODO_RR 	using System.Drawing;
 //TODO_RR using System.Drawing.Drawing2D;
@@ -39,7 +40,7 @@ namespace EngineApp
             get { return bitmap; }
             set { bitmap = value; }
         }
-
+		
 #if TODO_RR
         public static Int32 SetPixel(SDL_Surface surf, int x, int y, int pixel)
         {
@@ -52,11 +53,30 @@ namespace EngineApp
         {
             return surf.bitmap.GetPixel(x, y);
         }
-
+		
+		public static SDL_Surface Resize(SDL_Surface surf,float factor){
+			SDL_Surface dest = new SDL_Surface();
+			dest.name = surf.name;
+			dest.w =(int) (surf.w*factor);
+			dest.h =(int) (surf.h*factor);
+			dest.Bitmap = new Texture2D (dest.w, dest.h, TextureFormat.RGBA32, false);
+			float scale=(1/factor);
+			for (int i=0; i<dest.w; i++) {
+				for (int j=0; j<dest.h; j++) {
+					int x = (int)(scale * i);
+					int y = (int)(scale * j);
+					dest.Bitmap.SetPixel (i, j, surf.Bitmap.GetPixel (x, y));
+				}
+			}
+			dest.Bitmap.Apply ();
+			dest.BitmapMaterial = new Material (Shader.Find ("Diffuse"));
+			dest.BitmapMaterial.mainTexture = dest.Bitmap;
+			return dest;
+			
+		}
         /*
         load a surface from file putting it in soft or hardware mem
         */
-
         public static SDL_Surface LoadSurface(string fname, bool applyTransparency)
         {
 			SDL_Surface sdl = new SDL_Surface();
@@ -101,6 +121,7 @@ namespace EngineApp
 #endif
 					sdl.bitmapMaterial = new Material(Shader.Find("Diffuse"));
 					sdl.bitmapMaterial.mainTexture = sdl.bitmap;
+					
                 }
                 return sdl;
             }
