@@ -1105,6 +1105,7 @@ Draw wallpaper and background.
         Check if there is a target for current unit on x,y.
         ====================================================================
         */
+
         public static Unit engine_get_target(int x, int y, REGION region)
         {
             Unit unit;
@@ -1681,6 +1682,7 @@ Draw wallpaper and background.
 
         public static void InitMove()
         {
+			Debug.Log ("Estamos en InitMove");
 			map.map_get_unit_move_mask(move_unit);
 			/* check if tile is in reach */
 			if (map.mask[dest_x, dest_y].in_range == 0)
@@ -1745,7 +1747,8 @@ Draw wallpaper and background.
 #if TODO
                 image_move(move_image, start_x, start_y);
 #endif
-				draw_from_state_machine = true;
+				Debug.Log ("Tengo que poner el draw_map a true");
+				//TODO_RR draw_from_state_machine = true;
             }
 			/* animate */
             phase = PHASE.PHASE_START_SINGLE_MOVE;
@@ -1761,15 +1764,18 @@ Draw wallpaper and background.
             /* since it moves it is no longer assumed to be a guard */
             move_unit.is_guarding = false;
         }
-
+#if TODO_RR
 		public static void PreMove(){
 			 draw_from_state_machine = true;
+			 Thread.Sleep(20);
 			 phase = PHASE.PHASE_INIT_MOVE;
              AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_MOVE);
 		}
+#endif
 		
         public static void SingleMove()
         {
+			Debug.Log ("Estamos en SingleMove");
 			bool enemy_spotted;
             int i;
 
@@ -1821,6 +1827,7 @@ Draw wallpaper and background.
             }
 			if (way_pos == way_length - 1)
             {
+				Config.schedulerTimeOut = 20;
                 phase = PHASE.PHASE_CHECK_LAST_MOVE;
                 AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
                 //stateMachine.Send(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
@@ -1830,10 +1837,8 @@ Draw wallpaper and background.
                 if (map.MAP_CHECK_VIS(way[way_pos].x, way[way_pos].y) ||
                     map.MAP_CHECK_VIS(way[way_pos + 1].x, way[way_pos + 1].y))
                 {
-					//draw_map_state_machine = true;
-					//GUIMap.Repaint(map,true);
-					//PruebaState.Start();
 					draw_from_state_machine = true;
+					Debug.Log ("Tengo que repintar");
 				}
 				phase = PHASE.PHASE_RUN_SINGLE_MOVE;
                 AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_RUN_SINGLE_MOVE);
@@ -1843,6 +1848,7 @@ Draw wallpaper and background.
 
         public static void RunMove()
         {
+			Debug.Log ("Estamos en Run Move");
 			/* next way point */
             way_pos++;
             /* next movement */
@@ -1853,6 +1859,7 @@ Draw wallpaper and background.
 
         public static void CheckLastMove()
         {
+			Debug.Log ("Estamos en Check Move");
 			if (cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU)
             {
 				if (engine_capture_flag(move_unit))
@@ -1876,6 +1883,7 @@ Draw wallpaper and background.
 
         public static void EndMove()
         {
+			Debug.Log ("Estamos en EndMove");
 			 /* fade out sound */
 #if WITH_SOUND         
                     audio_fade_out( 0, 500 ); /* move sound channel */
@@ -1909,6 +1917,7 @@ Draw wallpaper and background.
 #if TODO
                                 image_hide( gui.cursors, 1 );
 #endif
+						Debug.Log ("Repintar en End Move");
 						draw_from_state_machine = true;
                     }
                 }
@@ -1934,12 +1943,14 @@ Draw wallpaper and background.
                             old_mx = old_my = -1;
 #endif
                 }
+				Debug.Log ("Repintar en End Move");
 				draw_from_state_machine= true;
             }
         }
 
         public static void ActionAttack(object[] args)
         {
+			Debug.Log ("Comprobando ataques");
             AI_Enemy.Action action = (AI_Enemy.Action)args[0];
             if (!action.unit.CheckAttack( action.target, Unit.UNIT_ATTACK.UNIT_ACTIVE_ATTACK))
             {
@@ -1973,7 +1984,7 @@ Draw wallpaper and background.
         public static void InitAttack()
         {
             //remove stateMachine.scheduler.Start();
-
+			Debug.Log("Estamos en InitAttack");
             if (!blind_cpu_turn)
             {
                 if (map.MAP_CHECK_VIS(cur_atk.x, cur_atk.y))
@@ -2008,6 +2019,7 @@ Draw wallpaper and background.
 
         public static void ShowAttackCross()
         {
+			Debug.Log("Estamos en ShowAttackCross");
             /* backup old strength to see who needs and explosion */
             int old_atk_str = cur_atk.str;
             int old_def_str = cur_def.str;
@@ -2064,6 +2076,7 @@ Draw wallpaper and background.
 
         public static void CheckResult()
         {
+			Debug.Log ("Estamos en CheckResult");
             bool broken_up = false;
             bool reset = false;
             bool was_final_fight = false;
@@ -2241,6 +2254,7 @@ Draw wallpaper and background.
 
         public static void EndCombat()
         {
+			Debug.Log ("Estamos EndCombat");
 #if WITH_SOUND                
             audio_fade_out( 2, 1500 ); /* explosion sound channel */
 #endif
@@ -2270,6 +2284,7 @@ Draw wallpaper and background.
 #endif
                 }
                 draw_from_state_machine = true;
+				Config.schedulerTimeOut = 220;
             }
             AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_NONE);
             //stateMachine.Send(EngineActionsTypes.ACTION_NONE);
