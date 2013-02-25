@@ -1860,14 +1860,12 @@ namespace EngineApp
 
 		private void draw_unit_on_texture (SDL_Surface hexTex, Unit unit, bool resize)
 		{
-			string name = Unit.DeleteOrdinal (unit.name);
-			Unit_Lib_Entry ulib = DB.UnitLib.unit_lib_find_by_name (name);
-			int ntex = TextureTable.elegirImgUnit (ulib);
-			SDL_Surface sdl = SDL_Surface.LoadSurface (ulib.icon_img_name + 1, false);
+			int ntex = TextureTable.elegirImgUnit (unit.sel_prop);
+			SDL_Surface sdl = SDL_Surface.LoadSurface (unit.sel_prop.icon_img_name + 1, false);
 			SDL_Surface dest = new SDL_Surface ();
 			if (ntex == 1) {
-				int offset = (sdl.h - ulib.offset_img - ulib.icon_h);
-				SDL_Surface.copy_image (dest, ulib.icon_w, ulib.icon_h, sdl, 0, offset);
+				int offset = (sdl.h - unit.sel_prop.offset_img - unit.sel_prop.icon_h);
+				SDL_Surface.copy_image (dest, unit.sel_prop.icon_w, unit.sel_prop.icon_h, sdl, 0, offset);
 				SDL_Surface.putPixelBlack (dest);
 				if (unit.orient == UnitLookingDirection.UNIT_ORIENT_LEFT) {
 					SDL_Surface aux = new SDL_Surface ();
@@ -1876,18 +1874,18 @@ namespace EngineApp
 				}
 				if (dest.w > 51) {
 					SDL_Surface aux = new SDL_Surface ();
-					aux.Bitmap = new Texture2D (ulib.icon_tiny_w, ulib.icon_tiny_h, TextureFormat.RGB24, false);
+					aux.Bitmap = new Texture2D (unit.sel_prop.icon_tiny_w, unit.sel_prop.icon_tiny_h, TextureFormat.RGB24, false);
 					float scale = 1.5f;
-					for (int i=0; i<ulib.icon_tiny_w; i++) {
-						for (int j=0; j<ulib.icon_tiny_h; j++) {
+					for (int i=0; i<unit.sel_prop.icon_tiny_w; i++) {
+						for (int j=0; j<unit.sel_prop.icon_tiny_h; j++) {
 							int x = (int)(scale * i);
 							int y = (int)(scale * j);
 							aux.Bitmap.SetPixel (i, j, dest.Bitmap.GetPixel (x, y));
 						}
 					}
 					aux.Bitmap.Apply ();
-					aux.w = ulib.icon_tiny_w;
-					aux.h = ulib.icon_tiny_h;
+					aux.w = unit.sel_prop.icon_tiny_w;
+					aux.h = unit.sel_prop.icon_tiny_h;
 					aux.BitmapMaterial = new Material (Shader.Find ("Diffuse"));
 					aux.BitmapMaterial.mainTexture = aux.Bitmap;
 					dest = aux;
@@ -1896,11 +1894,11 @@ namespace EngineApp
 				SDL_Surface.copy_image_without_key (hexTex, dest, xdest + 2, Nation.nation_flag_height + 5, Color.black);
 			}
 			else if (ntex == 2) {
-				int offset = ulib.offset_img + ulib.icon_h;
+				int offset = unit.sel_prop.offset_img + unit.sel_prop.icon_h;
 				offset = offset - sdl.h;
-				SDL_Surface sdl2 = SDL_Surface.LoadSurface (ulib.icon_img_name + 2, false);
+				SDL_Surface sdl2 = SDL_Surface.LoadSurface (unit.sel_prop.icon_img_name + 2, false);
 				offset = sdl2.h - offset;
-				SDL_Surface.copy_image (dest, ulib.icon_w, ulib.icon_h, sdl2, 0, offset);
+				SDL_Surface.copy_image (dest, unit.sel_prop.icon_w, unit.sel_prop.icon_h, sdl2, 0, offset);
 				SDL_Surface.putPixelBlack (dest);
 				if (unit.orient == UnitLookingDirection.UNIT_ORIENT_LEFT) {
 					SDL_Surface aux = new SDL_Surface ();
@@ -1909,18 +1907,18 @@ namespace EngineApp
 				}
 				if (resize) {
 					SDL_Surface aux = new SDL_Surface ();
-					aux.Bitmap = new Texture2D (ulib.icon_tiny_w, ulib.icon_tiny_h, TextureFormat.RGB24, false);
+					aux.Bitmap = new Texture2D (unit.sel_prop.icon_tiny_w, unit.sel_prop.icon_tiny_h, TextureFormat.RGB24, false);
 					float scale = 1.5f;
-					for (int i=0; i<ulib.icon_tiny_w; i++) {
-						for (int j=0; j<ulib.icon_tiny_h; j++) {
+					for (int i=0; i<unit.sel_prop.icon_tiny_w; i++) {
+						for (int j=0; j<unit.sel_prop.icon_tiny_h; j++) {
 							int x = (int)(scale * i);
 							int y = (int)(scale * j);
 							aux.Bitmap.SetPixel (i, j, dest.Bitmap.GetPixel (x, y));
 						}
 					}
 					aux.Bitmap.Apply ();
-					aux.w = ulib.icon_tiny_w;
-					aux.h = ulib.icon_tiny_h;
+					aux.w = unit.sel_prop.icon_tiny_w;
+					aux.h = unit.sel_prop.icon_tiny_h;
 					aux.BitmapMaterial = new Material (Shader.Find ("Diffuse"));
 					aux.BitmapMaterial.mainTexture = aux.Bitmap;
 					dest = aux;
