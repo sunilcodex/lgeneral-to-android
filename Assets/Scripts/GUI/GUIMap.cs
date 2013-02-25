@@ -63,11 +63,11 @@ public class GUIMap : MonoBehaviour
 						}
 					}
 					if (Engine.showCross != null && Engine.showCross.x==j && Engine.showCross.y==i)
-            		{
-						SDL_Surface cross = SDL_Surface.Resize(Engine.terrain.terrainIcons.cross,0.6f);
-						int xdest = (Config.hex_w-cross.w)/2;
-						int ydest = (Config.hex_h-cross.h)/2;
-						SDL_Surface.copy_image_without_key(hexTex,cross,xdest,ydest,Color.black);
+             		{
+ 						SDL_Surface cross = SDL_Surface.Resize(Engine.terrain.terrainIcons.cross,0.6f);
+ 						int xdest = (Config.hex_w-cross.w)/2;
+ 						int ydest = (Config.hex_h-cross.h)/2;
+ 						SDL_Surface.copy_image_without_key(hexTex,cross,xdest,ydest,Color.black);
 						//TODO_RR hexTex.BitmapMaterial.color = Color.red;
 					}
 					mapped[j,i].renderer.material = hexTex.BitmapMaterial;
