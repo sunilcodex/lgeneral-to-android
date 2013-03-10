@@ -226,8 +226,11 @@ public class Events : MonoBehaviour
 			initiative+=unit_info.ini;
 			softat+=unit_info.atks[0];*/
 		}
-		if (GUI.Button (new Rect (62.5f, 185, 125, 25), "Show C. Unit Info")) {
+		if (GUI.Button (new Rect (15, 185, 90, 25), "C. Unit Info") && Engine.cur_unit!=null) {
 			windowType = 4;
+		}
+		if (GUI.Button(new Rect(145,185,90,25),"Exit")){
+			Application.Quit();
 		}
 		GUI.Box (new Rect (37.5f, 215, 175, 40), current_info);
 		string hover_info = "";
@@ -302,31 +305,32 @@ public class Events : MonoBehaviour
 	
 	private void EndTurnGUI ()
 	{
+		Config.schedulerTimeOut = 20;
 		GUILayout.Label("Do you really want to end your turn?");
 		GUILayout.Label("End Your Turn #" + Scenario.turn, GUILayout.ExpandWidth(true));
 		GUILayout.BeginHorizontal();
 		if (GUILayout.Button ("YES")){
-#if TODO_RR
 			Engine.engine_end_turn();
-			if (!Engine.end_scen)
+			if (!Engine.end_scen){
             	Engine.engine_begin_turn(null, false);
+			}
 			if (Engine.draw_map)
             {
                     Draw();
             }
 			while (Engine.cur_player.ctrl != PLAYERCONTROL.PLAYER_CTRL_HUMAN)
-            {
-            	Engine.engine_end_turn();
-                if (!Engine.end_scen)
-                	Engine.engine_begin_turn(null, false);
-                if (Engine.draw_map)
                 {
+                    Engine.engine_end_turn();
+                    if (!Engine.end_scen){
+                        Engine.engine_begin_turn(null, false);
+					}
+                    if (Engine.draw_map)
+                    {
                         Draw();
+                    }
                 }
-            }
-			Scenario.turn+=1;
-#endif
 			windowType = 0;
+			Config.schedulerTimeOut = 220;
 		}
 		if (GUILayout.Button ("NO")){
 			windowType = 0;
