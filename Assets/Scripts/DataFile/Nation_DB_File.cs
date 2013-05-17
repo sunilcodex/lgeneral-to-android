@@ -39,7 +39,7 @@ namespace DataFile
             this.nation_flag_height = Nation.nation_flag_height;
         }
 
-        public void nationDBTOnationatt()
+        public void nationDBTOnation()
         {
             Nation.nations = this.nations;
             Nation.nation_count = this.nation_count;
