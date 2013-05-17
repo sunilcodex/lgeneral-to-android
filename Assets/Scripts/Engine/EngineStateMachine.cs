@@ -67,8 +67,12 @@ namespace EngineApp
     public class EngineStateMachine : PassiveStateMachine<StateID, EngineActionsTypes>, IDisposable
     {
         internal readonly AsyncOperation operation = AsyncOperationManager.CreateOperation(null);
-
-        internal readonly DelegateScheduler scheduler = new DelegateScheduler();
+// TOCA SOLO AQUI
+        //internal readonly DelegateScheduler scheduler = new DelegateScheduler();
+		internal readonly UnityScheduler scheduler = new UnityScheduler();
+		public UnityScheduler Scheduler{
+			get{return scheduler;}
+		}
 
         private bool isDisposed;
 
@@ -198,10 +202,6 @@ namespace EngineApp
 
         #endregion
 
-        #region Nested type: SendTimerDelegate
 
-        internal delegate void SendTimerDelegate();
-
-        #endregion
     }
 }
