@@ -343,6 +343,8 @@ namespace AI_Enemy
             }
             else
             {
+				Debug.Log("Fase->"+Engine.phase);
+                Debug.Log("Accion->" + action.type);
                 Engine.stateMachine.operation.Post(delegate
                 {
                     Engine.stateMachine.Send(action.type, action);
@@ -366,7 +368,7 @@ namespace AI_Enemy
                     Engine.stateMachine.scheduler.Start();
 
                 Engine.stateMachine.scheduler.Add(1, Config.schedulerTimeOut,
-                                                  new EngineStateMachine.SendTimerDelegate(ProcessQueue));
+                                                  new SendTimerDelegate(ProcessQueue));
 
             }
             else
