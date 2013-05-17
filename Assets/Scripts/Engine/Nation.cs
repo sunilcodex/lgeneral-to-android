@@ -4,7 +4,7 @@
  * Fecha: 09/01/2009
  * Hora: 16:33
  * 
- * Para cambiar esta plantilla use Herramientas | Opciones | CodificaciÛn | Editar Encabezados Est·ndar
+ * Para cambiar esta plantilla use Herramientas | Opciones | Codificaci√≥n | Editar Encabezados Est√°ndar
  */
 
 using System;
@@ -90,7 +90,7 @@ namespace EngineApp
 		        // Load the object saved above by using the Deserialize function
 		        Nation_DB_File nationDB = (Nation_DB_File)SerializerObj.Deserialize(ReadFileStream);
 				ReadFileStream.Close();
-				nationDB.nationDBTOnationatt();
+				nationDB.nationDBTOnation();
 				return 0;
 			}
 			catch (Exception e)
