@@ -10,7 +10,6 @@ public class GUIMap : MonoBehaviour
 {
         
 	public GameObject hexPrefab;
-	public string scen_name;
 	private static GameObject[,] mapped;
         
 	private void MakeMap (Map map)
@@ -40,8 +39,7 @@ public class GUIMap : MonoBehaviour
 				if (map.map [j, i].g_unit != null || map.map [j, i].a_unit != null) {
 					hexTex = map.map_draw_units (hexTex, j, i, !Engine.Air_mode, false);                                 
 				}
-				hex.renderer.material = hexTex.BitmapMaterial;
-                                
+				hex.renderer.material = hexTex.BitmapMaterial;  
 			}
 		}
 		Engine.status = STATUS.STATUS_NONE;
@@ -77,9 +75,6 @@ public class GUIMap : MonoBehaviour
         
 	void Awake ()
 	{
-		if (string.IsNullOrEmpty (scen_name)) {
-			throw new Exception ("name of scenario not found");
-		}
 		//onLoadScen();
 		//Scenario.scen_load("Poland.xml");
 		MakeMap (Engine.map);
@@ -111,4 +106,5 @@ public class GUIMap : MonoBehaviour
 			Engine.Draw_map_state_machine = false;
 		}*/
 	}
+	
 }
