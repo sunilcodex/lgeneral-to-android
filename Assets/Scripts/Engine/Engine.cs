@@ -733,8 +733,7 @@ Draw wallpaper and background.
         If 'skip_unit_prep' is set scen_prep_unit() is not called.
         ====================================================================
         */
-
-        public static string engine_begin_turn(Player forced_player, bool skip_unit_prep)
+        public static void engine_begin_turn(Player forced_player, bool skip_unit_prep)
         {
             char[] text = new char[400];
             int new_turn = 0;
@@ -777,7 +776,6 @@ Draw wallpaper and background.
                     engine_select_player(null, skip_unit_prep);
                     engine_set_status(STATUS.STATUS_NONE);
                     phase = PHASE.PHASE_NONE;
-                    return "";
                 }
                 else
                 {
@@ -809,8 +807,6 @@ Draw wallpaper and background.
             /* init ai turn if any */
             if (cur_player != null && cur_player.ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU)
                 cur_player.ai_init();
-            /* turn info */
-            string scen_info = engine_show_turn_info();
             engine_set_status(deploy_turn ? STATUS.STATUS_DEPLOY : STATUS.STATUS_NONE);
             phase = PHASE.PHASE_NONE;
             /* update screen */
@@ -847,7 +843,6 @@ Draw wallpaper and background.
             {
                 while (!cur_player.ai_run()) ;
             }
-			return scen_info;
 
         }
 
@@ -1348,7 +1343,8 @@ Draw wallpaper and background.
             }
 #else
 					player.ai_init = new AiInit(AI.ai_init);
-					player.ai_run = new AiRun(AI.ai_run);
+					//TODO_RR player.ai_run = new AiRun(AI.ai_run);
+					player.ai_run = new AiRun(AI_dummy.ai_run);
 					player.ai_finalize = new AiFinalize(AI.ai_finalize);
 #endif
                 }
@@ -1747,7 +1743,6 @@ Draw wallpaper and background.
 #if TODO
                 image_move(move_image, start_x, start_y);
 #endif
-				Debug.Log ("Tengo que poner el draw_map a true");
 				//TODO_RR draw_from_state_machine = true;
             }
 			/* animate */
@@ -1827,7 +1822,6 @@ Draw wallpaper and background.
             }
 			if (way_pos == way_length - 1)
             {
-				Config.schedulerTimeOut = 20;
                 phase = PHASE.PHASE_CHECK_LAST_MOVE;
                 AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
                 //stateMachine.Send(EngineActionsTypes.ACTION_CHECK_LAST_MOVE);
@@ -1838,7 +1832,6 @@ Draw wallpaper and background.
                     map.MAP_CHECK_VIS(way[way_pos + 1].x, way[way_pos + 1].y))
                 {
 					draw_from_state_machine = true;
-					Debug.Log ("Tengo que repintar");
 				}
 				phase = PHASE.PHASE_RUN_SINGLE_MOVE;
                 AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_RUN_SINGLE_MOVE);
@@ -1917,7 +1910,6 @@ Draw wallpaper and background.
 #if TODO
                                 image_hide( gui.cursors, 1 );
 #endif
-						Debug.Log ("Repintar en End Move");
 						draw_from_state_machine = true;
                     }
                 }
@@ -1943,7 +1935,6 @@ Draw wallpaper and background.
                             old_mx = old_my = -1;
 #endif
                 }
-				Debug.Log ("Repintar en End Move");
 				draw_from_state_machine= true;
             }
         }
@@ -2284,7 +2275,6 @@ Draw wallpaper and background.
 #endif
                 }
                 draw_from_state_machine = true;
-				Config.schedulerTimeOut = 220;
             }
             AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_NONE);
             //stateMachine.Send(EngineActionsTypes.ACTION_NONE);
@@ -2298,6 +2288,7 @@ Draw wallpaper and background.
         */
         public static string GuiShowScenInfo()
         {
+        
             StringBuilder str = new StringBuilder();
             /* title */
             str.Append(Scenario.scen_info.name + "\n");
