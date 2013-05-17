@@ -5,7 +5,7 @@ namespace Miscellaneous
 {
     public class Config
     {
-        public static int schedulerTimeOut = 220;
+        public static float schedulerTimeOut = 0.19f;
 
         /* directory to save config and saved games */
         public static string dir_name = ".";
@@ -46,6 +46,11 @@ namespace Miscellaneous
 		public static string Show_info_scen{
 			get{return show_info_scen;}
 			set{show_info_scen = value;}
+		}
+		private static string campaignSelected;
+		public static string CampaignSelected{
+			get{return campaignSelected;}
+			set{campaignSelected = value;}
 		}
 		
 #if TODO_RR
@@ -96,3 +101,4 @@ namespace Miscellaneous
         }
     }
 }
+
