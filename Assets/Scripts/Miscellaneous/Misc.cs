@@ -30,7 +30,7 @@ namespace Miscellaneous
 		{
 			return rand.Next (lower, upper);
 		}
-
+		
 		public static int GetHeightPosition (float yclick, int apro_x)
 		{
 			int h = 0; 
@@ -50,17 +50,18 @@ namespace Miscellaneous
 			int w2 = Mathf.RoundToInt ((xclicked + 0.8f) / Config.hex_x_offset);
 			return Mathf.Min (w1, w2);
 		}
+		
 		/// <summary>
 		/// Init random seed by using a time-dependent default seed value 
 		/// The default seed value is derived from the system
 		/// clock and has finite resolution. 
 		/// </summary>
-
 		public static void set_random_seed ()
 		{
 			rand = new System.Random ();
 		}
-#if TODO_RR
+
+		
 		/* get coordinates from string */
 		public static void get_coord (string str, out int x, out int y)
 		{
@@ -87,7 +88,7 @@ namespace Miscellaneous
 			cur_arg = str;
 			x = int.Parse (cur_arg);
 		}
-		#endif
+		
 		/*
         ====================================================================
         Get neighbored tile coords clockwise with id between 0 and 5.
@@ -176,6 +177,7 @@ namespace Miscellaneous
 		{
 			return ((x & 1) == 0);
 		}
+		
 
 		/*
         ====================================================================
@@ -202,5 +204,6 @@ namespace Miscellaneous
 				return false;
 			}
 		}
+
 	}
 }
