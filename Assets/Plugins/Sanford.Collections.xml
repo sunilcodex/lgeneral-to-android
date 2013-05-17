@@ -1,0 +1,1903 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Sanford.Collections</name>
+    </assembly>
+    <members>
+        <member name="T:Sanford.Collections.ImmutableCollections.RandomAccessList">
+            <summary>
+            Implements Chris Okasaki's random access list.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RandomAccessList.#ctor">
+            <summary>
+            Initializes a new instance of the RandomAccessList class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RandomAccessList.#ctor(Sanford.Collections.ImmutableCollections.RalTopNode,System.Int32)">
+            <summary>
+            Initializes a new instance of the RandomAccessList class with the
+            specified first top node and the number of elements in the list.
+            </summary>
+            <param name="first">
+            The first top node in the list.
+            </param>
+            <param name="count">
+            The number of nodes in the list.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RandomAccessList.Cons(System.Object)">
+            <summary>
+            Prepends a value to the random access list.
+            </summary>
+            <param name="value">
+            The value to prepend to the list.
+            </param>
+            <returns>
+            A new random access list with the specified value prepended to the
+            list.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RandomAccessList.GetValue(System.Int32)">
+            <summary>
+            Gets the value at the specified position in the current 
+            RandomAccessList.
+            </summary>
+            <param name="index">
+            An integer that represents the position of the RandomAccessList 
+            element to get. 
+            </param>
+            <returns>
+            The value at the specified position in the RandomAccessList.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            index is outside the range of valid indexes for the current 
+            RandomAccessList.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RandomAccessList.SetValue(System.Object,System.Int32)">
+            <summary>
+            Sets the specified element in the current RandomAccessList to the 
+            specified value.
+            </summary>
+            <param name="value">
+            The new value for the specified element. 
+            </param>
+            <param name="index">
+            An integer that represents the position of the RandomAccessList 
+            element to set. 
+            </param>
+            <returns>
+            A new RandomAccessList with the element at the specified position 
+            set to the specified value.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            index is outside the range of valid indexes for the current 
+            RandomAccessList.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RandomAccessList.GetEnumerator">
+            <summary>
+            Returns an IEnumerator for the RandomAccessList.
+            </summary>
+            <returns>
+            An IEnumerator for the RandomAccessList.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RandomAccessList.Count">
+            <summary>
+            Gets the number of elements in the RandomAccessList.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RandomAccessList.Head">
+            <summary>
+            Gets a RandomAccessList with first element of the current 
+            RandomAccessList.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            If the RandomAccessList is empty.
+            </exception>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RandomAccessList.Tail">
+            <summary>
+            Gets a RandomAccessList with all but the first element of the
+            current RandomAccessList.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            If the RandomAccessList is empty.
+            </exception>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.RalEnumerator">
+            <summary>
+            Provides functionality for enumerating a RandomAccessList.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalEnumerator.#ctor(Sanford.Collections.ImmutableCollections.RalTopNode,System.Int32)">
+            <summary>
+            Initializes a new instance of the Enumerator with the specified 
+            head of the list and the number of nodes in the list.
+            </summary>
+            <param name="head">
+            The head of the list.
+            </param>
+            <param name="count">
+            The number of nodes in the list.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalEnumerator.Reset">
+            <summary>
+            Sets the enumerator to its initial position, which is before 
+            the first element in the random access list.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalEnumerator.MoveNext">
+            <summary>
+            Advances the enumerator to the next element in the random access 
+            list.
+            </summary>
+            <returns>
+            <b>true</b> if the enumerator was successfully advanced to the 
+            next element; <b>false</b> if the enumerator has passed the end 
+            of the collection.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RalEnumerator.Current">
+            <summary>
+            Gets the current element in the random access list.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            The enumerator is positioned before the first element in the 
+            random access list or after the last element.
+            </exception>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.NullAvlNode">
+            <summary>
+            Represents a null AVL node.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.IAvlNode">
+            <summary>
+            Represents the functionality and properties of AVL nodes.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.IAvlNode.Remove">
+            <summary>
+            Removes the current node from the AVL tree.
+            </summary>
+            <returns>
+            The node to in the tree to replace the current node.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.IAvlNode.Balance">
+            <summary>
+            Balances the subtree represented by the node.
+            </summary>
+            <returns>
+            The root node of the balanced subtree.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.IAvlNode.IsBalanced">
+            <summary>
+            Indicates whether or not the subtree the node represents is in 
+            balance.
+            </summary>
+            <returns>
+            <b>true</b> if the subtree is in balance; otherwise, <b>false</b>.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.IAvlNode.BalanceFactor">
+            <summary>
+            Gets the balance factor of the subtree the node represents.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.IAvlNode.Count">
+            <summary>
+            Gets the number of nodes in the subtree.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.IAvlNode.Data">
+            <summary>
+            Gets the node's data.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.IAvlNode.Height">
+            <summary>
+            Gets the height of the subtree the node represents.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.IAvlNode.LeftChild">
+            <summary>
+            Gets the node's left child.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.IAvlNode.RightChild">
+            <summary>
+            Gets the node's right child.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.NullAvlNode.Remove">
+            <summary>
+            Removes the current node from the AVL tree.
+            </summary>
+            <returns>
+            The node to in the tree to replace the current node.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.NullAvlNode.Balance">
+            <summary>
+            Balances the subtree represented by the node.
+            </summary>
+            <returns>
+            The root node of the balanced subtree.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.NullAvlNode.IsBalanced">
+            <summary>
+            Indicates whether or not the subtree the node represents is in 
+            balance.
+            </summary>
+            <returns>
+            <b>true</b> if the subtree is in balance; otherwise, <b>false</b>.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.NullAvlNode.BalanceFactor">
+            <summary>
+            Gets the balance factor of the subtree the node represents.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.NullAvlNode.Count">
+            <summary>
+            Gets the number of nodes in the subtree.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.NullAvlNode.Data">
+            <summary>
+            Gets the node's data.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.NullAvlNode.Height">
+            <summary>
+            Gets the height of the subtree the node represents.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.NullAvlNode.LeftChild">
+            <summary>
+            Gets the node's left child.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.NullAvlNode.RightChild">
+            <summary>
+            Gets the node's right child.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.Generic.Deque`1">
+            <summary>
+            Represents a simple double-ended-queue collection of objects.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.#ctor">
+            <summary>
+            Initializes a new instance of the Deque class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.#ctor(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Initializes a new instance of the Deque class that contains 
+            elements copied from the specified collection.
+            </summary>
+            <param name="collection">
+            The collection whose elements are copied to the new Deque.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.Clear">
+            <summary>
+            Removes all objects from the Deque.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.Contains(`0)">
+            <summary>
+            Determines whether or not an element is in the Deque.
+            </summary>
+            <param name="obj">
+            The Object to locate in the Deque.
+            </param>
+            <returns>
+            <b>true</b> if <i>obj</i> if found in the Deque; otherwise, 
+            <b>false</b>.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.PushFront(`0)">
+            <summary>
+            Inserts an object at the front of the Deque.
+            </summary>
+            <param name="item">
+            The object to push onto the deque;
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.PushBack(`0)">
+            <summary>
+            Inserts an object at the back of the Deque.
+            </summary>
+            <param name="item">
+            The object to push onto the deque;
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.PopFront">
+            <summary>
+            Removes and returns the object at the front of the Deque.
+            </summary>
+            <returns>
+            The object at the front of the Deque.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Deque is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.PopBack">
+            <summary>
+            Removes and returns the object at the back of the Deque.
+            </summary>
+            <returns>
+            The object at the back of the Deque.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Deque is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.PeekFront">
+            <summary>
+            Returns the object at the front of the Deque without removing it.
+            </summary>
+            <returns>
+            The object at the front of the Deque.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Deque is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.PeekBack">
+            <summary>
+            Returns the object at the back of the Deque without removing it.
+            </summary>
+            <returns>
+            The object at the back of the Deque.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Deque is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.ToArray">
+            <summary>
+            Copies the Deque to a new array.
+            </summary>
+            <returns>
+            A new array containing copies of the elements of the Deque.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.Synchronized(Sanford.Collections.Generic.Deque{`0})">
+            <summary>
+            Returns a synchronized (thread-safe) wrapper for the Deque.
+            </summary>
+            <param name="deque">
+            The Deque to synchronize.
+            </param>
+            <returns>
+            A synchronized wrapper around the Deque.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Copies the Deque elements to an existing one-dimensional Array, 
+            starting at the specified array index.
+            </summary>
+            <param name="array">
+            The one-dimensional Array that is the destination of the elements 
+            copied from Deque. The Array must have zero-based indexing. 
+            </param>
+            <param name="index">
+            The zero-based index in array at which copying begins. 
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the Deque.
+            </summary>
+            <returns>
+            An IEnumerator for the Deque.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.Clone">
+            <summary>
+            Creates a shallow copy of the Deque.
+            </summary>
+            <returns>
+            A shallow copy of the Deque.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.Generic.Deque`1.IsSynchronized">
+            <summary>
+            Gets a value indicating whether access to the Deque is synchronized 
+            (thread-safe).
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.Generic.Deque`1.Count">
+            <summary>
+            Gets the number of elements contained in the Deque.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.Generic.Deque`1.SyncRoot">
+            <summary>
+            Gets an object that can be used to synchronize access to the Deque.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Generic.Deque`1.SynchronizedDeque.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the Deque.
+            </summary>
+            <returns>
+            An IEnumerator for the Deque.
+            </returns>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.RalTreeNode">
+            <summary>
+            Represents subtree nodes within random access lists.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalTreeNode.#ctor(System.Object,Sanford.Collections.ImmutableCollections.RalTreeNode,Sanford.Collections.ImmutableCollections.RalTreeNode)">
+            <summary>
+            Initializes an instance of the RandomAccessListNode with the
+            specified value, left child, and right child.
+            </summary>
+            <param name="value">
+            The value to store in the node.
+            </param>
+            <param name="leftChild">
+            The left child.
+            </param>
+            <param name="rightChild">
+            The right child.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalTreeNode.GetValue(System.Int32)">
+            <summary>
+            Gets the value at the specified element in the random access list
+            subtree.
+            </summary>
+            <param name="index">
+            An integer that represents the position of the random access list 
+            subtree element to get. 
+            </param>
+            <returns>
+            The value at the specified position in the random access list
+            subtree.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalTreeNode.SetValue(System.Object,System.Int32)">
+            <summary>
+            Sets the specified element in the current random access list 
+            subtree to the specified value.
+            </summary>
+            <param name="value">
+            The new value for the specified element. 
+            </param>
+            <param name="index">
+            An integer that represents the position of the random access list  
+            subtree element to set. 
+            </param>
+            <returns>
+            A new random access list tree node with the element at the specified 
+            position set to the specified value.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RalTreeNode.Count">
+            <summary>
+            Gets the number of nodes in the tree.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RalTreeNode.LeftChild">
+            <summary>
+            Gets the left child.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RalTreeNode.RightChild">
+            <summary>
+            Gets the right child.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RalTreeNode.Value">
+            <summary>
+            Gets the value represented by this node.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.AvlNode">
+            <summary>
+            Represents a node in an AVL tree.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.AvlNode.#ctor(System.Object,Sanford.Collections.ImmutableCollections.IAvlNode,Sanford.Collections.ImmutableCollections.IAvlNode)">
+            <summary>
+            Initializes a new instance of the AvlNode class with the specified 
+            data and left and right children.
+            </summary>
+            <param name="data">
+            The data for the node.
+            </param>
+            <param name="leftChild">
+            The left child.
+            </param>
+            <param name="rightChild">
+            The right child.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.AvlNode.Remove">
+            <summary>
+            Removes the current node from the AVL tree.
+            </summary>
+            <returns>
+            The node to in the tree to replace the current node.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.AvlNode.Balance">
+            <summary>
+            Balances the subtree represented by the node.
+            </summary>
+            <returns>
+            The root node of the balanced subtree.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.AvlNode.IsBalanced">
+            <summary>
+            Indicates whether or not the subtree the node represents is in 
+            balance.
+            </summary>
+            <returns>
+            <b>true</b> if the subtree is in balance; otherwise, <b>false</b>.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.AvlNode.BalanceFactor">
+            <summary>
+            Gets the balance factor of the subtree the node represents.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.AvlNode.Count">
+            <summary>
+            Gets the number of nodes in the subtree.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.AvlNode.Data">
+            <summary>
+            Gets the node's data.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.AvlNode.Height">
+            <summary>
+            Gets the height of the subtree the node represents.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.AvlNode.LeftChild">
+            <summary>
+            Gets the node's left child.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.AvlNode.RightChild">
+            <summary>
+            Gets the node's right child.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.ArrayList">
+            <summary>
+            Represents a collection of elements accessible by index and supports
+            insertion and deletion.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.#cctor">
+            <summary>
+            Initializes the ArrayList class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.#ctor">
+            <summary>
+            Initializes a new instance of the ArrayList class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.#ctor(Sanford.Collections.ImmutableCollections.IAvlNode,System.Int32)">
+            <summary>
+            Initializes a new instance of the ArrayList class with the 
+            specified root and count.
+            </summary>
+            <param name="root">
+            The root of the tree.
+            </param>
+            <param name="count">
+            The number of items in the ArrayList.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.Add(System.Object)">
+            <summary>
+            Adds an object to the end of the ArrayList.
+            </summary>
+            <param name="value">
+            The Object to be added to the end of the ArrayList. 
+            </param>
+            <returns>
+            A new ArrayList object with the specified value added at the end.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.Contains(System.Object)">
+            <summary>
+            Determines whether an element is in the ArrayList.
+            </summary>
+            <param name="value">
+            The Object to locate in the ArrayList. 
+            </param>
+            <returns>
+            <b>true</b> if item is found in the ArrayList; otherwise, 
+            <b>false</b>.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.IndexOf(System.Object)">
+            <summary>
+            Returns the zero-based index of the first occurrence of a value in 
+            the ArrayList.
+            </summary>
+            <param name="value">
+            The Object to locate in the ArrayList.
+            </param>
+            <returns>
+            The zero-based index of the first occurrence of value within the 
+            ArrayList, if found; otherwise, -1.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.Insert(System.Int32,System.Object)">
+            <summary>
+            Inserts an element into the ArrayList at the specified index.
+            </summary>
+            <param name="index">
+            The zero-based index at which value should be inserted. 
+            </param>
+            <param name="value">
+            The Object to insert.
+            </param>
+            <returns>
+            A new ArrayList with the specified object inserted at the specified 
+            index.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            index is less than zero or index is greater than Count.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.Remove(System.Object)">
+            <summary>
+            Removes the first occurrence of a specified object from the 
+            ArrayList.
+            </summary>
+            <param name="value">
+            The Object to remove from the ArrayList. 
+            </param>
+            <returns>
+            A new ArrayList with the first occurrent of the specified object 
+            removed.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.RemoveAt(System.Int32)">
+            <summary>
+            Removes the element at the specified index of the ArrayList.
+            </summary>
+            <param name="index">
+            The zero-based index of the element to remove. 
+            </param>
+            <returns>
+            A new ArrayList with the element at the specified index removed.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            index is less than zero or index is equal to or greater than Count.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.GetValue(System.Int32)">
+            <summary>
+            Gets the value at the specified index.
+            </summary>
+            <param name="index">
+            The zero-based index of the element to get.
+            </param>
+            <returns>
+            The value at the specified index.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            index is less than zero or index is equal to or greater than Count.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.SetValue(System.Int32,System.Object)">
+            <summary>
+            Sets the value at the specified index.
+            </summary>
+            <param name="index">
+            The zero-based index of the element to set.
+            </param>
+            <param name="value">
+            The value to set at the specified index.
+            </param>
+            <returns>
+            A new ArrayList with the specified value set at the specified index.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            index is less than zero or index is equal to or greater than Count.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.ArrayList.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the ArrayList.
+            </summary>
+            <returns>
+            An IEnumerator that can be used to iterate through the ArrayList.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.ArrayList.Count">
+            <summary>
+            Gets the number of elements contained in the ArrayList.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.SortedList">
+            <summary>
+            Represents a collection of key-and-value pairs that are sorted by the 
+            keys and are accessible by key.
+            </summary>
+        </member>
+        <member name="F:Sanford.Collections.ImmutableCollections.SortedList.Empty">
+            <summary>
+            An empty SortedList.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.SortedList.#ctor">
+            <summary>
+            Initializes a new instance of the SortedList class that is empty 
+            and is sorted according to the IComparable interface implemented by 
+            each key added to the SortedList.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.SortedList.#ctor(System.Collections.IComparer)">
+            <summary>
+            Initializes a new instance of the SortedList class that is empty 
+            and is sorted according to the specified IComparer interface.
+            </summary>
+            <param name="comparer">
+            The IComparer implementation to use when comparing keys, or a null 
+            reference to use the IComparable implementation of each key. 
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.SortedList.#ctor(Sanford.Collections.ImmutableCollections.IAvlNode,System.Collections.IComparer)">
+            <summary>
+            Initializes a new instance of the SortedList class with the 
+            specified root node and the IComparer interface to use for sorting
+            keys.
+            </summary>
+            <param name="root">
+            The root of the AVL tree.
+            </param>
+            <param name="comparer">
+            The IComparer implementation to use when comparing keys, or a null 
+            reference to use the IComparable implementation of each key.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.SortedList.Add(System.Object,System.Object)">
+            <summary>
+            Adds an element with the specified key and value to the SortedList.
+            </summary>
+            <param name="key">
+            The key of the element to add.
+            </param>
+            <param name="value">
+            The value of the element to add. The value can be a null reference.
+            </param>
+            <returns>
+            A new SortedList with the specified key and value added to the 
+            previous SortedList.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            <i>key</i> is a null reference.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            An element with the specified key already exists in the SortedList,
+            or The SortedList is set to use the IComparable interface, and key 
+            does not implement the IComparable interface.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.SortedList.Contains(System.Object)">
+            <summary>
+            Determines whether the SortedList contains a specific key.
+            </summary>
+            <param name="key">
+            The key to locate in the SortedList. 
+            </param>
+            <returns>
+            <b>true</b> if the SortedList contains an element with the 
+            specified <i>key</i>; otherwise, <b>false</b>.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.SortedList.GetEnumerator">
+            <summary>
+            Returns an IDictionaryEnumerator that can iterate through the 
+            SortedList.
+            </summary>
+            <returns>
+            An IDictionaryEnumerator for the SortedList.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.SortedList.Remove(System.Object)">
+            <summary>
+            Removes the element with the specified key from SortedList.
+            </summary>
+            <param name="key">
+            </param>
+            <returns>
+            The <i>key</i> of the element to remove. 
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            <i>key</i> is a null reference.
+            </exception>
+            <exception cref="T:System.ArgumentException">
+            The SortedList is set to use the IComparable interface, and key 
+            does not implement the IComparable interface.
+            </exception>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.SortedList.Item(System.Object)">
+            <summary>
+            Gets the value associated with the specified key.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.SortedList.Count">
+            <summary>
+            Gets the number of elements contained in the SortedList.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.SortedList.SortedListEnumerator">
+            <summary>
+            Provides functionality for iterating through a SortedList.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.SortedList.SortedListEnumerator.#ctor(Sanford.Collections.ImmutableCollections.IAvlNode)">
+            <summary>
+            Initializes a new instance of the SortedListEnumerator class 
+            with the specified root of the AVL tree to iterate over.
+            </summary>
+            <param name="root">
+            The root of the AVL tree the SortedList uses internally.
+            </param>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.AvlEnumerator">
+            <summary>
+            Provides functionality for iterating over an AVL tree.
+            </summary> 
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.AvlEnumerator.#ctor(Sanford.Collections.ImmutableCollections.IAvlNode)">
+            <summary>
+            Initializes a new instance of the AvlEnumerator class.
+            </summary>
+            <param name="root">
+            The root of the AVL tree to iterate over.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.AvlEnumerator.#ctor(Sanford.Collections.ImmutableCollections.IAvlNode,System.Int32)">
+            <summary>
+            Initializes a new instance of the AvlEnumerator class.
+            </summary>
+            <param name="root">
+            The root of the AVL tree to iterate over.
+            </param>
+            <param name="count">
+            The number of nodes in the tree.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.AvlEnumerator.Reset">
+            <summary>
+            Sets the enumerator to its initial position, which is before 
+            the first element in the AVL tree.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.AvlEnumerator.MoveNext">
+            <summary>
+            Advances the enumerator to the next element of the AVL tree.
+            </summary>
+            <returns>
+            <b>true</b> if the enumerator was successfully advanced to the 
+            next element; <b>false</b> if the enumerator has passed the end 
+            of the collection.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.AvlEnumerator.Current">
+            <summary>
+            Gets the current element in the AVL tree.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            The enumerator is positioned before the first element in the AVL
+            tree or after the last element.
+            </exception>
+        </member>
+        <member name="T:Sanford.Collections.PriorityQueue">
+            <summary>
+            Represents the priority queue data structure.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.#ctor">
+            <summary>
+            Initializes a new instance of the PriorityQueue class.
+            </summary>
+            <remarks>
+            The PriorityQueue will cast its elements to the IComparable 
+            interface when making comparisons.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.#ctor(System.Collections.IComparer)">
+            <summary>
+            Initializes a new instance of the PriorityQueue class with the
+            specified IComparer.
+            </summary>
+            <param name="comparer">
+            The IComparer to use for comparing and ordering elements.
+            </param>
+            <remarks>
+            If the specified IComparer is null, the PriorityQueue will cast its
+            elements to the IComparable interface when making comparisons.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.Enqueue(System.Object)">
+            <summary>
+            Enqueues the specified element into the PriorityQueue.
+            </summary>
+            <param name="element">
+            The element to enqueue into the PriorityQueue.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            If element is null.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.Dequeue">
+            <summary>
+            Removes the element at the head of the PriorityQueue.
+            </summary>
+            <returns>
+            The element at the head of the PriorityQueue.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            If Count is zero.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.Remove(System.Object)">
+            <summary>
+            Removes the specified element from the PriorityQueue.
+            </summary>
+            <param name="element">
+            The element to remove.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            If element is null
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.Contains(System.Object)">
+            <summary>
+            Returns a value indicating whether the specified element is in the
+            PriorityQueue.
+            </summary>
+            <param name="element">
+            The element to test.
+            </param>
+            <returns>
+            <b>true</b> if the element is in the PriorityQueue; otherwise
+            <b>false</b>.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.Peek">
+            <summary>
+            Returns the element at the head of the PriorityQueue without 
+            removing it.
+            </summary>
+            <returns>
+            The element at the head of the PriorityQueue.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.Clear">
+            <summary>
+            Removes all elements from the PriorityQueue.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.PriorityQueue.Synchronized(Sanford.Collections.PriorityQueue)">
+            <summary>
+            Returns a synchronized wrapper of the specified PriorityQueue.
+            </summary>
+            <param name="queue">
+            The PriorityQueue to synchronize.
+            </param>
+            <returns>
+            A synchronized PriorityQueue.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            If queue is null.
+            </exception>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.Array">
+            <summary>
+            Represents an array data structure.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Array.#ctor(System.Int32)">
+            <summary>
+            Initialize an instance of the Array class with the specified array 
+            length.
+            </summary>
+            <param name="length">
+            The length of the array.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Array.#ctor(Sanford.Collections.ImmutableCollections.RalTopNode,System.Int32)">
+            <summary>
+            Initializes a new instance of the Array class with the specified 
+            head of the random access list and the length of the array.
+            </summary>
+            <param name="head">
+            The head of the random access list.
+            </param>
+            <param name="length">
+            The length of the array.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Array.GetValue(System.Int32)">
+            <summary>
+            Gets the value of the specified element in the current Array. 
+            </summary>
+            <param name="index">
+            An integer that represents the position of the Array element to 
+            get. 
+            </param>
+            <returns>
+            The value at the specified position in the Array.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            index is outside the range of valid indexes for the current Array.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Array.SetValue(System.Object,System.Int32)">
+            <summary>
+            Sets the specified element in the current Array to the specified 
+            value.
+            </summary>
+            <param name="value">
+            The new value for the specified element. 
+            </param>
+            <param name="index">
+            An integer that represents the position of the Array element to set. 
+            </param>
+            <returns>
+            A new array with the element at the specified position set to the 
+            specified value.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            index is outside the range of valid indexes for the current Array.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Array.GetEnumerator">
+            <summary>
+            Returns an IEnumerator for the Array.
+            </summary>
+            <returns>
+            An IEnumerator for the Array.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.Array.Length">
+            <summary>
+            Gets an integer that represents the total number of elements in all 
+            the dimensions of the Array.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.RalTopNode">
+            <summary>
+            Represents the top nodes in a RandomAccessList.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalTopNode.#ctor(Sanford.Collections.ImmutableCollections.RalTreeNode,Sanford.Collections.ImmutableCollections.RalTopNode)">
+            <summary>
+            Initializes a new instance of the RalTopNode with the specified 
+            root of the tree this node represents and the next top node in the
+            list.
+            </summary>
+            <param name="root">
+            The root node of the tree this top node represents.
+            </param>
+            <param name="nextNode">
+            The next top node in the list.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalTopNode.GetValue(System.Int32)">
+            <summary>
+            Gets the value at the specified element in the random access list.
+            </summary>
+            <param name="index">
+            An integer that represents the position of the random access list 
+            element to get. 
+            </param>
+            <returns>
+            The value at the specified position in the random access list.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.RalTopNode.SetValue(System.Object,System.Int32)">
+            <summary>
+            Sets the specified element in the current random access list to the 
+            specified value.
+            </summary>
+            <param name="value">
+            The new value for the specified element. 
+            </param>
+            <param name="index">
+            An integer that represents the position of the random access list  
+            element to set. 
+            </param>
+            <returns>
+            A new random access list top node with the element at the specified 
+            position set to the specified value.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RalTopNode.Root">
+            <summary>
+            Gets the root node represented by the top node.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.RalTopNode.NextNode">
+            <summary>
+            Gets the next top node in the random access list.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.Deque">
+            <summary>
+            Represents a simple double-ended-queue collection of objects.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Deque.#ctor">
+            <summary>
+            Initializes a new instance of the Deque class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Deque.#ctor(System.Collections.ICollection)">
+            <summary>
+            Initializes a new instance of the Deque class that contains 
+            elements copied from the specified collection.
+            </summary>
+            <param name="col">
+            The ICollection to copy elements from.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.Deque.Clear">
+            <summary>
+            Removes all objects from the Deque.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Deque.Contains(System.Object)">
+            <summary>
+            Determines whether or not an element is in the Deque.
+            </summary>
+            <param name="obj">
+            The Object to locate in the Deque.
+            </param>
+            <returns>
+            <b>true</b> if <i>obj</i> if found in the Deque; otherwise, 
+            <b>false</b>.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Deque.PushFront(System.Object)">
+            <summary>
+            Inserts an object at the front of the Deque.
+            </summary>
+            <param name="obj">
+            The object to push onto the deque;
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.Deque.PushBack(System.Object)">
+            <summary>
+            Inserts an object at the back of the Deque.
+            </summary>
+            <param name="obj">
+            The object to push onto the deque;
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.Deque.PopFront">
+            <summary>
+            Removes and returns the object at the front of the Deque.
+            </summary>
+            <returns>
+            The object at the front of the Deque.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Deque is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Deque.PopBack">
+            <summary>
+            Removes and returns the object at the back of the Deque.
+            </summary>
+            <returns>
+            The object at the back of the Deque.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Deque is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Deque.PeekFront">
+            <summary>
+            Returns the object at the front of the Deque without removing it.
+            </summary>
+            <returns>
+            The object at the front of the Deque.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Deque is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Deque.PeekBack">
+            <summary>
+            Returns the object at the back of the Deque without removing it.
+            </summary>
+            <returns>
+            The object at the back of the Deque.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Deque is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Deque.ToArray">
+            <summary>
+            Copies the Deque to a new array.
+            </summary>
+            <returns>
+            A new array containing copies of the elements of the Deque.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Deque.Synchronized(Sanford.Collections.Deque)">
+            <summary>
+            Returns a synchronized (thread-safe) wrapper for the Deque.
+            </summary>
+            <param name="deque">
+            The Deque to synchronize.
+            </param>
+            <returns>
+            A synchronized wrapper around the Deque.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Deque.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Copies the Deque elements to an existing one-dimensional Array, 
+            starting at the specified array index.
+            </summary>
+            <param name="array">
+            The one-dimensional Array that is the destination of the elements 
+            copied from Deque. The Array must have zero-based indexing. 
+            </param>
+            <param name="index">
+            The zero-based index in array at which copying begins. 
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.Deque.GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the Deque.
+            </summary>
+            <returns>
+            An IEnumerator for the Deque.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Deque.Clone">
+            <summary>
+            Creates a shallow copy of the Deque.
+            </summary>
+            <returns>
+            A shallow copy of the Deque.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.Deque.IsSynchronized">
+            <summary>
+            Gets a value indicating whether access to the Deque is synchronized 
+            (thread-safe).
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.Deque.Count">
+            <summary>
+            Gets the number of elements contained in the Deque.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.Deque.SyncRoot">
+            <summary>
+            Gets an object that can be used to synchronize access to the Deque.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.SkipList">
+            <summary>
+            Represents a collection of key-and-value pairs.
+            </summary>
+            <remarks>
+            The SkipList class is an implementation of the IDictionary interface. It 
+            is based on the data structure created by William Pugh.
+            </remarks> 
+        </member>
+        <member name="M:Sanford.Collections.SkipList.#ctor">
+            <summary>
+            Initializes a new instance of the SkipList class that is empty and 
+            is sorted according to the IComparable interface implemented by 
+            each key added to the SkipList.
+            </summary>
+            <remarks>
+            Each key must implement the IComparable interface to be capable of 
+            comparisons with every other key in the SortedList. The elements 
+            are sorted according to the IComparable implementation of each key 
+            added to the SkipList.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.#ctor(System.Collections.IComparer)">
+            <summary>
+            Initializes a new instance of the SkipList class that is empty and 
+            is sorted according to the specified IComparer interface.
+            </summary>
+            <param name="comparer">
+            The IComparer implementation to use when comparing keys. 
+            </param>
+            <remarks>
+            The elements are sorted according to the specified IComparer 
+            implementation. If comparer is a null reference, the IComparable 
+            implementation of each key is used; therefore, each key must 
+            implement the IComparable interface to be capable of comparisons 
+            with every other key in the SkipList.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Finalize">
+            <summary>
+            Destructor.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Initialize">
+            <summary>
+            Initializes the SkipList.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.GetNewLevel">
+            <summary>
+            Returns a level value for a new SkipList node.
+            </summary>
+            <returns>
+            The level value for a new SkipList node.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Search(System.Object)">
+            <summary>
+            Searches for the specified key.
+            </summary>
+            <param name="key">
+            The key to search for.
+            </param>
+            <returns>
+            Returns true if the specified key is in the SkipList.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Search(System.Object,Sanford.Collections.SkipList.Node@)">
+            <summary>
+            Searches for the specified key.
+            </summary>
+            <param name="key">
+            The key to search for.
+            </param>
+            <param name="curr">
+            A SkipList node to hold the results of the search.
+            </param>
+            <returns>
+            Returns true if the specified key is in the SkipList.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Search(System.Object,Sanford.Collections.SkipList.Node[])">
+            <summary>
+            Searches for the specified key.
+            </summary>
+            <param name="key">
+            The key to search for.
+            </param>
+            <param name="update">
+            An array of nodes holding references to the places in the SkipList
+            search in which the search dropped down one level.
+            </param>
+            <returns>
+            Returns true if the specified key is in the SkipList.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Search(System.Object,Sanford.Collections.SkipList.Node@,Sanford.Collections.SkipList.Node[])">
+            <summary>
+            Searches for the specified key.
+            </summary>
+            <param name="key">
+            The key to search for.
+            </param>
+            <param name="curr">
+            A SkipList node to hold the results of the search.
+            </param>
+            <param name="update">
+            An array of nodes holding references to the places in the SkipList
+            search in which the search dropped down one level.
+            </param>
+            <returns>
+            Returns true if the specified key is in the SkipList.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.SearchWithComparer(System.Object,Sanford.Collections.SkipList.Node@,Sanford.Collections.SkipList.Node[])">
+            <summary>
+            Search for the specified key using a comparer.
+            </summary>
+            <param name="key">
+            The key to search for.
+            </param>
+            <param name="curr">
+            A SkipList node to hold the results of the search.
+            </param>
+            <param name="update">
+            An array of nodes holding references to the places in the SkipList
+            search in which the search dropped down one level.
+            </param>
+            <returns>
+            Returns true if the specified key is in the SkipList.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.SearchWithComparable(System.Object,Sanford.Collections.SkipList.Node@,Sanford.Collections.SkipList.Node[])">
+            <summary>
+            Search for the specified key using the IComparable interface 
+            implemented by each key.
+            </summary>
+            <param name="key">
+            The key to search for.
+            </param>
+            <param name="curr">
+            A SkipList node to hold the results of the search.
+            </param>
+            <param name="update">
+            An array of nodes holding references to the places in the SkipList
+            search in which the search dropped down one level.
+            </param>
+            <returns>
+            Returns true if the specified key is in the SkipList.
+            </returns>
+            <remarks>
+            Assumes each key inserted into the SkipList implements the 
+            IComparable interface.
+            
+            If the specified key is in the SkipList, the curr parameter will
+            reference the node with the key. If the specified key is not in the
+            SkipList, the curr paramater will either hold the node with the 
+            first key value greater than the specified key or it will have the
+            same value as the header indicating that the search reached the end 
+            of the SkipList.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Insert(System.Object,System.Object,Sanford.Collections.SkipList.Node[])">
+            <summary>
+            Inserts a key/value pair into the SkipList.
+            </summary>
+            <param name="key">
+            The key to insert into the SkipList.
+            </param>
+            <param name="val">
+            The value to insert into the SkipList.
+            </param>
+            <param name="update">
+            An array of nodes holding references to places in the SkipList in 
+            which the search for the place to insert the new key/value pair 
+            dropped down one level.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Add(System.Object,System.Object)">
+            <summary>
+            Adds an element with the provided key and value to the SkipList.
+            </summary>
+            <param name="key">
+            The Object to use as the key of the element to add. 
+            </param>
+            <param name="value">
+            The Object to use as the value of the element to add. 
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Clear">
+            <summary>
+            Removes all elements from the SkipList.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Contains(System.Object)">
+            <summary>
+            Determines whether the SkipList contains an element with the 
+            specified key.
+            </summary>
+            <param name="key">
+            The key to locate in the SkipList.
+            </param>
+            <returns>
+            true if the SkipList contains an element with the key; otherwise, 
+            false.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.GetEnumerator">
+            <summary>
+            Returns an IDictionaryEnumerator for the SkipList.
+            </summary>
+            <returns>
+            An IDictionaryEnumerator for the SkipList.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Remove(System.Object)">
+            <summary>
+            Removes the element with the specified key from the SkipList.
+            </summary>
+            <param name="key">
+            The key of the element to remove.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.CopyTo(System.Array,System.Int32)">
+            <summary>
+            Copies the elements of the SkipList to an Array, starting at a 
+            particular Array index.
+            </summary>
+            <param name="array">
+            The one-dimensional Array that is the destination of the elements 
+            copied from SkipList.
+            </param>
+            <param name="index">
+            The zero-based index in array at which copying begins.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.System#Collections#IEnumerable#GetEnumerator">
+            <summary>
+            Returns an enumerator that can iterate through the SkipList.
+            </summary>
+            <returns>
+            An IEnumerator that can be used to iterate through the collection.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.IsFixedSize">
+            <summary>
+            Gets a value indicating whether the SkipList has a fixed size.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.IsReadOnly">
+            <summary>
+            Gets a value indicating whether the IDictionary is read-only.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.Item(System.Object)">
+            <summary>
+            Gets or sets the element with the specified key. This is the 
+            indexer for the SkipList. 
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.Keys">
+            <summary>
+            Gets an ICollection containing the keys of the SkipList.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.Values">
+            <summary>
+            Gets an ICollection containing the values of the SkipList.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.Count">
+            <summary>
+            Gets the number of elements contained in the SkipList.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.IsSynchronized">
+            <summary>
+            Gets a value indicating whether access to the SkipList is 
+            synchronized (thread-safe).
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.SyncRoot">
+            <summary>
+            Gets an object that can be used to synchronize access to the 
+            SkipList.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.SkipList.Node">
+            <summary>
+            Represents a node in the SkipList.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Node.#ctor(System.Int32)">
+            <summary>
+            Initializes an instant of a Node with its node level.
+            </summary>
+            <param name="level">
+            The node level.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Node.#ctor(System.Int32,System.Object,System.Object)">
+            <summary>
+            Initializes an instant of a Node with its node level and 
+            key/value pair.
+            </summary>
+            <param name="level">
+            The node level.
+            </param>
+            <param name="key">
+            The key for the node.
+            </param>
+            <param name="val">
+            The value for the node.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.Node.Dispose">
+            <summary>
+            Disposes the Node.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.Node.Key">
+            <summary>
+            Key property.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.Node.Value">
+            <summary>
+            Value property.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.Node.Entry">
+            <summary>
+            Node dictionary Entry property - contains key/value pair. 
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.SkipList.SkipListEnumerator">
+            <summary>
+            Enumerates the elements of a skip list.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.SkipListEnumerator.#ctor(Sanford.Collections.SkipList)">
+            <summary>
+            Initializes an instance of a SkipListEnumerator.
+            </summary>
+            <param name="list"></param>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.SkipListEnumerator.MoveNext">
+            <summary>
+            Advances the enumerator to the next element of the skip list.
+            </summary>
+            <returns>
+            true if the enumerator was successfully advanced to the next 
+            element; false if the enumerator has passed the end of the 
+            skip list.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.SkipList.SkipListEnumerator.Reset">
+            <summary>
+            Sets the enumerator to its initial position, which is before 
+            the first element in the skip list.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.SkipListEnumerator.Entry">
+            <summary>
+            Gets both the key and the value of the current dictionary 
+            entry.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.SkipListEnumerator.Key">
+            <summary>
+            Gets the key of the current dictionary entry.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.SkipListEnumerator.Value">
+            <summary>
+            Gets the value of the current dictionary entry.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.SkipList.SkipListEnumerator.Current">
+            <summary>
+            Gets the current element in the skip list.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.Stack">
+            <summary>
+            Represents a simple last-in-first-out collection of objects.
+            </summary>
+        </member>
+        <member name="F:Sanford.Collections.ImmutableCollections.Stack.Empty">
+            <summary>
+            An empty Stack.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Stack.#ctor">
+            <summary>
+            Initializes a new instance of the Stack class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Stack.#ctor(Sanford.Collections.ImmutableCollections.Stack.Node,System.Int32)">
+            <summary>
+            Initializes a new instance of the Stack class with the 
+            specified top node and the number of elements in the stack.
+            </summary>
+            <param name="top">
+            The top node in the stack.
+            </param>
+            <param name="count">
+            The number of elements in the stack.
+            </param>        
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Stack.Push(System.Object)">
+            <summary>
+            Inserts an object at the top of the Stack.
+            </summary>
+            <param name="obj">
+            The Object to push onto the Stack.
+            </param>
+            <returns>
+            A new stack with the specified object on the top of the stack.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Stack.Pop">
+            <summary>
+            Removes the object at the top of the Stack.
+            </summary>
+            <returns>
+            A new stack with top of the previous stack removed.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            The Stack is empty.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Stack.GetEnumerator">
+            <summary>
+            Returns an IEnumerator for the Stack.
+            </summary>
+            <returns>
+            An IEnumerator for the Stack.
+            </returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.Stack.Count">
+            <summary>
+            Gets the number of elements in the Stack.
+            </summary>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.Stack.Top">
+            <summary>
+            Gets the top of the stack.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            The Stack is empty.
+            </exception>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.Stack.Node">
+            <summary>
+            Represents a node in the stack.
+            </summary>
+        </member>
+        <member name="T:Sanford.Collections.ImmutableCollections.Stack.StackEnumerator">
+            <summary>
+            Provides functionality for iterating over the Stack class.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Stack.StackEnumerator.#ctor(Sanford.Collections.ImmutableCollections.Stack)">
+            <summary>
+            Initializes a new instance of the StackEnumerator class with 
+            the specified stack to iterate over.
+            </summary>
+            <param name="owner">
+            The Stack to iterate over.
+            </param>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Stack.StackEnumerator.Reset">
+            <summary>
+            Sets the enumerator to its initial position, which is before 
+            the first element in the Stack.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.ImmutableCollections.Stack.StackEnumerator.MoveNext">
+            <summary>
+            Advances the enumerator to the next element of the Stack.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Sanford.Collections.ImmutableCollections.Stack.StackEnumerator.Current">
+            <summary>
+            Gets the current element in the Stack.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">
+            The enumerator is positioned before the first element of the 
+            Stack or after the last element.
+            </exception>
+        </member>
+        <member name="T:Sanford.Collections.Generic.PriorityQueue`1">
+            <summary>
+            Represents the priority queue data structure.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.#ctor">
+            <summary>
+            Initializes a new instance of the PriorityQueue class.
+            </summary>
+            <remarks>
+            The PriorityQueue will cast its elements to the IComparable 
+            interface when making comparisons.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.#ctor(System.Collections.IComparer)">
+            <summary>
+            Initializes a new instance of the PriorityQueue class with the
+            specified IComparer.
+            </summary>
+            <param name="comparer">
+            The IComparer to use for comparing and ordering elements.
+            </param>
+            <remarks>
+            If the specified IComparer is null, the PriorityQueue will cast its
+            elements to the IComparable interface when making comparisons.
+            </remarks>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.Enqueue(`0)">
+            <summary>
+            Enqueues the specified element into the PriorityQueue.
+            </summary>
+            <param name="element">
+            The element to enqueue into the PriorityQueue.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            If element is null.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.Dequeue">
+            <summary>
+            Removes the element at the head of the PriorityQueue.
+            </summary>
+            <returns>
+            The element at the head of the PriorityQueue.
+            </returns>
+            <exception cref="T:System.InvalidOperationException">
+            If Count is zero.
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.Remove(System.Object)">
+            <summary>
+            Removes the specified element from the PriorityQueue.
+            </summary>
+            <param name="element">
+            The element to remove.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            If element is null
+            </exception>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.Contains(System.Object)">
+            <summary>
+            Returns a value indicating whether the specified element is in the
+            PriorityQueue.
+            </summary>
+            <param name="element">
+            The element to test.
+            </param>
+            <returns>
+            <b>true</b> if the element is in the PriorityQueue; otherwise
+            <b>false</b>.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.Peek">
+            <summary>
+            Returns the element at the head of the PriorityQueue without 
+            removing it.
+            </summary>
+            <returns>
+            The element at the head of the PriorityQueue.
+            </returns>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.Clear">
+            <summary>
+            Removes all elements from the PriorityQueue.
+            </summary>
+        </member>
+        <member name="M:Sanford.Collections.Generic.PriorityQueue`1.Synchronized(Sanford.Collections.PriorityQueue)">
+            <summary>
+            Returns a synchronized wrapper of the specified PriorityQueue.
+            </summary>
+            <param name="queue">
+            The PriorityQueue to synchronize.
+            </param>
+            <returns>
+            A synchronized PriorityQueue.
+            </returns>
+            <exception cref="T:System.ArgumentNullException">
+            If queue is null.
+            </exception>
+        </member>
+    </members>
+</doc>
