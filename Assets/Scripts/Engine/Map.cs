@@ -1071,7 +1071,7 @@ namespace EngineApp
 					draw_unit_on_texture(hexTex,unit,resize);
 				}
 				/* unit info icons */
-				if (unit != null && Config.show_bar) {
+				if (unit != null && Config.show_bar && unit.str>0) {
 					/* strength */
 					if ((cur_player != null) && Player.player_is_ally (cur_player, unit.player)){
 							string name = Unit.DeleteOrdinal (unit.name);
