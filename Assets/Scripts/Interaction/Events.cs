@@ -2,30 +2,260 @@ using UnityEngine;
 using System.Collections;
 using EngineApp;
 using Miscellaneous;
-using AI_Enemy;
 using DataFile;
-using System.Text;
-using System.Threading;
+using AI_Enemy;
 
-public class Events : MonoBehaviour
-{
+public class Events : MonoBehaviour {
 	
+	private int widthInfo = 250;
+	private int windowType = 0;
 	private Ray ray;
 	private RaycastHit hit;
 	private RaycastHit hitSelected;
-	private int width;
-	private int height;
-	private static int widthInfo = 250;
-	private int windowType = 0;
-	private Unit unitAtk;
-	public static int WidthInfo {
-		get{ return widthInfo;}
-	}
 	private int x, y;
-
-	private void OnClick ()
+	private Unit unitAtk;
+	private int addTurn = 0;
+	
+	void Awake(){
+		if (Engine.map.isLoaded){
+			float xpos = Engine.map.map_w*Config.hex_x_offset-15+widthInfo;
+			float zpos = Engine.map.map_h*-Config.hex_h+Config.hex_y_offset;
+			Camera.mainCamera.transform.position = new Vector3((xpos/2),50,(zpos/2));
+		}
+	}
+	
+	void OnGUI ()
 	{
-		if (Input.GetMouseButtonDown (0) && Engine.map.isLoaded) {//TODO_RR if (Input.GetTouch(0).phase == TouchPhase.Began)){
+		if (Engine.map.isLoaded) {
+			GUI.Window (windowType, new Rect (Screen.width - widthInfo, 0, widthInfo, Screen.height), ConfigWindow, "");
+		}
+	}
+	
+	void ConfigWindow (int windowID)
+	{
+		switch (windowID) {
+		case 0:
+			GeneralConfig ();
+			break;
+		case 2:
+			VictCondGUI ();
+			break;
+		case 3:
+			EndTurnGUI ();
+			break;
+		case 4:
+			ShowCUnitInfoGUI ();
+			break;
+		}
+	}
+	
+	private bool isVisibleUnit (int x, int y)
+	{
+		foreach (Unit unit in Scenario.vis_units) {
+			if (unit.x == x && unit.y == y)
+				return true;
+		}
+		return false;
+	}
+	
+	private void GeneralConfig ()
+	{
+		string turns = "Turn " + (Scenario.turn+addTurn) + " of " + Scenario.scen_info.turn_limit;
+		string prestige = "Prestige: " + Player.players_get_first ().prestige;
+		string weather = "Weather:  " +
+                    ((Scenario.turn < Scenario.scen_info.turn_limit) ?
+                     Engine.terrain.weatherTypes [Scenario.scen_get_weather ()].name : "");
+		string forecast = "Forecast: " +
+                    ((Scenario.turn + 1 < Scenario.scen_info.turn_limit) ?
+                     Engine.terrain.weatherTypes [Scenario.scen_get_forecast ()].name : "");
+		GUI.Label (new Rect (83, 25, 100, 25), turns);
+		GUI.Label (new Rect (83, 50, 100, 25), prestige);
+		GUI.Label (new Rect (83, 75, 100, 25), weather);
+		GUI.Label (new Rect (83, 100, 100, 25), forecast);
+		if (GUI.Button (new Rect (15, 125, 90, 25), "Supply Units")) {
+			SupplyUnitsGUI ();
+		}
+		GUI.Button (new Rect (145, 125, 90, 25), "Deploy Units");
+		if (GUI.Button (new Rect (15, 155, 90, 25), "Vict. Cond")) {
+			windowType = 2;
+		}
+		if (GUI.Button (new Rect (145, 155, 90, 25), "End Turn")) {
+			windowType = 3;
+		}
+		string current_info = ""; 
+		if (Engine.cur_unit != null) {
+			current_info = Engine.cur_unit.name + "\nFuel:" +
+						   Engine.cur_unit.cur_fuel + " Ammo:" +
+						   Engine.cur_unit.cur_ammo + " Ent:" + Engine.cur_unit.entr;
+		}
+		if (GUI.Button (new Rect (15, 185, 90, 25), "C. Unit Info") && Engine.cur_unit!=null) {
+			windowType = 4;
+		}
+		if (GUI.Button(new Rect(145,185,90,25),"Exit")){
+			Application.Quit();
+		}
+		GUI.Box (new Rect (37.5f, 215, 175, 40), current_info);
+		string hover_info = "";
+		string terrain_info = "";
+		if (hitSelected.transform != null) {
+			terrain_info = Engine.map.map [x, y].name + "(" + x + "," + y + ")";
+			if (Engine.map.map [x, y].a_unit != null && isVisibleUnit (x, y)) {
+				hover_info = Engine.map.map [x, y].a_unit.name + "\nFuel:" +
+						   	 Engine.map.map [x, y].a_unit.cur_fuel + " Ammo:" +
+						   	 Engine.map.map [x, y].a_unit.cur_ammo + " Ent:" + Engine.map.map [x, y].a_unit.entr;
+			}
+			if (Engine.map.map [x, y].g_unit != null && isVisibleUnit (x, y)) {
+				hover_info = Engine.map.map [x, y].g_unit.name + "\nFuel:" +
+						   	 Engine.map.map [x, y].g_unit.cur_fuel + " Ammo:" +
+						   	 Engine.map.map [x, y].g_unit.cur_ammo + " Ent:" + Engine.map.map [x, y].g_unit.entr;
+			}
+		}
+		GUI.Box (new Rect (37.5f, 260, 175, 40), hover_info);
+		GUI.Label (new Rect (83, 300, 200, 20), terrain_info);
+		if (unitAtk != null) {
+ 			int unit_damage, target_damage;
+ 			Unit attacker = Engine.cur_unit.unit_backup ();
+ 			Unit defender = unitAtk.unit_backup ();
+ 			Unit.GetExpectedLosses (attacker, defender, out unit_damage, out target_damage);
+ 			GUI.Label (new Rect (50, 320, 200, 20), "Expected losses: " + unit_damage + " vs " + target_damage); 
+ 		}
+		
+	}
+	
+	private void SupplyUnitsGUI ()
+	{
+		if (Engine.map.isLoaded && Engine.cur_unit != null) {
+			int ammo, fuel;
+			if (Engine.cur_unit.CheckSupply (Unit.UNIT_SUPPLY.UNIT_SUPPLY_ANYTHING, out ammo, out fuel))
+				Engine.cur_unit.Supply (Unit.UNIT_SUPPLY.UNIT_SUPPLY_ALL);
+			Engine.engine_select_unit (Engine.cur_unit);
+			Engine.draw_map = true;
+		}
+	}
+	
+	private void VictCondGUI ()
+	{
+		string info = Engine.gui_show_conds ();
+		GUILayout.Box (info);
+		if (GUILayout.Button ("OK"))
+			windowType = 0;
+	}
+	
+	private void EndTurnGUI(){
+		bool endGame = false;
+		GUILayout.Label("Do you really want to end your turn?");
+		GUILayout.Label("End Your Turn #" + (Scenario.turn+addTurn), GUILayout.ExpandWidth(true));
+		GUILayout.BeginHorizontal();
+		if (GUILayout.Button ("YES")){
+			Engine.engine_end_turn();
+			if (!Engine.end_scen){
+            	Engine.engine_begin_turn(null, false);
+			}
+			if (Engine.draw_map)
+            {
+                    Draw();
+            }
+			while (Engine.cur_player.ctrl != PLAYERCONTROL.PLAYER_CTRL_HUMAN)
+                {
+                    Engine.engine_end_turn();
+                    if (!Engine.end_scen){
+                        Engine.engine_begin_turn(null, false);
+					}
+                    if (Engine.draw_map)
+                    {
+                        Draw();
+                    }
+					if (Engine.cur_player == null){
+						endGame = true;
+						addTurn = 0;
+						break;
+					}
+                }
+			if (endGame){
+				Application.LoadLevel("EndGame");
+			}
+			if (Scenario.turn==0){
+				addTurn = 1;
+			}
+			windowType = 0;
+		}
+		if (GUILayout.Button ("NO")){
+			windowType = 0;
+		}	
+		GUILayout.EndHorizontal();
+	}
+	
+	private void ShowCUnitInfoGUI ()
+	{
+		if (Engine.map.isLoaded && Engine.cur_unit != null) {
+			Unit unit = Engine.cur_unit;
+			string str = "";
+			str+= "Unit Name:\t" + unit.name;
+			str+="\nClass:\t\t" + DB.UnitLib.unit_classes [unit.prop.unit_class].name;
+			str+="\nMovement:\t" + DB.UnitLib.mov_types [unit.prop.mov_type].name;
+			str+="\nTarget:\t\t" + DB.UnitLib.trgt_types [unit.prop.trgt_type].name;
+			/* ammo, fuel, spot, mov, ini, range */
+			if (unit.prop.ammo == 0)
+				str+="\nAmmo:\t\tN.A.";
+			else if (Engine.cur_player == null || Player.player_is_ally (Engine.cur_player, unit.player))
+				str+="\nAmmo:\t\t" + unit.cur_ammo + ", " + unit.prop.ammo;
+			else
+				str+="\nAmmo:\t\t" + unit.prop.ammo;
+			if (unit.prop.fuel == 0)
+				str+="\nFuel:\t\tN.A.";
+			else if (Engine.cur_player == null || Player.player_is_ally (Engine.cur_player, unit.player))
+				str+="\nFuel:\t\t" + unit.cur_fuel + ", " + unit.prop.fuel;
+			else
+				str+="\nFuel:\t\t" + unit.prop.fuel;
+			str+="\nSpotting:\t\t" + unit.prop.spt;
+			str+="\nMovement:\t" + unit.prop.mov;
+			str+="\nInitiative:\t\t" + unit.prop.ini;
+			str+="\nRange:\t\t" + unit.prop.rng;
+			str+="\nExperience:\t" + unit.exp;
+			str+="\nEntrenchment:\t" + unit.entr;
+			/* attack/defense */
+			for (int i = 0; i < DB.UnitLib.trgt_type_count; i++) {
+				if (unit.prop.atks [i] < 0)
+					str+="\n" + DB.UnitLib.trgt_types [i].name + " Attack:\t" + -unit.prop.atks [i];
+				else
+					str+="\n" + DB.UnitLib.trgt_types [i].name + " Attack:\t" + unit.prop.atks [i];
+			}
+			str+="\nGround Defense:\t" + unit.prop.def_grnd;
+			str+="\nAir Defense:\t" + unit.prop.def_air;
+			str+="\nClose Defense:\t" + unit.prop.def_cls;
+			str+="\nSuppression:\t" + unit.turn_suppr;
+
+			/* transporter */
+			if (unit.trsp_prop != null) {
+				/* icon */
+				/* name & type */
+				str+="\nTransporter Name:\t\t" + unit.trsp_prop.name;
+				str+="\nTrans. Class:\t\t" + DB.UnitLib.unit_classes [unit.trsp_prop.unit_class].name;
+				str+="\nTrans. Movement:\t" + DB.UnitLib.mov_types [unit.trsp_prop.mov_type].name;
+				str+="\nTrans. Target:\t" + DB.UnitLib.trgt_types [unit.trsp_prop.trgt_type].name;
+				/* spt, mov, ini, rng */
+				str+="\nTrans. Spotting:\t" + unit.trsp_prop.spt;
+				str+="\nTrans. Movement:\t" + unit.trsp_prop.mov;
+				str+="\nTrans. Initiative:\t" + unit.trsp_prop.ini;
+				str+="\nTrans. Range::\t" + unit.trsp_prop.rng;
+				/* attack & defense */
+				for (int i = 0; i < DB.UnitLib.trgt_type_count; i++) {
+					str+="\n " + DB.UnitLib.trgt_types [i].name + " Trans. Attack:\t" + unit.trsp_prop.atks [i];
+				}
+				str+="\nTrans. Ground Defense:\t" + unit.trsp_prop.def_grnd;
+				str+="\nTrans. Air Defense:\t" + unit.trsp_prop.def_air;
+				str+="\nTrans. Close Defense:\t" + unit.trsp_prop.def_cls;
+			}
+			/* show */
+			GUILayout.Box (str);
+		}
+		if (GUILayout.Button ("OK"))
+			windowType = 0;
+	}
+	
+	private void OnClick(){
+		if (Input.GetMouseButtonDown (0) && Engine.map.isLoaded
+			&& Engine.phase==PHASE.PHASE_NONE) {//TODO_RR if (Input.GetTouch(0).phase == TouchPhase.Began)){
 			int mapx, mapy;
 			Engine.REGION region;
 			Vector3 clickedPosition = Camera.main.ScreenToWorldPoint (Input.mousePosition);
@@ -38,12 +268,10 @@ public class Events : MonoBehaviour
                             Engine.engine_get_prim_unit (mapx, mapy, region) == Engine.cur_unit)) {
 						Unit unit = Engine.engine_get_target (mapx, mapy, region);
 						if (unit != null) {
-							Config.schedulerTimeOut = 20;
 							Action.action_queue_attack(Engine.cur_unit, unit);
 						} else {
 							if (Engine.map.mask [mapx, mapy].in_range != 0 && !Engine.map.mask [mapx, mapy].blocked) {
-								Config.schedulerTimeOut = 220;
-								Action.action_queue_move (Engine.cur_unit, mapx, mapy);						
+								Action.action_queue_move (Engine.cur_unit, mapx, mapy);					
 							} else {
 								if (Engine.map.mask [mapx, mapy].sea_embark) {
 									if (Engine.cur_unit.embark == UnitEmbarkTypes.EMBARK_NONE)
@@ -58,6 +286,9 @@ public class Events : MonoBehaviour
 									if (unit != null && Engine.cur_unit != unit) {
 										if (Engine.cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN) {
 											if (Engine.engine_capture_flag (Engine.cur_unit)) { 
+#if TODO_RR
+		si ha acabado saltar al nuevo menu
+#endif
 												/* CHECK IF SCENARIO IS FINISHED */
 												if (Scenario.scen_check_result (false)) {
 													Engine.engine_finish_scenario ();
@@ -89,17 +320,18 @@ public class Events : MonoBehaviour
 				
 			}
 		}
+		else
+			return;
 		if (Engine.draw_map) {
 			Draw ();
 		}
 	}
 	
-	private void OnMove ()
-	{
+	private void OnMouseMove(){
 		int xS, yS;
 		Engine.REGION aux_region;
 		ray = Camera.main.ScreenPointToRay (Input.mousePosition); //ray = Camera.main.ScreenPointToRay(touch.position);
-		if (Physics.Raycast (ray, out hit, 100)) {
+		if (Physics.Raycast (ray, out hit, 100) && hit.transform.tag!="Edge") {
 			Engine.engine_get_map_pos(hit.transform.position.x,
 									  hit.transform.position.z,out xS,out yS,
 									  out aux_region,Input.mousePosition.z);
@@ -125,6 +357,7 @@ public class Events : MonoBehaviour
 		}
 	}
 	
+	
 	public static void Draw ()
 	{
 		if (Engine.map.isLoaded) {
@@ -135,308 +368,8 @@ public class Events : MonoBehaviour
 		Engine.draw_map = false;
 	}
 	
-	// Update is called once per frame
-	void Update ()
-	{
-		OnMove ();
-		if (hitSelected.transform!=null)
- 			OnClick ();
+	void Update() {
+		OnMouseMove ();
+		OnClick();
 	}
-	
-	void OnGUI ()
-	{
-		if (Engine.map.isLoaded) {
-			GUI.Window (windowType, new Rect (Screen.width - widthInfo, 0, widthInfo, Screen.height), ConfigWindow, "");
-		}
-	}
-	
-	void ConfigWindow (int windowID)
-	{
-		switch (windowID) {
-		case 0:
-			GeneralConfig ();
-			break;
-		case 1:
-			DeployUnitsGUI ();
-			break;
-		case 2:
-			VictCondGUI ();
-			break;
-		case 3:
-			EndTurnGUI ();
-			break;
-		case 4:
-			ShowCUnitInfoGUI ();
-			break;
-		}		
-		
-	}
-	
-	private bool isVisibleUnit (int x, int y)
-	{
-		foreach (Unit unit in Scenario.vis_units) {
-			if (unit.x == x && unit.y == y)
-				return true;
-		}
-		return false;
-	}
-	
-	private void GeneralConfig ()
-	{
-		/*string movement = "Movement: ";
-		string spotting = "Spotting: ";
-		string range = "Range: ";
-		string initiative = "Initiative: ";
-		string softat = "Soft At.: ";*/
-		string turns = "Turn " + Scenario.turn + " of " + Scenario.scen_info.turn_limit;
-		string prestige = "Prestige: " + Player.players_get_first ().prestige;
-		string weather = "Weather:  " +
-                    ((Scenario.turn < Scenario.scen_info.turn_limit) ?
-                     Engine.terrain.weatherTypes [Scenario.scen_get_weather ()].name : "");
-		string forecast = "Forecast: " +
-                    ((Scenario.turn + 1 < Scenario.scen_info.turn_limit) ?
-                     Engine.terrain.weatherTypes [Scenario.scen_get_forecast ()].name : "");
-		GUI.Label (new Rect (83, 25, 75, 25), turns);
-		GUI.Label (new Rect (83, 50, 100, 25), prestige);
-		GUI.Label (new Rect (83, 75, 100, 25), weather);
-		GUI.Label (new Rect (83, 100, 100, 25), forecast);
-		if (GUI.Button (new Rect (15, 125, 90, 25), "Supply Units")) {
-			SupplyUnitsGUI ();
-		}
-		if (GUI.Button (new Rect (145, 125, 90, 25), "Deploy Units")) {
-			windowType = 1;
-		}
-		if (GUI.Button (new Rect (15, 155, 90, 25), "Vict. Cond")) {
-			windowType = 2;
-		}
-		if (GUI.Button (new Rect (145, 155, 90, 25), "End Turn")) {
-			windowType = 3;
-		}
-		string current_info = ""; 
-		//Unit_Lib_Entry unit_info = null;
-		if (Engine.cur_unit != null) {
-			current_info = Engine.cur_unit.name + "\nFuel:" +
-						   Engine.cur_unit.cur_fuel + " Ammo:" +
-						   Engine.cur_unit.cur_ammo + " Ent:" + Engine.cur_unit.entr;
-			/*string name = Unit.DeleteOrdinal(Engine.cur_unit.name);
-			unit_info = DB.UnitLib.unit_lib_find_by_name(name);
-			movement+=unit_info.mov+"("+DB.UnitLib.mov_types[unit_info.mov_type].name+")";
-			spotting+=unit_info.spt;
-			range+=unit_info.rng;
-			initiative+=unit_info.ini;
-			softat+=unit_info.atks[0];*/
-		}
-		if (GUI.Button (new Rect (15, 185, 90, 25), "C. Unit Info") && Engine.cur_unit!=null) {
-			windowType = 4;
-		}
-		if (GUI.Button(new Rect(145,185,90,25),"Exit")){
-			Application.Quit();
-		}
-		GUI.Box (new Rect (37.5f, 215, 175, 40), current_info);
-		string hover_info = "";
-		string terrain_info = "";
-		if (hitSelected.transform != null) {
-			terrain_info = Engine.map.map [x, y].name + "(" + x + "," + y + ")";
-			if (Engine.map.map [x, y].a_unit != null && isVisibleUnit (x, y)) {
-				hover_info = Engine.map.map [x, y].a_unit.name + "\nFuel:" +
-						   	 Engine.map.map [x, y].a_unit.cur_fuel + " Ammo:" +
-						   	 Engine.map.map [x, y].a_unit.cur_ammo + " Ent:" + Engine.map.map [x, y].a_unit.entr;
-				/*Unit_Lib_Entry unit_info_hover = DB.UnitLib.unit_lib_find_by_name(Unit.DeleteOrdinal(Engine.map.map[x,y].a_unit.name));
-				movement = getMovOfUnitHover(unit_info_hover,movement);
-				spotting = getSpotOfUnitHover(unit_info_hover, spotting);
-				range = getRangeOfUnitHover(unit_info_hover, range);
-				initiative = getIniOfUnitHover(unit_info_hover, initiative);*/
-				
-			}
-			if (Engine.map.map [x, y].g_unit != null && isVisibleUnit (x, y)) {
-				hover_info = Engine.map.map [x, y].g_unit.name + "\nFuel:" +
-						   	 Engine.map.map [x, y].g_unit.cur_fuel + " Ammo:" +
-						   	 Engine.map.map [x, y].g_unit.cur_ammo + " Ent:" + Engine.map.map [x, y].g_unit.entr;
-				/*Unit_Lib_Entry unit_info_hover = DB.UnitLib.unit_lib_find_by_name(Unit.DeleteOrdinal(Engine.map.map[x,y].g_unit.name));
-				movement = getMovOfUnitHover(unit_info_hover,movement);
-				spotting = getSpotOfUnitHover(unit_info_hover, spotting);
-				range = getRangeOfUnitHover(unit_info_hover, range);
-				initiative = getIniOfUnitHover(unit_info_hover, initiative);*/
-			}
-		}
-		GUI.Box (new Rect (37.5f, 260, 175, 40), hover_info);
-		GUI.Label (new Rect (83, 300, 200, 20), terrain_info);
-		if (unitAtk != null) {
- 			int unit_damage, target_damage;
- 			Unit attacker = Engine.cur_unit.unit_backup ();
- 			Unit defender = unitAtk.unit_backup ();
- 			Unit.GetExpectedLosses (attacker, defender, out unit_damage, out target_damage);
- 			GUI.Label (new Rect (50, 320, 200, 20), "Expected losses: " + unit_damage + " vs " + target_damage); 
- 		}
-		/*GUI.Label(new Rect(25,290,235,20),movement);
-		GUI.Label(new Rect(25,310,235,20),spotting);
-		GUI.Label(new Rect(25,330,235,20),range);
-		GUI.Label(new Rect(25,350,235,20),initiative);
-		GUI.Label(new Rect(25,370,235,20),softat);*/
-	}
-	
-	private void SupplyUnitsGUI ()
-	{
-		if (Engine.map.isLoaded && Engine.cur_unit != null) {
-			int ammo, fuel;
-			if (Engine.cur_unit.CheckSupply (Unit.UNIT_SUPPLY.UNIT_SUPPLY_ANYTHING, out ammo, out fuel))
-				Engine.cur_unit.Supply (Unit.UNIT_SUPPLY.UNIT_SUPPLY_ALL);
-			Engine.engine_select_unit (Engine.cur_unit);
-			Engine.draw_map = true;
-		}
-	}
-	
-	private void DeployUnitsGUI ()
-	{
-#if TODO_RR
-		//Dar la funcionalidad a DeployUnits
-#endif
-		if (GUILayout.Button ("OK"))
-			windowType = 0;
-	}
-	
-	private void VictCondGUI ()
-	{
-		string info = Engine.gui_show_conds ();
-		GUILayout.Box (info);
-		if (GUILayout.Button ("OK"))
-			windowType = 0;
-	}
-	
-	private void EndTurnGUI ()
-	{
-		Config.schedulerTimeOut = 20;
-		GUILayout.Label("Do you really want to end your turn?");
-		GUILayout.Label("End Your Turn #" + Scenario.turn, GUILayout.ExpandWidth(true));
-		GUILayout.BeginHorizontal();
-		if (GUILayout.Button ("YES")){
-			Engine.engine_end_turn();
-			if (!Engine.end_scen){
-            	Engine.engine_begin_turn(null, false);
-			}
-			if (Engine.draw_map)
-            {
-                    Draw();
-            }
-			while (Engine.cur_player.ctrl != PLAYERCONTROL.PLAYER_CTRL_HUMAN)
-                {
-                    Engine.engine_end_turn();
-                    if (!Engine.end_scen){
-                        Engine.engine_begin_turn(null, false);
-					}
-                    if (Engine.draw_map)
-                    {
-                        Draw();
-                    }
-                }
-			windowType = 0;
-			Config.schedulerTimeOut = 220;
-		}
-		if (GUILayout.Button ("NO")){
-			windowType = 0;
-		}	
-		GUILayout.EndHorizontal();
-	}
-	
-	private void ShowCUnitInfoGUI ()
-	{
-		if (Engine.map.isLoaded && Engine.cur_unit != null) {
-			Unit unit = Engine.cur_unit;
-			StringBuilder str = new StringBuilder ();
-			str.Append ("Unit Name:\t" + unit.name);
-			str.Append ("\nClass:\t\t" + DB.UnitLib.unit_classes [unit.prop.unit_class].name);
-			str.Append ("\nMovement:\t" + DB.UnitLib.mov_types [unit.prop.mov_type].name);
-			str.Append ("\nTarget:\t\t" + DB.UnitLib.trgt_types [unit.prop.trgt_type].name);
-			/* ammo, fuel, spot, mov, ini, range */
-			if (unit.prop.ammo == 0)
-				str.Append ("\nAmmo:\t\tN.A.");
-			else if (Engine.cur_player == null || Player.player_is_ally (Engine.cur_player, unit.player))
-				str.Append ("\nAmmo:\t\t" + unit.cur_ammo + ", " + unit.prop.ammo);
-			else
-				str.Append ("\nAmmo:\t\t" + unit.prop.ammo);
-			if (unit.prop.fuel == 0)
-				str.Append ("\nFuel:\t\tN.A.");
-			else if (Engine.cur_player == null || Player.player_is_ally (Engine.cur_player, unit.player))
-				str.Append ("\nFuel:\t\t" + unit.cur_fuel + ", " + unit.prop.fuel);
-			else
-				str.Append ("\nFuel:\t\t" + unit.prop.fuel);
-			str.Append ("\nSpotting:\t\t" + unit.prop.spt);
-			str.Append ("\nMovement:\t" + unit.prop.mov);
-			str.Append ("\nInitiative:\t\t" + unit.prop.ini);
-			str.Append ("\nRange:\t\t" + unit.prop.rng);
-			str.Append ("\nExperience:\t" + unit.exp);
-			str.Append ("\nEntrenchment:\t" + unit.entr);
-			/* attack/defense */
-			for (int i = 0; i < DB.UnitLib.trgt_type_count; i++) {
-				if (unit.prop.atks [i] < 0)
-					str.Append ("\n" + DB.UnitLib.trgt_types [i].name + " Attack:\t" + -unit.prop.atks [i]);
-				else
-					str.Append ("\n" + DB.UnitLib.trgt_types [i].name + " Attack:\t" + unit.prop.atks [i]);
-			}
-			str.Append ("\nGround Defense:\t" + unit.prop.def_grnd);
-			str.Append ("\nAir Defense:\t" + unit.prop.def_air);
-			str.Append ("\nClose Defense:\t" + unit.prop.def_cls);
-			str.Append ("\nSuppression:\t" + unit.turn_suppr);
-
-			/* transporter */
-			if (unit.trsp_prop != null) {
-				/* icon */
-				/* name & type */
-				str.Append ("\nTransporter Name:\t\t" + unit.trsp_prop.name);
-				str.Append ("\nTrans. Class:\t\t" + DB.UnitLib.unit_classes [unit.trsp_prop.unit_class].name);
-				str.Append ("\nTrans. Movement:\t" + DB.UnitLib.mov_types [unit.trsp_prop.mov_type].name);
-				str.Append ("\nTrans. Target:\t" + DB.UnitLib.trgt_types [unit.trsp_prop.trgt_type].name);
-				/* spt, mov, ini, rng */
-				str.Append ("\nTrans. Spotting:\t" + unit.trsp_prop.spt);
-				str.Append ("\nTrans. Movement:\t" + unit.trsp_prop.mov);
-				str.Append ("\nTrans. Initiative:\t" + unit.trsp_prop.ini);
-				str.Append ("\nTrans. Range::\t" + unit.trsp_prop.rng);
-				/* attack & defense */
-				for (int i = 0; i < DB.UnitLib.trgt_type_count; i++) {
-					str.Append ("\n " + DB.UnitLib.trgt_types [i].name + " Trans. Attack:\t" + unit.trsp_prop.atks [i]);
-				}
-				str.Append ("\nTrans. Ground Defense:\t" + unit.trsp_prop.def_grnd);
-				str.Append ("\nTrans. Air Defense:\t" + unit.trsp_prop.def_air);
-				str.Append ("\nTrans. Close Defense:\t" + unit.trsp_prop.def_cls);
-			}
-			/* show */
-			GUILayout.Box (str.ToString ());
-		}
-		if (GUILayout.Button ("OK"))
-			windowType = 0;
-	}
-	/*private string getMovOfUnitHover(Unit_Lib_Entry unit_info_hover, string movement){
-		if (movement.Equals("Movement: ")){
-			return movement+="\t\t\t\t"+unit_info_hover.mov+"("+DB.UnitLib.mov_types[unit_info_hover.mov_type].name+")";
-		}
-		else{
-			return movement+="\t"+unit_info_hover.mov+"("+DB.UnitLib.mov_types[unit_info_hover.mov_type].name+")";
-		}
-	}
-	private string getSpotOfUnitHover(Unit_Lib_Entry unit_info_hover, string spotting){
-		if (spotting.Equals("Spotting: ")){
-			return spotting+="\t\t\t\t\t"+unit_info_hover.spt;
-		}
-		else{
-			return spotting+="\t\t\t\t\t\t"+unit_info_hover.spt;
-		}
-	}
-	
-	private string getRangeOfUnitHover(Unit_Lib_Entry unit_info_hover, string spotting){
-		if (spotting.Equals("Range: ")){
-			return spotting+="\t\t\t\t\t\t"+unit_info_hover.rng;
-		}
-		else{
-			return spotting+="\t\t\t\t\t\t"+unit_info_hover.rng;
-		}
-	}
-	
-	private string getIniOfUnitHover(Unit_Lib_Entry unit_info_hover, string spotting){
-		if (spotting.Equals("Initiative: ")){
-			return spotting+="\t\t\t\t\t"+unit_info_hover.rng;
-		}
-		else{
-			return spotting+="\t\t\t\t\t"+unit_info_hover.rng;
-		}
-	}*/
 }
