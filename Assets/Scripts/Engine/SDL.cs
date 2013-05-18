@@ -238,27 +238,6 @@ namespace EngineApp
             
         }
 
-#if TODO_RR
-        public static void copy_image(SDL_Surface dest, int xdest, int ydest,
-                                       int w, int h, SDL_Surface src, int xsrc, int ysrc, int alpha)
-        {
-            Graphics graphic;
-            if (dest.surf != null && dest.bitmap == null)
-                graphic = dest.surf;
-            else
-                graphic = Graphics.FromImage(dest.bitmap);
-            set_alpha(alpha);
-            graphic.DrawImage(src.bitmap, new Rectangle(xdest, ydest, w, h), xsrc, ysrc, w, h, GraphicsUnit.Pixel, imageAttr);
-        }
-#endif
-
-#if TODO_RR
-        public static void copy_image(Graphics graphic, int xdest, int ydest, int w, int h, SDL_Surface src, int xsrc, int ysrc)
-        {
-            graphic.DrawImage(src.bitmap, xdest, ydest, new Rectangle(xsrc, ysrc, w, h), GraphicsUnit.Pixel);
-        }
-#endif
-
         public static void copy_image180(SDL_Surface dest, SDL_Surface src)
         {
 			if (src==null || dest==null)
