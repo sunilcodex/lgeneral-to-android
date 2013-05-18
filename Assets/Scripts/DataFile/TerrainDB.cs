@@ -90,10 +90,6 @@ namespace DataFile
                 terrainTypes[i].max_ini = terr.terrainTypes[i].max_ini;
                 terrainTypes[i].flags = terr.terrainTypes[i].flags;
 				terrainTypes[i].images_name = terr.terrainTypes[i].images;
-				/*for (int j = 0; j < weatherTypeCount; j++)
-                {
-                    terrainTypes[i].images_name[j] = terr.terrainTypes[i].images[j].name;
-                }*/
             }
 
                  
