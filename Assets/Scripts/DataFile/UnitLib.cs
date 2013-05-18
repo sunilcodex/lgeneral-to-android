@@ -219,15 +219,6 @@ namespace DataFile
 				this.unit_classes = LoadedObject.unit_classes;
 				this.unit_class_count = LoadedObject.unit_class_count;
 				this.unit_info_icons = LoadedObject.unit_info_icons;
-#if TODO_RR
-				this.unit_info_icons = new Unit_Info_Icons();
-				this.unit_info_icons.atk_img_name = LoadedObject.unit_info_icons.atk_img_name;
-				this.unit_info_icons.guard_img_name = LoadedObject.unit_info_icons.guard_img_name;
-				this.unit_info_icons.mov_img_name = LoadedObject.unit_info_icons.mov_img_name;
-				this.unit_info_icons.str_img_name = LoadedObject.unit_info_icons.str_img_name;
-				this.unit_info_icons.str_h = LoadedObject.unit_info_icons.str_h;
-				this.unit_info_icons.str_w = LoadedObject.unit_info_icons.str_w;
-#endif
 				this.unit_lib = LoadedObject.unit_lib;
 				this.unit_lib_main_loaded = true;
 				this.offset_img = LoadedObject.offset_img;
@@ -239,49 +230,7 @@ namespace DataFile
 			}
 			
 		}
-#if TODO_RR
-		public void unitToFile ()
-		{
-			try {
-				foreach (Unit_Lib_Entry unit in this.unit_lib) {
-					int e = TextureTable.elegirImgUnit (unit);
-					SDL_Surface sdl = SDL_Surface.LoadSurface ("Textures/units/pg1", false);
-					SDL_Surface dest = new SDL_Surface ();
-					if (e == 1) {
-						int o = (sdl.h - unit.offset_img - unit.icon_h);
-						if (o >= 0) {
-							SDL_Surface.copy_image (dest, unit.icon_w, unit.icon_h, sdl, 0, o);
-							byte[] bytes = dest.bitmap.EncodeToPNG ();
-							File.WriteAllBytes (Application.dataPath + "/../Unit/" + unit.id + ".png", bytes);
-							
-						} else {
-							Debug.Log (unit.name);
-						}
-					
-					
-					} else if (e == 2) {
-					
-						SDL_Surface sdl2 = SDL_Surface.LoadSurface ("Textures/units/pg2", false);
-						int v = unit.offset_img + 2 - sdl.h + unit.icon_h;
-						int v2 = sdl2.h - v;
-						if (v2 >= 0) {
-							SDL_Surface.copy_image (dest, unit.icon_w, unit.icon_h, sdl2, 0, v2);
-							byte[] bytes = dest.bitmap.EncodeToPNG ();
-							File.WriteAllBytes (Application.dataPath + "/../Unit/" + unit.id + ".png", bytes);
-					
-						} else {
-							Debug.Log (unit.name);
-						}
-					
-					
-					}
-				
-				}
-			} catch (Exception e) {
-				Debug.LogError (e.Message);
-			}
-		}
-#endif
+
 		/*
         ====================================================================
         Delete unit library.
