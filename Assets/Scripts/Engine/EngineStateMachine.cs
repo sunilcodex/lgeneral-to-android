@@ -67,8 +67,6 @@ namespace EngineApp
     public class EngineStateMachine : PassiveStateMachine<StateID, EngineActionsTypes>, IDisposable
     {
         internal readonly AsyncOperation operation = AsyncOperationManager.CreateOperation(null);
-// TOCA SOLO AQUI
-        //internal readonly DelegateScheduler scheduler = new DelegateScheduler();
 		internal readonly UnityScheduler scheduler = new UnityScheduler();
 		public UnityScheduler Scheduler{
 			get{return scheduler;}
@@ -81,7 +79,6 @@ namespace EngineApp
             scheduler.PollingInterval = Config.schedulerTimeOut / 2;
             States[StateID.STATUS_INGAME].EntryHandler += StartNewScenarioGame;
 			
-			//TODO_RR States[StateID.PHASE_PRE_MOVE].EntryHandler+=Engine.PreMove;
             States[StateID.PHASE_INIT_MOVE].EntryHandler += Engine.InitMove;
             States[StateID.PHASE_START_SINGLE_MOVE].EntryHandler += Engine.SingleMove;
             States[StateID.PHASE_RUN_SINGLE_MOVE].EntryHandler += Engine.RunMove;
@@ -108,8 +105,6 @@ namespace EngineApp
             AddTransition(StateID.STATUS_INGAME, EngineActionsTypes.Dispose, StateID.Disposed);
 
             /* MOVEMENT */
-            //TODO_RR AddTransition(StateID.STATUS_NONE, EngineActionsTypes.ACTION_MOVE, StateID.PHASE_PRE_MOVE, ActionMove);
-			//TODO_RR AddTransition(StateID.PHASE_PRE_MOVE,EngineActionsTypes.ACTION_MOVE,StateID.PHASE_INIT_MOVE);
 			AddTransition(StateID.STATUS_NONE, EngineActionsTypes.ACTION_MOVE, StateID.PHASE_INIT_MOVE, ActionMove);
             AddTransition(StateID.PHASE_INIT_MOVE, EngineActionsTypes.ACTION_END_MOVE, StateID.STATUS_NONE);
             AddTransition(StateID.PHASE_INIT_MOVE, EngineActionsTypes.ACTION_START_SINGLE_MOVE, StateID.PHASE_START_SINGLE_MOVE);
@@ -177,7 +172,6 @@ namespace EngineApp
             Engine.engine_clear_danger_mask();
             //if (Engine.cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN)
             //    image_hide(gui.cursors, 1);
-            //Engine.Draw_from_state_machine = true;
 			//Engine.draw_map = true;
         }
 
