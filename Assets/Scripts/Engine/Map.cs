@@ -179,15 +179,7 @@ namespace EngineApp
 
 		static List<List<MapCoord>> deploy_fields;
 		
-		public void map_remove_fog_ai_units ()
-		{
-			for (int x = 0; x < map_w; x++)
-				for (int y = 0; y < map_h; y++) {
-					if (this.map[x,y].g_unit!=null){
-						Debug.Log("entra");
-					}
-				}
-		}
+
 		/// <summary>
 		/// Check the surrounding tiles and get the one with the highest
 		/// in_range value.
