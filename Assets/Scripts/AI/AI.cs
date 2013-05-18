@@ -377,7 +377,6 @@ Internal stuff
 #endif
 			}
 			if (ai_status != AI_STATUS.AI_STATUS_END) {
-				Debug.Log ("***MERGE***");
 				foreach (Unit unit_aux in ai_units) {
 					Engine.map.map_get_merge_units (unit_aux, out partners, out partner_count);
 					best = null; /* merge with the one that has the most strength points */
@@ -398,7 +397,6 @@ Internal stuff
 				}
 				ai_status = AI_STATUS.AI_STATUS_SUPPLY;
 				ai_unitsIterator = ai_units.GetEnumerator ();
-				Debug.Log ("*** SUPPLY ***");
 				foreach (Unit unit_aux in ai_units) {
 					/* check if unit needs supply and remove 
                            it from ai_units if so */
@@ -437,7 +435,6 @@ Internal stuff
 				foreach (Unit unit_aux in ai_units) {
 					AI_Group.ai_group_add_unit (ai_group, unit_aux);
 				}
-				Debug.Log ("***GROUP***");
 				for (int k=0; k<ai_units.Count; k++){
 					AI_Group.ai_group_handle_next_unit (ai_group);
 				}
@@ -447,7 +444,6 @@ Internal stuff
        			Console.WriteLine("*** END TURN ***");
 #endif
 			}
-			Debug.Log ("***END TURN***");
 			Action.action_queue_end_turn ();
 			ai_status = AI_STATUS.AI_STATUS_FINALIZE;
 			return true;
