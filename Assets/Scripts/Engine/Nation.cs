@@ -101,19 +101,6 @@ namespace EngineApp
             
 		}
 		
-#if TODO_RR
-		public static void nationstofile(){
-			for (int i=0; i<nations.Length;i++){
-				Debug.Log(nations[i].name+" "+nations[i].flag_offset);
-				SDL_Surface dest = new SDL_Surface();
-				SDL_Surface.copy_image(dest,Nation.nation_flag_width,
-					Nation.nation_flag_height,Nation.nation_flags,0,
-					(Nation.nation_flags.h-nations[i].flag_offset-Nation.nation_flag_height),false);
-				byte[] bytes = dest.bitmap.EncodeToPNG();
-				File.WriteAllBytes(Application.dataPath + "/../Imagenes/"+nations[i].name+".png", bytes);
-			}
-		}
-#endif
         /// <summary>
         /// Delete nations.
         /// </summary>
