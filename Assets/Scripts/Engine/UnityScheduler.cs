@@ -19,15 +19,13 @@ public class UnityScheduler /*: MonoBehaviour */
 
 	public void CheckUpdate (float deltaTime)
 	{
-		if (isrunning && callback != null) { // revisar la lógica
+		if (isrunning && callback != null) { 
 			if (runningTime < time)
 				runningTime += deltaTime;
-			else { // revisar la lógica
+			else { 
 				callback ();
 				callback = null;
 				runningTime = 0;
-				//quitar el callback
-				//resetear tiempo y revisar otra logica similar
 			}
 		}
 	}
