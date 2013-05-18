@@ -9,7 +9,6 @@
 
 using System;
 using System.Text;
-//TODO_RR using System.Drawing;
 using System.Collections.Generic;
 using DataFile;
 using Miscellaneous;
@@ -865,7 +864,9 @@ Draw wallpaper and background.
             }
             /* autosave game for a human */
             if (!deploy_turn && cur_player != null && cur_player.ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN)
-                //TODO_RR Slots.slot_save(10 /* Autosave */, "Autosave");
+#if TODO_RR
+                Slots.slot_save(10 /* Autosave */, "Autosave");
+#endif
 				Debug.Log ("AUTOSAVE");
             /* fuel up and kill crashed aircrafts*/
             foreach (Unit unit in Scenario.units)
@@ -977,33 +978,7 @@ Draw wallpaper and background.
 			else{
 				return false;
 			}
-#if TODO_RR
-            int x = 0, y = 0;
-            if (map.isLoaded){
-				int auxWidth = Engine.map.map_w-1;
-				int auxHeight = Engine.map.map_h-1;
-				int width = auxWidth*Config.hex_x_offset;
-				int height = -Config.hex_h*auxHeight-Config.hex_y_offset;
-				if (sx>=-Config.hex_w/2 && sx<=width+Config.hex_w/2 && sy<=Config.hex_h/2 && sy>=height-Config.hex_h/2){
-					x = Misc.GetWidthtPosition(sx);
-					y = Misc.GetHeightPosition(sy,x);
-				}
-				int tile_y = (Misc.IsEven(x))?-y*Config.hex_h:-y*Config.hex_h-Config.hex_y_offset;
-				if (tile_y<sy)
-					region = REGION.REGION_AIR;
-            	else
-                	region = REGION.REGION_GROUND;
-				mx = x;
-            	my = y;
-				/* check range */
-	            if (x < 0 || y < 0 || x >= Engine.map.map_w || y >= Engine.map.map_h) return false;
-	            /* ok, tile exists */
-	            return true;
-			}
-			else{
-				return false;
-			}
-#endif
+
         }
         /*
         ====================================================================
@@ -1678,7 +1653,6 @@ Draw wallpaper and background.
 
         public static void InitMove()
         {
-			Debug.Log ("Estamos en InitMove");
 			map.map_get_unit_move_mask(move_unit);
 			/* check if tile is in reach */
 			if (map.mask[dest_x, dest_y].in_range == 0)
@@ -1759,18 +1733,10 @@ Draw wallpaper and background.
             /* since it moves it is no longer assumed to be a guard */
             move_unit.is_guarding = false;
         }
-#if TODO_RR
-		public static void PreMove(){
-			 draw_from_state_machine = true;
-			 Thread.Sleep(20);
-			 phase = PHASE.PHASE_INIT_MOVE;
-             AI_Enemy.Action.action_queue(EngineActionsTypes.ACTION_MOVE);
-		}
-#endif
+
 		
         public static void SingleMove()
         {
-			Debug.Log ("Estamos en SingleMove");
 			bool enemy_spotted;
             int i;
 
@@ -1841,7 +1807,6 @@ Draw wallpaper and background.
 
         public static void RunMove()
         {
-			Debug.Log ("Estamos en Run Move");
 			/* next way point */
             way_pos++;
             /* next movement */
@@ -1852,7 +1817,6 @@ Draw wallpaper and background.
 
         public static void CheckLastMove()
         {
-			Debug.Log ("Estamos en Check Move");
 			if (cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_CPU)
             {
 				if (engine_capture_flag(move_unit))
@@ -1876,7 +1840,6 @@ Draw wallpaper and background.
 
         public static void EndMove()
         {
-			Debug.Log ("Estamos en EndMove");
 			 /* fade out sound */
 #if WITH_SOUND         
                     audio_fade_out( 0, 500 ); /* move sound channel */
@@ -1941,7 +1904,6 @@ Draw wallpaper and background.
 
         public static void ActionAttack(object[] args)
         {
-			Debug.Log ("Comprobando ataques");
             AI_Enemy.Action action = (AI_Enemy.Action)args[0];
             if (!action.unit.CheckAttack( action.target, Unit.UNIT_ATTACK.UNIT_ACTIVE_ATTACK))
             {
@@ -1975,7 +1937,6 @@ Draw wallpaper and background.
         public static void InitAttack()
         {
             //remove stateMachine.scheduler.Start();
-			Debug.Log("Estamos en InitAttack");
             if (!blind_cpu_turn)
             {
                 if (map.MAP_CHECK_VIS(cur_atk.x, cur_atk.y))
@@ -2010,7 +1971,6 @@ Draw wallpaper and background.
 
         public static void ShowAttackCross()
         {
-			Debug.Log("Estamos en ShowAttackCross");
             /* backup old strength to see who needs and explosion */
             int old_atk_str = cur_atk.str;
             int old_def_str = cur_def.str;
@@ -2067,7 +2027,6 @@ Draw wallpaper and background.
 
         public static void CheckResult()
         {
-			Debug.Log ("Estamos en CheckResult");
             bool broken_up = false;
             bool reset = false;
             bool was_final_fight = false;
@@ -2245,7 +2204,6 @@ Draw wallpaper and background.
 
         public static void EndCombat()
         {
-			Debug.Log ("Estamos EndCombat");
 #if WITH_SOUND                
             audio_fade_out( 2, 1500 ); /* explosion sound channel */
 #endif
