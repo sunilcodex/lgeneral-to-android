@@ -20,19 +20,15 @@ public class GUIMap : MonoBehaviour
 			for (int j=0; j<map.map_w; j++) {
 				GameObject hex;
 				if (Misc.IsEven (j)) {
-					//hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * 1.5f, 0, -Mathf.Sqrt (3) * i), Quaternion.identity);
 					hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * Config.hex_x_offset, 0, 
                                                    -Config.hex_h * i), Quaternion.identity);
 				} else {
-					//hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * 1.5f, 0,           
-					//-(Mathf.Sqrt (3) * i) - (Mathf.Sqrt (3) / 2)), Quaternion.identity);
 					hex = (GameObject)Instantiate (hexPrefab, new Vector3 (j * Config.hex_x_offset, 0,
                                                    -(Config.hex_h * i) - Config.hex_y_offset), Quaternion.identity);
 				}
 				mapped[j,i] = hex;
 				//put hex as child of map
 				hex.transform.parent = this.gameObject.transform;
-				//TODO_RR AddTextureTerrain (hex, map.map [j, i]);
 				SDL_Surface hexTex;
 				//Draw Terrain
 				hexTex = map.map_draw_terrain (j, i);
@@ -66,7 +62,6 @@ public class GUIMap : MonoBehaviour
  						int xdest = (Config.hex_w-cross.w)/2;
  						int ydest = (Config.hex_h-cross.h)/2;
  						SDL_Surface.copy_image_without_key(hexTex,cross,xdest,ydest,Color.black);
-						//TODO_RR hexTex.BitmapMaterial.color = Color.red;
 					}
 					mapped[j,i].renderer.material = hexTex.BitmapMaterial;
 				}
@@ -75,8 +70,6 @@ public class GUIMap : MonoBehaviour
         
 	void Awake ()
 	{
-		//onLoadScen();
-		//Scenario.scen_load("Poland.xml");
 		MakeMap (Engine.map);
                                 
 	}
@@ -96,15 +89,6 @@ public class GUIMap : MonoBehaviour
 			Repaint(Engine.map,use_frame);
 			Engine.Draw_from_state_machine = false;
 		}
-		/*if (Engine.Draw_map_state_machine){
-			if (Engine.map.isLoaded) {
-				Engine.status = STATUS.STATUS_NONE;
-				bool use_frame = (Engine.cur_ctrl != PLAYERCONTROL.PLAYER_CTRL_CPU);
-				GUIMap.Repaint(Engine.map,use_frame);
-			}
-			Engine.draw_map = false;
-			Engine.Draw_map_state_machine = false;
-		}*/
 	}
 	
 }
