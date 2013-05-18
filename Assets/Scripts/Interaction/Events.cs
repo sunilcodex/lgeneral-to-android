@@ -286,12 +286,10 @@ public class Events : MonoBehaviour {
 									if (unit != null && Engine.cur_unit != unit) {
 										if (Engine.cur_ctrl == PLAYERCONTROL.PLAYER_CTRL_HUMAN) {
 											if (Engine.engine_capture_flag (Engine.cur_unit)) { 
-#if TODO_RR
-		si ha acabado saltar al nuevo menu
-#endif
 												/* CHECK IF SCENARIO IS FINISHED */
 												if (Scenario.scen_check_result (false)) {
 													Engine.engine_finish_scenario ();
+													Application.LoadLevel("EndGame");
 													return;
 												}              
 											}
