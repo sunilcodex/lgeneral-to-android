@@ -43,18 +43,14 @@ public class GUIMenu : MonoBehaviour
 					Config.CampaignSelected = "Poland.xml";
 					Application.LoadLevel("ScenInfo");
 				}
-				if (GUI.Button (new Rect (50, 170, 100, 20), new GUIContent ("1941 West", 
-				"Hungry for the oil of the Middle East, the Axis moves through North Africa")))
-					Application.LoadLevel ("CuboPrueba");
-				if (GUI.Button (new Rect (50, 200, 100, 20), 
-				new GUIContent ("1941 East", "In the greatest invasion of history, the Axis strikes into the Soviet Union")))
-					Application.LoadLevel ("CuboPrueba");
-				if (GUI.Button (new Rect (50, 230, 100, 20), 
-				new GUIContent ("1943 West", "The Axis must defend the soft underbelly of Europe from the Allies")))
-					Application.LoadLevel ("CuboPrueba");
-				if (GUI.Button (new Rect (50, 260, 100, 20), new GUIContent ("1943 East", 
-				"Overextended Soviet forces, the Axis tries to regain the initiative in the East")))
-					Application.LoadLevel ("CuboPrueba");
+				GUI.Button (new Rect (50, 170, 100, 20), new GUIContent ("1941 West", 
+				"Hungry for the oil of the Middle East, the Axis moves through North Africa"));
+				GUI.Button (new Rect (50, 200, 100, 20), 
+				new GUIContent ("1941 East", "In the greatest invasion of history, the Axis strikes into the Soviet Union"));
+				GUI.Button (new Rect (50, 230, 100, 20), 
+				new GUIContent ("1943 West", "The Axis must defend the soft underbelly of Europe from the Allies"));
+				GUI.Button (new Rect (50, 260, 100, 20), new GUIContent ("1943 East", 
+				"Overextended Soviet forces, the Axis tries to regain the initiative in the East"));
 				GUI.Label (new Rect (200, 175, 150, 100), GUI.tooltip);
 				break;
 			case 1:
