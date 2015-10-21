@@ -1,0 +1,6 @@
+Version to Android about the game Panzer General, this game is turn-based game, set on operational level hex maps. One plays lone scenarios from either Axis or Allied side and against a computer or human opponent. In Campaign Mode, the player assumes the role of a German Generalissimus against the Allied computer.
+Panzer General is an operational-level game, and units approximate battalions, although unit size and map scale from one scenario to the next are elastic. While the names and information for the units are reasonably accurate, the scenarios only approximate historical situations.
+Its novel feature was to link individual scenarios into a campaign spanning World War II from 1939 to 1945. Units are able to gain experience and become stronger, where success in one battle would award the player prestige to upgrade units, acquire additional units, and select a better scenario for the next battle.
+
+
+Remember that for this application we rely as a source of a project done for Windows Phone. What is being done in this project is from that code as a basis from which we adapted to it for Android or any other platform using the Unity3d game engine.
